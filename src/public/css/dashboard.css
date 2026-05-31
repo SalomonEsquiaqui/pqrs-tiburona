@@ -1,4 +1,4 @@
-/* ===== DASHBOARD LAYOUT v2 ===== */
+/* ===== DASHBOARD LAYOUT v3 — Mobile-First Fix ===== */
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -14,11 +14,10 @@ body {
   background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 55%, #064e3b 100%);
   display: flex; flex-direction: column;
   position: sticky; top: 0; height: 100vh;
-  overflow: hidden;                        /* nunca scroll horizontal */
+  overflow: hidden;
   border-right: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Logo más compacto */
 .sidebar-logo {
   display: flex; align-items: center; gap: 9px;
   padding: 16px 16px 13px;
@@ -31,7 +30,6 @@ body {
 }
 .sidebar-logo small { color: rgba(255,255,255,0.45); font-size: 0.68rem; display: block; }
 
-/* Nav ocupa el espacio disponible, con scroll vertical si hiciera falta */
 .sidebar-nav {
   flex: 1; padding: 10px 8px;
   overflow-y: auto; overflow-x: hidden;
@@ -67,7 +65,6 @@ body {
   padding: 2px 6px; border-radius: 999px; margin-left: auto; flex-shrink: 0;
 }
 
-/* Usuario + botones — pegado al fondo, tamaño reducido */
 .sidebar-user {
   padding: 12px 12px 10px;
   border-top: 1px solid rgba(255,255,255,.08);
@@ -75,7 +72,6 @@ body {
 }
 .sidebar-user strong { display: block; color: #fff; font-size: 0.84rem; margin-bottom: 4px; font-weight: 600; }
 
-/* Botón refrescar */
 .btn-refrescar {
   display: flex; align-items: center; justify-content: center; gap: 5px;
   width: 100%; padding: 6px 10px;
@@ -159,25 +155,35 @@ body {
 .tabla-wrap {
   background: var(--blanco, #fff); border-radius: 14px;
   box-shadow: 0 1px 4px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.04);
-  overflow: hidden; border: 1px solid var(--gris-medio, #e2e8f0);
+  overflow-x: auto; border: 1px solid var(--gris-medio, #e2e8f0);
+  -webkit-overflow-scrolling: touch;
 }
-.tabla-wrap table { width: 100%; border-collapse: collapse; }
+.tabla-wrap table { width: 100%; min-width: 700px; border-collapse: collapse; }
 .tabla-wrap thead th {
-  padding: 12px 16px;
+  padding: 12px 12px;
   background: var(--gris-claro, #f8fafc);
   font-size: 0.71rem; font-weight: 700; color: #94a3b8;
   text-align: left; text-transform: uppercase; letter-spacing: 0.08em;
   border-bottom: 1px solid var(--gris-medio, #e2e8f0);
+  white-space: nowrap;
 }
 .tabla-wrap tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
 .tabla-wrap tbody tr:last-child { border-bottom: none; }
 .tabla-wrap tbody tr:hover { background: #f8fafc; }
 .tabla-wrap tbody td {
-  padding: 12px 16px; font-size: 0.86rem; vertical-align: middle;
+  padding: 12px 12px; font-size: 0.84rem; vertical-align: middle;
 }
-.asunto-cell { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Columna acciones siempre visible y con ancho fijo */
+.tabla-wrap thead th:last-child,
+.tabla-wrap tbody td:last-child {
+  position: sticky; right: 0;
+  background: var(--blanco, #fff);
+  box-shadow: -2px 0 6px rgba(15,23,42,.06);
+  min-width: 120px;
+}
+.tabla-wrap thead th:last-child { background: var(--gris-claro, #f8fafc); }
+.asunto-cell { max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Miniatura de imagen en tabla */
 .img-thumb {
   width: 36px; height: 36px; border-radius: 6px;
   object-fit: cover; cursor: pointer;
@@ -240,6 +246,9 @@ body {
   color: #fff; font-size: 1.1rem; font-weight: 800; flex-shrink: 0;
 }
 
+/* ── NAV INFERIOR — oculta en desktop, visible solo en móvil ── */
+.nav-bottom-mobile { display: none; }
+
 /* ── PIN ── */
 .pin-resultado-card {
   background: linear-gradient(135deg, var(--azul-suave, #eff6ff), var(--verde-suave, #ecfdf5));
@@ -249,49 +258,37 @@ body {
   animation: fadeIn 0.3s ease;
 }
 
-/* ── RESPONSIVE ── */
+/* ========================================================
+   RESPONSIVE TABLET
+   ======================================================== */
 @media (max-width: 1024px) {
   .sidebar { width: 210px; }
   .main-content { padding: 22px 22px; }
 }
-@media (max-width: 768px) {
-  .sidebar { width: 190px; }
-  .main-content { padding: 18px 16px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
-  .dash-layout { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; overflow: visible; }
-  .sidebar-nav { display: flex; flex-wrap: wrap; padding: 8px; width: 100%; overflow: visible; }
-  .nav-item { flex: 0 0 auto; white-space: nowrap; }
-  .sidebar-user { width: 100%; padding: 10px 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  /* ================================================================
-   DASHBOARD MÓVIL — pegar al FINAL de dashboard.css
-   Convierte el sidebar lateral en navegación inferior tipo app nativa.
-   No toca nada de la versión escritorio (>768px).
-   ================================================================ */
 
+/* ========================================================
+   RESPONSIVE MÓVIL — convierte sidebar en header + nav inferior
+   ======================================================== */
 @media (max-width: 768px) {
 
-  /* ── LAYOUT: columna con nav abajo ── */
+  /* Layout general */
   .dash-layout {
     flex-direction: column;
     min-height: 100dvh;
-    padding-bottom: 70px; /* espacio para la nav inferior */
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* ── SIDEBAR → TOP HEADER ── */
+  /* ── SIDEBAR → TOP HEADER fijo ── */
   .sidebar {
     width: 100%;
     min-height: auto;
-    height: auto;
+    height: 58px;
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 200;
     flex-direction: row;
     align-items: center;
-    padding: 0 16px;
-    height: 60px;
+    padding: 0 14px;
     background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 100%);
     border-bottom: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 2px 16px rgba(0,0,0,0.3);
@@ -303,31 +300,28 @@ body {
     flex: 1;
     border-bottom: none;
     padding: 0;
-    display: flex;
-    align-items: center;
     gap: 10px;
   }
   .sidebar-logo img {
-    width: 34px !important;
-    height: 34px !important;
+    width: 32px !important;
+    height: 32px !important;
   }
   .sidebar-logo h2 {
-    font-size: 0.95rem !important;
-    color: #fff;
+    font-size: 0.92rem !important;
     margin: 0 !important;
   }
   .sidebar-logo small {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     color: rgba(255,255,255,0.5);
     display: block;
   }
 
-  /* Nav se oculta del header (va abajo) */
+  /* La nav principal se oculta del header (se muestra abajo) */
   .sidebar-nav {
     display: none;
   }
 
-  /* Info de usuario → compacta en header derecha */
+  /* Zona de usuario — compacta en header derecha */
   .sidebar-user {
     border-top: none;
     padding: 0;
@@ -336,48 +330,30 @@ body {
     gap: 8px;
     flex-shrink: 0;
   }
-  .sidebar-user strong {
-    display: none; /* se oculta en header, se ve en la nav */
-  }
-  .sidebar-user .badge {
-    font-size: 0.6rem;
-    padding: 2px 8px;
-  }
-  .sidebar-user .btn-refrescar {
-    display: none;
-  }
-  /* Botón salir → icono pequeño */
+  .sidebar-user strong { display: none; }
+  .sidebar-user .btn-refrescar { display: none; }
+  .sidebar-user .badge { font-size: 0.6rem; padding: 2px 8px; }
   .sidebar-user .btn.btn-peligro {
     margin-top: 0 !important;
     width: auto !important;
     padding: 6px 12px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     border-radius: 8px;
-  }
-  /* Ocultar el texto "Salir" y mostrar solo el icono */
-  .sidebar-user .btn.btn-peligro {
-    font-size: 0.7rem;
-    padding: 6px 10px;
-    letter-spacing: 0;
+    white-space: nowrap;
   }
 
-  /* Notificaciones en header */
-  #notif-sidebar-container {
-    display: flex;
-    align-items: center;
-  }
-
-  /* ── NAV INFERIOR ── */
+  /* ── NAV INFERIOR tipo app nativa ── */
   .nav-bottom-mobile {
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 200;
     background: #0f172a;
     border-top: 1px solid rgba(255,255,255,0.1);
     display: flex;
     align-items: stretch;
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    min-height: 58px;
   }
   .nav-bottom-mobile .nav-item {
     flex: 1;
@@ -385,19 +361,17 @@ body {
     align-items: center;
     justify-content: center;
     gap: 3px;
-    padding: 10px 4px;
-    font-size: 0.62rem;
+    padding: 8px 4px;
+    font-size: 0.6rem;
     color: rgba(255,255,255,0.45);
     border-radius: 0;
     margin-bottom: 0;
     white-space: nowrap;
     overflow: visible;
-    min-height: 58px;
+    min-height: 56px;
     border-left: none !important;
   }
-  .nav-bottom-mobile .nav-item::before {
-    display: none !important;
-  }
+  .nav-bottom-mobile .nav-item::before { display: none !important; }
   .nav-bottom-mobile .nav-item.activo {
     color: #34d399;
     background: rgba(52,211,153,0.08);
@@ -413,32 +387,36 @@ body {
     border-radius: 0 0 3px 3px;
   }
   .nav-bottom-mobile .nav-item .nav-emoji {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     line-height: 1;
   }
   .nav-bottom-mobile .nav-item .nav-label {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     font-weight: 600;
     letter-spacing: 0.01em;
+    text-align: center;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .nav-bottom-mobile .notif-badge {
     position: absolute;
     top: 6px;
-    right: calc(50% - 18px);
+    right: calc(50% - 20px);
     font-size: 0.55rem;
     padding: 1px 5px;
     min-width: 16px;
     text-align: center;
   }
 
-  /* ── MAIN CONTENT ── */
+  /* ── MAIN CONTENT — espacio para header y nav ── */
   .main-content {
     padding: 16px 14px;
-    margin-top: 60px; /* espacio para el header fijo */
-    min-height: calc(100dvh - 60px - 70px);
+    margin-top: 58px;
+    min-height: calc(100dvh - 58px - 64px);
   }
 
-  /* ── STATS GRID: 2 columnas en móvil ── */
+  /* ── STATS: 2 columnas ── */
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -448,21 +426,15 @@ body {
     padding: 14px 14px;
     border-radius: 12px;
   }
-  .stat-card .numero {
-    font-size: 1.7rem;
-  }
-  .stat-card .etiqueta {
-    font-size: 0.68rem;
-  }
+  .stat-card .numero { font-size: 1.7rem; }
+  .stat-card .etiqueta { font-size: 0.68rem; }
 
   /* ── PAGE HEADER ── */
   .page-header {
     margin-bottom: 14px;
     gap: 8px;
   }
-  .page-header h1 {
-    font-size: 1.15rem;
-  }
+  .page-header h1 { font-size: 1.1rem; }
 
   /* ── FILTROS: scroll horizontal ── */
   .filtros {
@@ -482,11 +454,11 @@ body {
     padding: 9px 12px;
   }
   .filtros input[type="text"] {
-    min-width: 180px;
+    min-width: 160px;
     font-size: 0.82rem;
   }
 
-  /* ── TABLA → CARDS en móvil ── */
+  /* ── TABLA → ocultar en móvil (se usa vista de cards vía JS) ── */
   .tabla-wrap {
     border-radius: 12px;
     overflow: visible;
@@ -494,12 +466,8 @@ body {
     box-shadow: none;
     border: none;
   }
-  .tabla-wrap table {
-    display: none; /* ocultar tabla en móvil */
-  }
-
-  /* Las filas se renderizan como cards vía JS,
-     pero para las que ya existen en el DOM: */
+  .tabla-wrap table { display: none; }
+  .tabla-wrap thead { display: none; }
   .tabla-wrap tbody {
     display: flex;
     flex-direction: column;
@@ -532,9 +500,6 @@ body {
     flex-shrink: 0;
     margin-right: 8px;
   }
-  .tabla-wrap thead {
-    display: none; /* ocultar cabecera en móvil */
-  }
 
   /* ── CARDS DE PQRS (soporte) ── */
   .pqrs-soporte-card {
@@ -542,16 +507,9 @@ body {
     border-radius: 12px;
     margin-bottom: 10px;
   }
-  .card-top {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .pqrs-titulo {
-    font-size: 0.88rem;
-  }
-  .card-acciones {
-    gap: 6px;
-  }
+  .card-top { flex-wrap: wrap; gap: 8px; }
+  .pqrs-titulo { font-size: 0.88rem; }
+  .card-acciones { gap: 6px; }
   .card-acciones .btn {
     flex: 1;
     min-width: 0;
@@ -560,7 +518,7 @@ body {
     justify-content: center;
   }
 
-  /* ── MODALES: bottom sheet en móvil ── */
+  /* ── MODALES: bottom sheet ── */
   .modal-overlay {
     align-items: flex-end;
     padding: 0;
@@ -585,11 +543,9 @@ body {
     from { transform: translateY(100%); }
     to   { transform: translateY(0); }
   }
-  .modal-header h2 {
-    font-size: 1rem;
-  }
+  .modal-header h2 { font-size: 1rem; }
 
-  /* ── FORMS dentro de cards ── */
+  /* ── FORMS ── */
   .card {
     padding: 18px 16px;
     border-radius: 14px;
@@ -603,9 +559,7 @@ body {
     border-radius: 10px;
     min-height: 48px;
   }
-  .form-grupo label {
-    font-size: 0.7rem;
-  }
+  .form-grupo label { font-size: 0.7rem; }
   .btn-primario,
   .btn-verde,
   .btn-peligro {
@@ -620,24 +574,17 @@ body {
     padding: 18px 16px;
     border-radius: 14px;
   }
-  .pin-crear-card > div {
-    flex-direction: column !important;
-  }
+  .pin-crear-card > div { flex-direction: column !important; }
   .pin-crear-card .form-grupo {
     margin: 0 0 10px !important;
     width: 100% !important;
     min-width: unset !important;
     flex: unset !important;
   }
-  .pin-crear-card .btn-verde {
-    width: 100%;
-  }
+  .pin-crear-card .btn-verde { width: 100%; }
 
   /* ── AGENTE CARD ── */
-  .card-agente {
-    padding: 14px;
-    gap: 10px;
-  }
+  .card-agente { padding: 14px; gap: 10px; }
 
   /* ── ALERTA PQRS ── */
   .alerta-pqrs-card {
@@ -645,24 +592,14 @@ body {
     border-radius: 20px;
     max-width: 92vw;
   }
-  .alerta-pqrs-titulo {
-    font-size: 1.2rem;
-  }
+  .alerta-pqrs-titulo { font-size: 1.2rem; }
 
-  /* ── TABS dentro de secciones ── */
-  .tabs {
-    border-radius: 10px;
-  }
-  .tab-btn {
-    min-height: 44px;
-    font-size: 0.85rem;
-  }
+  /* ── TABS ── */
+  .tabs { border-radius: 10px; }
+  .tab-btn { min-height: 44px; font-size: 0.85rem; }
 
   /* ── UPLOAD AREA ── */
-  .upload-area {
-    padding: 20px 14px;
-    border-radius: 12px;
-  }
+  .upload-area { padding: 20px 14px; border-radius: 12px; }
 
   /* ── MEDIA CHIPS ── */
   .media-type-chips {
@@ -680,20 +617,13 @@ body {
   }
 
   /* ── STARS ── */
-  .star-btn {
-    font-size: 2rem;
-  }
+  .star-btn { font-size: 2rem; }
 
-  /* ── BADGE NOTIF ── */
-  .notif-badge {
-    font-size: 0.6rem;
-    padding: 1px 5px;
-  }
+  /* ── NOTIF BADGE ── */
+  .notif-badge { font-size: 0.6rem; padding: 1px 5px; }
 
   /* Grid equipos soporte */
-  #cards-soporte {
-    grid-template-columns: 1fr !important;
-  }
+  #cards-soporte { grid-template-columns: 1fr !important; }
 }
 
 /* ── PANTALLAS MUY PEQUEÑAS ── */
@@ -702,29 +632,9 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-  .stat-card .numero {
-    font-size: 1.5rem;
-  }
-  .main-content {
-    padding: 12px 12px;
-  }
-  .page-header h1 {
-    font-size: 1rem;
-  }
-  .nav-bottom-mobile .nav-item .nav-emoji {
-    font-size: 1.15rem;
-  }
-  .nav-bottom-mobile .nav-item .nav-label {
-    font-size: 0.55rem;
-  }
-}
-
-/* ── SAFE AREA IPHONE ── */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  @media (max-width: 768px) {
-    .dash-layout {
-      padding-bottom: calc(70px + env(safe-area-inset-bottom));
-    }
-  }
-}
+  .stat-card .numero { font-size: 1.5rem; }
+  .main-content { padding: 12px 12px; }
+  .page-header h1 { font-size: 1rem; }
+  .nav-bottom-mobile .nav-item .nav-emoji { font-size: 1.1rem; }
+  .nav-bottom-mobile .nav-item .nav-label { font-size: 0.52rem; }
 }
