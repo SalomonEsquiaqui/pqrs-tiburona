@@ -230,17 +230,60 @@ async function cargarResueltas() {
   document.getElementById('s-resueltas').textContent = hoyCount;
 
   const tbody = document.getElementById('tabla-resueltas');
-  if (!data?.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;">Sin resueltas aún.</td></tr>';
+  if (window.innerWidth <= 768) {
+    _renderResueltasMobile(data || []);
+  } else {
+    const tablaWrap = tbody.closest('.tabla-wrap');
+    tablaWrap.style.display = '';
+    const cards = document.getElementById('cards-mobile-resueltas');
+    if (cards) cards.style.display = 'none';
+    if (!data?.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;">Sin resueltas aún.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(p => `
+      <tr>
+        <td><code class="cod-radicado">${p.radicado}</code></td>
+        <td><span class="badge badge-tipo-${p.tipo}">${p.tipo}</span></td>
+        <td>${p.asunto}</td>
+        <td>${formatFecha(p.updated_at)}</td>
+      </tr>`).join('');
+  }
+}
+
+function _renderResueltasMobile(data) {
+  const tbody = document.getElementById('tabla-resueltas');
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = 'none';
+
+  let cardsWrap = document.getElementById('cards-mobile-resueltas');
+  if (!cardsWrap) {
+    cardsWrap = document.createElement('div');
+    cardsWrap.id = 'cards-mobile-resueltas';
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+    tablaWrap.parentNode.insertBefore(cardsWrap, tablaWrap);
+  }
+  cardsWrap.style.display = 'flex';
+
+  const iconos = {peticion:'📝',queja:'😤',reclamo:'⚡',sugerencia:'💡',felicitacion:'🌟'};
+
+  if (!data.length) {
+    cardsWrap.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:14px;border:1px solid #e2e8f0;">
+        <span style="font-size:2rem;display:block;margin-bottom:10px;">✅</span>
+        <p style="color:#94a3b8;font-size:0.9rem;">Sin PQRS resueltas aún.</p>
+      </div>`;
     return;
   }
-  tbody.innerHTML = data.map(p => `
-    <tr>
-      <td><code class="cod-radicado">${p.radicado}</code></td>
-      <td><span class="badge badge-tipo-${p.tipo}">${p.tipo}</span></td>
-      <td>${p.asunto}</td>
-      <td>${formatFecha(p.updated_at)}</td>
-    </tr>`).join('');
+  cardsWrap.innerHTML = data.map(p => `
+    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid #059669;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+        <code style="font-size:0.7rem;background:#f1f5f9;padding:2px 7px;border-radius:5px;color:#475569;font-weight:700;">${p.radicado}</code>
+        <span style="background:#05966918;color:#059669;border:1px solid #05966940;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;">✅ resuelto</span>
+      </div>
+      <p style="font-weight:600;color:#0f172a;font-size:0.88rem;margin-bottom:6px;line-height:1.3;">${p.asunto}</p>
+      <p style="font-size:0.78rem;color:#64748b;">${iconos[p.tipo]||'📋'} ${p.tipo} &nbsp;·&nbsp; 📅 ${formatFecha(p.updated_at)}</p>
+    </div>`).join('');
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────

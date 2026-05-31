@@ -58,7 +58,20 @@ function actualizarStats() {
 }
 
 function renderAdminPqrs(lista) {
+  if (window.innerWidth <= 768) {
+    _renderAdminCardsMobile(lista);
+  } else {
+    _renderAdminTablaDesktop(lista);
+  }
+}
+
+function _renderAdminTablaDesktop(lista) {
   const tbody = document.getElementById('tabla-admin-pqrs');
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = '';
+  const cards = document.getElementById('cards-mobile-admin');
+  if (cards) cards.style.display = 'none';
+
   if (!lista.length) {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:#aaa;">Sin solicitudes</td></tr>';
     return;
@@ -82,6 +95,59 @@ function renderAdminPqrs(lista) {
     </tr>`;
   }).join('');
 }
+
+function _renderAdminCardsMobile(lista) {
+  const tbody = document.getElementById('tabla-admin-pqrs');
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = 'none';
+
+  let cardsWrap = document.getElementById('cards-mobile-admin');
+  if (!cardsWrap) {
+    cardsWrap = document.createElement('div');
+    cardsWrap.id = 'cards-mobile-admin';
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+    tablaWrap.parentNode.insertBefore(cardsWrap, tablaWrap);
+  }
+  cardsWrap.style.display = 'flex';
+
+  const colores = {pendiente:'#f97316',asignado:'#3b82f6',en_proceso:'#8b5cf6',resuelto:'#059669',cerrado:'#94a3b8'};
+  const iconos  = {peticion:'📝',queja:'😤',reclamo:'⚡',sugerencia:'💡',felicitacion:'🌟'};
+
+  if (!lista.length) {
+    cardsWrap.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:14px;border:1px solid #e2e8f0;">
+        <span style="font-size:2rem;display:block;margin-bottom:10px;">📭</span>
+        <p style="color:#94a3b8;font-size:0.9rem;">Sin solicitudes registradas.</p>
+      </div>`;
+    return;
+  }
+
+  cardsWrap.innerHTML = lista.map(p => {
+    const color = colores[p.estado] || '#e2e8f0';
+    return `
+    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${color};">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;">
+        <div style="min-width:0;">
+          <code style="font-size:0.7rem;background:#f1f5f9;padding:2px 7px;border-radius:5px;color:#475569;font-weight:700;">${p.radicado}</code>
+          <p style="font-weight:700;color:#0f172a;font-size:0.9rem;margin-top:5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;">${p.asunto}</p>
+        </div>
+        <span style="background:${color}18;color:${color};border:1px solid ${color}40;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;white-space:nowrap;flex-shrink:0;">${p.estado.replace('_',' ')}</span>
+      </div>
+      <div style="font-size:0.78rem;color:#64748b;margin-bottom:2px;">👤 ${p.users?.nombre||'—'} &nbsp;·&nbsp; ${iconos[p.tipo]||'📋'} ${p.tipo}</div>
+      <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;">📅 ${formatFecha(p.created_at)} &nbsp;·&nbsp; 🏢 ${p.area||'—'}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;min-height:42px;"
+          onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
+          ${p.estado==='pendiente'?'📋 Asignar':'🔄 Reasignar'}
+        </button>
+        <button class="btn btn-sm btn-verde" style="min-height:42px;padding:0 16px;"
+          onclick="abrirModalVer('${p.id}')">👁</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.addEventListener('resize', () => { renderAdminPqrs(todasPqrs); });
 
 function filtrarAdmin() {
   const estado = document.getElementById('a-filtro-estado').value;

@@ -198,9 +198,22 @@ function actualizarEstadisticas() {
     todasMisPqrs.filter(p => p.estado === 'resuelto').length;
 }
 
-// ── RENDER TABLA ─────────────────────────────────────────────────────────────
+// ── RENDER TABLA / CARDS (adaptativo) ────────────────────────────────────────
 function renderTabla(lista) {
+  if (window.innerWidth <= 768) {
+    _renderCardsMobile(lista);
+  } else {
+    _renderTablaDesktop(lista);
+  }
+}
+
+function _renderTablaDesktop(lista) {
   const tbody = document.getElementById('tabla-mis-pqrs');
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = '';
+  const cardsWrap = document.getElementById('cards-mobile-pqrs');
+  if (cardsWrap) cardsWrap.style.display = 'none';
+
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">
       <span style="font-size:1.8rem;display:block;margin-bottom:8px;">📭</span>
@@ -220,6 +233,54 @@ function renderTabla(lista) {
     </tr>
   `).join('');
 }
+
+function _renderCardsMobile(lista) {
+  const tbody = document.getElementById('tabla-mis-pqrs');
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = 'none';
+
+  let cardsWrap = document.getElementById('cards-mobile-pqrs');
+  if (!cardsWrap) {
+    cardsWrap = document.createElement('div');
+    cardsWrap.id = 'cards-mobile-pqrs';
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+    tablaWrap.parentNode.insertBefore(cardsWrap, tablaWrap);
+  }
+  cardsWrap.style.display = 'flex';
+
+  const colores = {pendiente:'#f97316',asignado:'#3b82f6',en_proceso:'#8b5cf6',resuelto:'#059669',cerrado:'#94a3b8'};
+  const iconos  = {peticion:'📝',queja:'😤',reclamo:'⚡',sugerencia:'💡',felicitacion:'🌟'};
+
+  if (!lista.length) {
+    cardsWrap.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:14px;border:1px solid #e2e8f0;">
+        <span style="font-size:2rem;display:block;margin-bottom:10px;">📭</span>
+        <p style="color:#94a3b8;font-size:0.9rem;">No tienes solicitudes aún.<br>¡Crea tu primera PQRS!</p>
+      </div>`;
+    return;
+  }
+
+  cardsWrap.innerHTML = lista.map(p => {
+    const color = colores[p.estado] || '#e2e8f0';
+    return `
+    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${color};">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;">
+        <div style="min-width:0;">
+          <code style="font-size:0.7rem;background:#f1f5f9;padding:2px 7px;border-radius:5px;color:#475569;font-weight:700;">${p.radicado}</code>
+          <p style="font-weight:700;color:#0f172a;font-size:0.9rem;margin-top:5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;">${p.asunto}</p>
+        </div>
+        <span style="background:${color}18;color:${color};border:1px solid ${color}40;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;white-space:nowrap;flex-shrink:0;">${p.estado.replace('_',' ')}</span>
+      </div>
+      <div style="font-size:0.78rem;color:#64748b;margin-bottom:4px;">${iconos[p.tipo]||'📋'} ${p.tipo}</div>
+      <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;">📅 ${formatFecha(p.created_at)}</div>
+      <button class="btn btn-sm btn-outline" onclick="verDetalle('${p.id}')" style="width:100%;justify-content:center;min-height:42px;">
+        👁 Ver detalle
+      </button>
+    </div>`;
+  }).join('');
+}
+
+window.addEventListener('resize', () => { renderTabla(todasMisPqrs); });
 
 // ── FILTRAR ───────────────────────────────────────────────────────────────────
 function filtrarPqrs() {
