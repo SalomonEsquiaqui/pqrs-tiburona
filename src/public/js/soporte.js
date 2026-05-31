@@ -437,3 +437,53 @@ function initNotifSoporte() {
     if (!wrap.contains(e.target)) panel?.classList.remove('open');
   });
 }
+
+// ── RENDER MÓVIL: tabla resueltas → cards ──────────────────────────────────
+const _cargarResueltasOriginal = cargarResueltas;
+async function cargarResueltas() {
+  await _cargarResueltasOriginal();
+  if (window.innerWidth <= 768) _adaptarResueltasMobile();
+}
+
+function _adaptarResueltasMobile() {
+  const tbody = document.getElementById('tabla-resueltas');
+  if (!tbody) return;
+  const tablaWrap = tbody.closest('.tabla-wrap');
+
+  let cardsWrap = document.getElementById('cards-mobile-resueltas');
+  if (!cardsWrap) {
+    cardsWrap = document.createElement('div');
+    cardsWrap.id = 'cards-mobile-resueltas';
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+    tablaWrap.parentNode.insertBefore(cardsWrap, tablaWrap);
+  }
+  tablaWrap.style.display = 'none';
+
+  const filas = [...tbody.querySelectorAll('tr')];
+  if (!filas.length || tbody.textContent.includes('Sin resueltas')) {
+    cardsWrap.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:14px;border:1px solid #e2e8f0;">
+        <span style="font-size:2rem;display:block;margin-bottom:10px;">✅</span>
+        <p style="color:#94a3b8;font-size:0.9rem;">Sin PQRS resueltas aún.</p>
+      </div>`;
+    return;
+  }
+  const iconos = { peticion:'📝', queja:'😤', reclamo:'⚡', sugerencia:'💡', felicitacion:'🌟' };
+  cardsWrap.innerHTML = filas.map(tr => {
+    const celdas = [...tr.querySelectorAll('td')];
+    if (celdas.length < 4) return '';
+    const radicado = celdas[0]?.textContent.trim();
+    const tipo     = celdas[1]?.textContent.trim();
+    const asunto   = celdas[2]?.textContent.trim();
+    const fecha    = celdas[3]?.textContent.trim();
+    return `
+      <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid #059669;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+          <code style="font-size:0.7rem;background:#f1f5f9;padding:2px 7px;border-radius:5px;color:#475569;font-weight:700;">${radicado}</code>
+          <span style="background:#05966918;color:#059669;border:1px solid #05966940;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;">✅ resuelto</span>
+        </div>
+        <p style="font-weight:600;color:#0f172a;font-size:0.88rem;margin-bottom:6px;">${asunto}</p>
+        <p style="font-size:0.78rem;color:#64748b;">${iconos[tipo]||'📋'} ${tipo} &nbsp;·&nbsp; 📅 ${fecha}</p>
+      </div>`;
+  }).join('');
+}
