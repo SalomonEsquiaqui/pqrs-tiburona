@@ -162,6 +162,18 @@ function filtrarAdmin() {
 async function cargarUsuarios() {
   const { data } = await db.from('users').select('*').order('created_at', { ascending: false });
   const tbody = document.getElementById('tabla-usuarios');
+
+  if (window.innerWidth <= 768) {
+    _renderUsuariosMobile(data || []);
+    return;
+  }
+
+  // ── Desktop: tabla normal ──
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = '';
+  const cards = document.getElementById('cards-mobile-usuarios');
+  if (cards) cards.style.display = 'none';
+
   if (!data?.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;">Sin usuarios</td></tr>'; return; }
   tbody.innerHTML = data.map(u => `
     <tr>
@@ -177,6 +189,50 @@ async function cargarUsuarios() {
         </select>
       </td>
     </tr>`).join('');
+}
+
+function _renderUsuariosMobile(data) {
+  const tbody = document.getElementById('tabla-usuarios');
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  tablaWrap.style.display = 'none';
+
+  let cardsWrap = document.getElementById('cards-mobile-usuarios');
+  if (!cardsWrap) {
+    cardsWrap = document.createElement('div');
+    cardsWrap.id = 'cards-mobile-usuarios';
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+    tablaWrap.parentNode.insertBefore(cardsWrap, tablaWrap);
+  }
+  cardsWrap.style.display = 'flex';
+
+  const rolColor = {usuario:'#3b82f6', soporte:'#8b5cf6', admin:'#059669'};
+
+  if (!data.length) {
+    cardsWrap.innerHTML = `<div style="text-align:center;padding:30px;background:#fff;border-radius:14px;color:#94a3b8;">Sin usuarios registrados</div>`;
+    return;
+  }
+
+  cardsWrap.innerHTML = data.map(u => {
+    const color = rolColor[u.rol] || '#64748b';
+    return `
+    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${color};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong style="font-size:0.92rem;color:#0f172a;">${u.nombre}</strong>
+        <span style="background:${color}18;color:${color};border:1px solid ${color}40;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;">${u.rol}</span>
+      </div>
+      <p style="font-size:0.8rem;color:#64748b;margin-bottom:2px;">✉️ ${u.email}</p>
+      <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">📞 ${u.telefono||'—'}</p>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:0.75rem;color:#64748b;flex-shrink:0;">Cambiar rol:</span>
+        <select onchange="cambiarRol('${u.id}',this.value)"
+          style="flex:1;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:#fff;min-height:40px;">
+          <option value="usuario" ${u.rol==='usuario'?'selected':''}>👤 Usuario</option>
+          <option value="soporte" ${u.rol==='soporte'?'selected':''}>🛠️ Soporte</option>
+          <option value="admin"   ${u.rol==='admin'?'selected':''}>⚙️ Admin</option>
+        </select>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function cambiarRol(userId, nuevoRol) {

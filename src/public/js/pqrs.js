@@ -436,12 +436,11 @@ async function enviarPqrs(e) {
 function mostrarSeccion(id, btn) {
   document.querySelectorAll('section[id^="sec-"]').forEach(s => s.style.display = 'none');
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('activo'));
-  document.getElementById(`sec-${id}`).style.display = 'block';
+  const sec = document.getElementById(`sec-${id}`);
+  if (sec) sec.style.display = 'block';
+  // Marcar activo en sidebar Y en nav inferior
+  document.querySelectorAll(`[data-seccion="${id}"], [onclick*="'${id}'"]`).forEach(b => b.classList.add('activo'));
   if (btn) btn.classList.add('activo');
-  else {
-    const nav = document.querySelector(`[onclick*="'${id}'"]`);
-    if (nav) nav.classList.add('activo');
-  }
 }
 
 function cerrarModal(id) { document.getElementById(id)?.classList.remove('abierto'); }

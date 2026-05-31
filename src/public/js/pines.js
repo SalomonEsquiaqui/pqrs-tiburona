@@ -19,43 +19,51 @@ async function cargarPines() {
       return;
     }
 
-    tbody.innerHTML = data.map(p => `
-      <tr>
-        <td>
-          <span style="font-family:'Courier New',monospace;font-size:1.2rem;font-weight:900;
-                letter-spacing:0.15em;color:${p.activo ? 'var(--azul-rey)' : '#aaa'};">
-            ${p.pin}
-          </span>
-        </td>
-        <td>
-          <span class="badge ${p.rol === 'admin' ? 'badge-admin' : 'badge-soporte'}">
-            ${p.rol === 'admin' ? '👑 Admin' : '🛠 Soporte'}
-          </span>
-        </td>
-        <td style="color:#666;font-size:0.85rem;">${p.descripcion || '—'}</td>
-        <td>
-          ${p.activo
-            ? '<span class="estado estado-resuelto">✅ Activo</span>'
-            : '<span class="estado estado-cerrado">🔒 Inactivo</span>'
-          }
-        </td>
-        <td style="font-size:0.8rem;color:#aaa;">${new Date(p.created_at).toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'numeric' })}</td>
-        <td>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            ${p.activo ? `
-              <button class="btn btn-sm"
-                style="background:#fff7ed;color:#9a3412;"
-                onclick="desactivarPin('${p.id}')">
-                🔒 Desactivar
-              </button>` : ''}
-            <button class="btn btn-sm btn-peligro"
-              onclick="eliminarPin('${p.id}')">
-              🗑 Eliminar
-            </button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
+    if (window.innerWidth <= 768) {
+      _renderPinesMobile(data, tbody);
+    } else {
+      const tablaWrap = tbody.closest('.tabla-wrap');
+      if (tablaWrap) tablaWrap.style.display = '';
+      const cards = document.getElementById('cards-mobile-pines');
+      if (cards) cards.style.display = 'none';
+      tbody.innerHTML = data.map(p => `
+        <tr>
+          <td>
+            <span style="font-family:'Courier New',monospace;font-size:1.2rem;font-weight:900;
+                  letter-spacing:0.15em;color:${p.activo ? 'var(--azul-rey)' : '#aaa'};">
+              ${p.pin}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${p.rol === 'admin' ? 'badge-admin' : 'badge-soporte'}">
+              ${p.rol === 'admin' ? '👑 Admin' : '🛠 Soporte'}
+            </span>
+          </td>
+          <td style="color:#666;font-size:0.85rem;">${p.descripcion || '—'}</td>
+          <td>
+            ${p.activo
+              ? '<span class="estado estado-resuelto">✅ Activo</span>'
+              : '<span class="estado estado-cerrado">🔒 Inactivo</span>'
+            }
+          </td>
+          <td style="font-size:0.8rem;color:#aaa;">${new Date(p.created_at).toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'numeric' })}</td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              ${p.activo ? `
+                <button class="btn btn-sm"
+                  style="background:#fff7ed;color:#9a3412;"
+                  onclick="desactivarPin('${p.id}')">
+                  🔒 Desactivar
+                </button>` : ''}
+              <button class="btn btn-sm btn-peligro"
+                onclick="eliminarPin('${p.id}')">
+                🗑 Eliminar
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
 
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#dc2626;">Error cargando PINes: ${err.message}</td></tr>`;
@@ -148,3 +156,45 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarPines();
   }
 });
+
+// ── RENDER MÓVIL PINES ───────────────────────────────────────────────────────
+function _renderPinesMobile(data, tbody) {
+  const tablaWrap = tbody.closest('.tabla-wrap');
+  if (tablaWrap) tablaWrap.style.display = 'none';
+
+  let cardsWrap = document.getElementById('cards-mobile-pines');
+  if (!cardsWrap) {
+    cardsWrap = document.createElement('div');
+    cardsWrap.id = 'cards-mobile-pines';
+    cardsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+    if (tablaWrap) tablaWrap.parentNode.insertBefore(cardsWrap, tablaWrap);
+    else tbody.parentNode.insertBefore(cardsWrap, tbody);
+  }
+  cardsWrap.style.display = 'flex';
+
+  cardsWrap.innerHTML = data.map(p => `
+    <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${p.activo ? '#3b82f6' : '#94a3b8'};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-family:'Courier New',monospace;font-size:1.6rem;font-weight:900;letter-spacing:0.2em;color:${p.activo ? '#1e40af' : '#94a3b8'};">${p.pin}</span>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <span class="badge ${p.rol === 'admin' ? 'badge-admin' : 'badge-soporte'}" style="font-size:0.68rem;">
+            ${p.rol === 'admin' ? '👑 Admin' : '🛠 Soporte'}
+          </span>
+          ${p.activo
+            ? '<span style="background:#05966918;color:#059669;border:1px solid #05966940;padding:2px 8px;border-radius:99px;font-size:0.65rem;font-weight:700;">✅ Activo</span>'
+            : '<span style="background:#94a3b818;color:#94a3b8;border:1px solid #94a3b840;padding:2px 8px;border-radius:99px;font-size:0.65rem;font-weight:700;">🔒 Inactivo</span>'
+          }
+        </div>
+      </div>
+      ${p.descripcion ? `<p style="font-size:0.8rem;color:#64748b;margin-bottom:8px;">📝 ${p.descripcion}</p>` : ''}
+      <p style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;">📅 ${new Date(p.created_at).toLocaleDateString('es-CO', {day:'2-digit',month:'short',year:'numeric'})}</p>
+      <div style="display:flex;gap:8px;">
+        ${p.activo ? `
+        <button class="btn btn-sm" style="flex:1;justify-content:center;min-height:40px;background:#fff7ed;color:#9a3412;border:1.5px solid #fed7aa;"
+          onclick="desactivarPin('${p.id}')">🔒 Desactivar</button>` : ''}
+        <button class="btn btn-sm btn-peligro" style="${p.activo?'':'flex:1;'}justify-content:center;min-height:40px;"
+          onclick="eliminarPin('${p.id}')">🗑 Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
