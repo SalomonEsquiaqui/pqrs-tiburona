@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soporte — PQRS La Tiburona</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/alerts.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body style="background:var(--gris-claro);">
+
+<!-- Alertas flotantes -->
+<div id="alertas-container" class="alerta-flotante"></div>
+
+<div class="dash-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>⚽ La Tiburona</h2>
+      <small>Panel Soporte</small>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item activo" onclick="mostrarSeccionSoporte('asignadas', this)">
+        📋 Mis asignaciones
+        <span class="notif-badge" id="badge-pendientes">0</span>
+      </button>
+      <button class="nav-item" onclick="mostrarSeccionSoporte('resueltas', this)">
+        ✅ Resueltas
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <strong id="nombre-soporte">Soporte</strong>
+      <span class="badge badge-soporte">Soporte</span><br><br>
+      <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro">Salir</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- Mis stats -->
+    <div class="stats-grid" style="margin-bottom:24px;">
+      <div class="stat-card naranja"><div class="numero" id="s-activas">0</div><div class="etiqueta">Activas</div></div>
+      <div class="stat-card rojo"><div class="numero" id="s-urgentes">0</div><div class="etiqueta">Urgentes</div></div>
+      <div class="stat-card verde"><div class="numero" id="s-resueltas">0</div><div class="etiqueta">Resueltas hoy</div></div>
+    </div>
+
+    <!-- ASIGNADAS -->
+    <section id="sec-asignadas">
+      <div class="page-header"><h1>Mis asignaciones activas</h1></div>
+      <div id="lista-asignadas"></div>
+    </section>
+
+    <!-- RESUELTAS -->
+    <section id="sec-resueltas" style="display:none;">
+      <div class="page-header"><h1>PQRS resueltas</h1></div>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr><th>Radicado</th><th>Tipo</th><th>Asunto</th><th>Resuelto</th></tr>
+          </thead>
+          <tbody id="tabla-resueltas">
+            <tr><td colspan="4" style="text-align:center;color:#aaa;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL RESPONDER -->
+<div class="modal-overlay" id="modal-responder">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Responder PQRS</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-responder')">×</button>
+    </div>
+    <div id="msg-responder" class="mensaje"></div>
+    <div id="detalle-pqrs-soporte" style="background:var(--gris-claro);border-radius:8px;padding:14px;margin-bottom:16px;font-size:0.85rem;"></div>
+    <div class="form-grupo">
+      <label>Respuesta / Acción tomada</label>
+      <textarea id="respuesta-texto" rows="5" placeholder="Describe la solución o acción tomada..."></textarea>
+    </div>
+    <div class="form-grupo">
+      <label>Nuevo estado</label>
+      <select id="nuevo-estado">
+        <option value="en_proceso">En proceso (seguir trabajando)</option>
+        <option value="resuelto">Resuelto (cerrar PQRS)</option>
+      </select>
+    </div>
+    <button class="btn btn-verde" onclick="enviarRespuesta()">✅ Guardar respuesta</button>
+  </div>
+</div>
+
+<!-- MODAL DETALLE (faltaba este modal) -->
+<div class="modal-overlay" id="modal-detalle-soporte">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Detalle de PQRS</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-detalle-soporte')">×</button>
+    </div>
+    <div id="detalle-soporte-contenido"></div>
+  </div>
+</div>
+
+<!-- CORRECCIÓN: rutas sin /src/public (el servidor sirve estáticos desde src/public) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/notifications.js"></script>
+<script src="/js/soporte.js"></script>
+</body>
+</html>

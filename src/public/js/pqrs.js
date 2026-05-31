@@ -1,0 +1,580 @@
+// ===== PANEL USUARIO — PQRS =====
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let sesionActual       = null;
+let todasMisPqrs       = [];
+let archivoAdjunto     = null;   // File seleccionado (cualquier tipo multimedia)
+let tipoMediaActual    = 'imagen';
+let pqrsIdParaValorar  = null;
+let estrellaSeleccionada = 0;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  sesionActual = await verificarSesion(db);
+  if (!sesionActual) return;
+
+  const { data: perfil } = await db
+    .from('users').select('nombre,rol').eq('id', sesionActual.user.id).single();
+
+  if (perfil) {
+    document.getElementById('nombre-usuario').textContent = perfil.nombre;
+    if (perfil.rol !== 'usuario') redirigirPorRol(perfil.rol);
+  }
+
+  await cargarMisPqrs();
+
+  document.getElementById('filtro-estado').addEventListener('change', filtrarPqrs);
+  document.getElementById('filtro-tipo').addEventListener('change', filtrarPqrs);
+  document.getElementById('form-nueva-pqrs').addEventListener('submit', enviarPqrs);
+
+  // Configurar upload multimedia
+  configurarUploadMultimedia();
+
+  // Suscripciones realtime para notificaciones
+  suscribirCambiosEstado(sesionActual.user.id);
+  suscribirRespuestasNuevas(sesionActual.user.id);
+});
+
+// ── BOTÓN REFRESCAR ──────────────────────────────────────────────────────────
+async function refrescarDatos() {
+  const btn = document.getElementById('btn-refrescar');
+  if (btn) btn.classList.add('girando');
+  await cargarMisPqrs();
+  setTimeout(() => btn?.classList.remove('girando'), 700);
+}
+
+// ── CAMBIAR TIPO DE MEDIA (chips) ────────────────────────────────────────────
+function cambiarTipoMedia(tipo, chipEl) {
+  tipoMediaActual = tipo;
+  document.querySelectorAll('.media-chip').forEach(c => c.classList.remove('active'));
+  chipEl.classList.add('active');
+
+  const configs = {
+    imagen: { accept: 'image/*,.jpg,.jpeg,.png,.webp', icon: '🖼️', label: 'Arrastra una imagen aquí o <strong>haz clic para seleccionar</strong>', hint: 'JPG, PNG, WEBP · Máx. 5 MB' },
+    video:  { accept: 'video/*,.mp4,.mov,.avi,.webm',  icon: '🎬', label: 'Arrastra un video aquí o <strong>haz clic para seleccionar</strong>', hint: 'MP4, MOV, AVI · Máx. 50 MB' },
+    audio:  { accept: 'audio/*,.mp3,.wav,.ogg',         icon: '🎵', label: 'Arrastra un audio aquí o <strong>haz clic para seleccionar</strong>', hint: 'MP3, WAV, OGG · Máx. 20 MB' },
+    pdf:    { accept: '.pdf,application/pdf',            icon: '📄', label: 'Arrastra un PDF aquí o <strong>haz clic para seleccionar</strong>', hint: 'PDF · Máx. 10 MB' },
+  };
+  const c = configs[tipo];
+  const fileInput = document.getElementById('pqrs-imagen');
+  fileInput.accept = c.accept;
+  document.getElementById('upload-icon-emoji').textContent = c.icon;
+  document.getElementById('upload-label-main').innerHTML = c.label;
+  document.getElementById('upload-label-hint').textContent = c.hint;
+
+  // Limpiar selección previa si cambia el tipo
+  quitarArchivo();
+}
+
+// ── UPLOAD MULTIMEDIA ─────────────────────────────────────────────────────────
+function configurarUploadImagen() { configurarUploadMultimedia(); } // alias legacy
+
+function configurarUploadMultimedia() {
+  const uploadArea = document.getElementById('upload-area');
+  const fileInput  = document.getElementById('pqrs-imagen');
+  if (!uploadArea) return;
+
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault(); uploadArea.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) procesarArchivo(file);
+  });
+
+  uploadArea.addEventListener('click', e => {
+    if (e.target !== fileInput) fileInput.click();
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) procesarArchivo(fileInput.files[0]);
+  });
+}
+
+// Límites por tipo (bytes)
+const LIMITES = { imagen: 5, video: 50, audio: 20, pdf: 10 };
+
+function detectarTipoArchivo(file) {
+  if (file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) return 'imagen';
+  if (file.type.startsWith('video/') || /\.(mp4|mov|avi|webm)$/i.test(file.name)) return 'video';
+  if (file.type.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(file.name)) return 'audio';
+  if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) return 'pdf';
+  return null;
+}
+
+function procesarArchivo(file) {
+  const tipo = detectarTipoArchivo(file);
+  if (!tipo) {
+    mostrarMensaje('msg-nueva-pqrs', 'Tipo de archivo no permitido. Usa JPG, PNG, MP4, MP3 o PDF.', 'error');
+    return;
+  }
+  const limiteMB = LIMITES[tipo];
+  if (file.size > limiteMB * 1024 * 1024) {
+    mostrarMensaje('msg-nueva-pqrs', `El archivo supera el límite de ${limiteMB} MB para ${tipo}.`, 'error');
+    return;
+  }
+
+  archivoAdjunto = file;
+  const preview = document.getElementById('upload-preview');
+  const iconos = { imagen: '🖼️', video: '🎬', audio: '🎵', pdf: '📄' };
+  const sizeKB = (file.size / 1024).toFixed(0);
+  const sizeTxt = sizeKB > 1024 ? `${(sizeKB / 1024).toFixed(1)} MB` : `${sizeKB} KB`;
+
+  let previewExtra = '';
+  if (tipo === 'imagen') {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.innerHTML = `
+        <div class="upload-file-preview">
+          <img src="${e.target.result}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" alt="preview">
+          <div class="file-info">
+            <div class="file-name">${file.name}</div>
+            <div class="file-size">${sizeTxt}</div>
+          </div>
+          <button type="button" class="btn-remove-file" onclick="quitarArchivo()" title="Quitar archivo">✕</button>
+        </div>`;
+      document.getElementById('upload-area').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
+
+  preview.innerHTML = `
+    <div class="upload-file-preview">
+      <span class="file-icon">${iconos[tipo]}</span>
+      <div class="file-info">
+        <div class="file-name">${file.name}</div>
+        <div class="file-size">${sizeTxt} · ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</div>
+      </div>
+      <button type="button" class="btn-remove-file" onclick="quitarArchivo()" title="Quitar archivo">✕</button>
+    </div>`;
+  document.getElementById('upload-area').style.display = 'none';
+}
+
+// Alias legacy
+function procesarImagen(file) { procesarArchivo(file); }
+
+function quitarArchivo() {
+  archivoAdjunto = null;
+  document.getElementById('upload-preview').innerHTML = '';
+  document.getElementById('upload-area').style.display = '';
+  document.getElementById('pqrs-imagen').value = '';
+}
+// Alias legacy
+function quitarImagen() { quitarArchivo(); }
+
+// ── SUBIR ARCHIVO A SUPABASE STORAGE ─────────────────────────────────────────
+async function subirImagen(pqrsId) {
+  if (!archivoAdjunto) return null;
+  const ext  = archivoAdjunto.name.split('.').pop();
+  const path = `pqrs/${pqrsId}/adjunto.${ext}`;
+  const { error } = await db.storage.from('pqrs-adjuntos').upload(path, archivoAdjunto, {
+    cacheControl: '3600', upsert: true
+  });
+  if (error) { console.error('Error subiendo archivo:', error.message); return null; }
+  const { data: { publicUrl } } = db.storage.from('pqrs-adjuntos').getPublicUrl(path);
+  return publicUrl;
+}
+
+// ── CARGAR MIS PQRS ──────────────────────────────────────────────────────────
+async function cargarMisPqrs() {
+  const { data, error } = await db
+    .from('pqrs').select('*')
+    .eq('usuario_id', sesionActual.user.id)
+    .order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  todasMisPqrs = data || [];
+  actualizarEstadisticas();
+  renderTabla(todasMisPqrs);
+}
+
+// ── ESTADÍSTICAS ────────────────────────────────────────────────────────────
+function actualizarEstadisticas() {
+  document.getElementById('stat-total').textContent = todasMisPqrs.length;
+  document.getElementById('stat-pendientes').textContent =
+    todasMisPqrs.filter(p => ['pendiente','asignado','en_proceso'].includes(p.estado)).length;
+  document.getElementById('stat-resueltos').textContent =
+    todasMisPqrs.filter(p => p.estado === 'resuelto').length;
+}
+
+// ── RENDER TABLA ─────────────────────────────────────────────────────────────
+function renderTabla(lista) {
+  const tbody = document.getElementById('tabla-mis-pqrs');
+  if (!lista.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">
+      <span style="font-size:1.8rem;display:block;margin-bottom:8px;">📭</span>
+      No tienes solicitudes aún. ¡Crea tu primera PQRS!
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = lista.map(p => `
+    <tr>
+      <td><code class="cod-radicado">${p.radicado}</code></td>
+      <td><span class="badge badge-tipo-${p.tipo}">${p.tipo}</span></td>
+      <td class="asunto-cell" title="${p.asunto}">${p.asunto}</td>
+      <td style="color:#64748b;font-size:0.82rem;">${formatFecha(p.created_at)}</td>
+      <td><span class="estado estado-${p.estado.replace('_','-')}">${p.estado.replace('_',' ')}</span></td>
+      <td>${p.imagen_url ? `<img src="${p.imagen_url}" class="img-thumb" onclick="verImagenCompleta('${p.imagen_url}')" title="Ver imagen adjunta">` : '<span style="color:#cbd5e1;font-size:0.78rem;">—</span>'}</td>
+      <td><button class="btn btn-sm btn-outline" onclick="verDetalle('${p.id}')">👁 Ver</button></td>
+    </tr>
+  `).join('');
+}
+
+// ── FILTRAR ───────────────────────────────────────────────────────────────────
+function filtrarPqrs() {
+  const estado = document.getElementById('filtro-estado').value;
+  const tipo   = document.getElementById('filtro-tipo').value;
+  let filtrado = todasMisPqrs;
+  if (estado) filtrado = filtrado.filter(p => p.estado === estado);
+  if (tipo)   filtrado = filtrado.filter(p => p.tipo === tipo);
+  renderTabla(filtrado);
+}
+
+async function verDetalle(id) {
+  const { data: p } = await db.from('pqrs').select('*').eq('id', id).single();
+  const { data: respuestas } = await db
+    .from('respuestas').select('*, users(nombre)').eq('pqrs_id', id).order('created_at');
+
+  // Adjunto multimedia
+  let adjunto = '';
+  if (p.imagen_url) {
+    const url = p.imagen_url;
+    const ext = url.split('.').pop().toLowerCase().split('?')[0];
+    if (['mp4','mov','avi','webm'].includes(ext)) {
+      adjunto = `<div class="adjunto-img-wrap" style="margin-top:14px;">
+        <span class="adjunto-label">🎬 Video adjunto</span>
+        <video controls style="width:100%;max-height:280px;border-radius:8px;margin-top:6px;">
+          <source src="${url}"><p>Tu navegador no soporta video.</p>
+        </video></div>`;
+    } else if (['mp3','wav','ogg'].includes(ext)) {
+      adjunto = `<div class="adjunto-img-wrap" style="margin-top:14px;">
+        <span class="adjunto-label">🎵 Audio adjunto</span>
+        <audio controls style="width:100%;margin-top:6px;"><source src="${url}"></audio></div>`;
+    } else if (ext === 'pdf') {
+      adjunto = `<div class="adjunto-img-wrap" style="margin-top:14px;">
+        <span class="adjunto-label">📄 PDF adjunto</span>
+        <a href="${url}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="display:inline-flex;margin-top:6px;">📄 Ver PDF</a></div>`;
+    } else {
+      adjunto = `<div class="adjunto-img-wrap" style="margin-top:14px;">
+        <span class="adjunto-label">📎 Imagen adjunta</span>
+        <img src="${url}" alt="Adjunto" style="width:100%;max-height:260px;object-fit:cover;cursor:zoom-in;" onclick="verImagenCompleta('${url}')">
+      </div>`;
+    }
+  }
+
+  // Valoración existente
+  let valoracionHtml = '';
+  if (p.valoracion) {
+    const estrellas = '★'.repeat(p.valoracion) + '☆'.repeat(5 - p.valoracion);
+    valoracionHtml = `<div class="rating-badge">⭐ Tu valoración: <span style="letter-spacing:2px">${estrellas}</span> (${p.valoracion}/5)</div>`;
+  }
+
+  // Botón valorar — solo si hay respuesta y no ha valorado
+  const hayRespuestas = respuestas && respuestas.length > 0;
+  const puedeValorar  = hayRespuestas && !p.valoracion;
+  const btnValorar    = puedeValorar
+    ? `<button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="abrirModalValoracion('${p.id}')">⭐ Valorar atención</button>`
+    : '';
+
+  document.getElementById('contenido-detalle').innerHTML = `
+    <div class="detalle-header">
+      <div><strong class="detalle-campo" style="font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;">Radicado</strong><code class="cod-radicado">${p.radicado}</code></div>
+      <div><strong class="detalle-campo" style="font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;">Estado</strong><span class="estado estado-${p.estado.replace('_','-')}">${p.estado.replace('_',' ')}</span></div>
+      <div><strong class="detalle-campo" style="font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;">Tipo</strong><span class="badge badge-tipo-${p.tipo}">${p.tipo}</span></div>
+    </div>
+    <div class="detalle-campo"><strong>Asunto</strong><p>${p.asunto}</p></div>
+    <div class="detalle-campo"><strong>Área</strong><p>${p.area || '—'}</p></div>
+    <div class="detalle-campo"><strong>Descripción</strong><p style="white-space:pre-wrap;line-height:1.6;">${p.descripcion}</p></div>
+    ${p.fecha_hecho ? `<div class="detalle-campo"><strong>Fecha y hora del hecho</strong><p>📅 ${p.fecha_hecho}${p.hora_hecho ? ' &nbsp;🕐 ' + p.hora_hecho : ''}</p></div>` : ''}
+    ${adjunto}
+    ${valoracionHtml}
+    ${btnValorar}
+    <p style="margin-top:12px;color:#94a3b8;font-size:0.79rem;">📅 Enviado el ${formatFecha(p.created_at)}</p>
+    <hr style="margin:18px 0;border:none;border-top:1px solid var(--gris-medio);">
+    <h3 style="font-size:0.92rem;font-weight:700;margin-bottom:12px;">💬 Respuestas (${respuestas?.length || 0})</h3>
+    ${respuestas?.length
+      ? respuestas.map(r => `
+          <div class="respuesta-item">
+            <div class="respuesta-header">
+              <strong>${r.users?.nombre || 'Soporte'}</strong>
+              <span>${formatFecha(r.created_at)}</span>
+            </div>
+            <p>${r.contenido}</p>
+          </div>`).join('')
+      : '<p style="color:#94a3b8;font-size:0.85rem;">Sin respuestas aún.</p>'
+    }
+  `;
+  document.getElementById('modal-detalle').classList.add('abierto');
+}
+
+// ── VER IMAGEN EN LIGHTBOX SIMPLE ────────────────────────────────────────────
+function verImagenCompleta(url) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px;';
+  overlay.innerHTML = `<img src="${url}" style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 24px 64px rgba(0,0,0,.5);">`;
+  overlay.onclick = () => overlay.remove();
+  document.body.appendChild(overlay);
+}
+
+// ── ENVIAR PQRS ───────────────────────────────────────────────────────────────
+async function enviarPqrs(e) {
+  e.preventDefault();
+  ocultarMensaje('msg-nueva-pqrs');
+
+  const tipo        = document.getElementById('pqrs-tipo').value;
+  const asunto      = document.getElementById('pqrs-asunto').value.trim();
+  const descripcion = document.getElementById('pqrs-descripcion').value.trim();
+  const area        = document.getElementById('pqrs-area').value;
+  const fechaHecho  = document.getElementById('pqrs-fecha-hecho').value;
+  const horaHecho   = document.getElementById('pqrs-hora-hecho').value;
+  const btn         = document.getElementById('btn-enviar-pqrs');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Enviando...';
+  silbatoFutbol(); // 🎵 sonido de silbato al enviar
+
+  try {
+    const radicado = generarRadicado();
+    // 1. Insertar PQRS
+    const { data: pqrsCreada, error } = await db.from('pqrs').insert({
+      radicado, usuario_id: sesionActual.user.id,
+      tipo, asunto, descripcion, area: area || null, estado: 'pendiente',
+      fecha_hecho: fechaHecho || null,
+      hora_hecho:  horaHecho  || null
+    }).select().single();
+
+    if (error) throw new Error(error.message);
+
+    // 2. Subir archivo multimedia si existe
+    if (archivoAdjunto) {
+      const imageUrl = await subirImagen(pqrsCreada.id);
+      if (imageUrl) {
+        await db.from('pqrs').update({ imagen_url: imageUrl }).eq('id', pqrsCreada.id);
+      }
+    }
+
+    btn.disabled = false;
+    btn.textContent = '📤 Enviar solicitud';
+
+    document.getElementById('form-nueva-pqrs').reset();
+    quitarArchivo();
+    mostrarAlertaPqrs(tipo);
+    notificarPqrsEnviada(tipo, radicado);
+    await cargarMisPqrs();
+    setTimeout(() => mostrarSeccion('mis-pqrs'), 11000);
+
+  } catch (err) {
+    mostrarMensaje('msg-nueva-pqrs', err.message || 'Error al enviar. Intenta de nuevo.', 'error');
+    btn.disabled = false;
+    btn.textContent = '📤 Enviar solicitud';
+  }
+}
+
+// ── HELPERS UI ────────────────────────────────────────────────────────────────
+function mostrarSeccion(id, btn) {
+  document.querySelectorAll('section[id^="sec-"]').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('activo'));
+  document.getElementById(`sec-${id}`).style.display = 'block';
+  if (btn) btn.classList.add('activo');
+  else {
+    const nav = document.querySelector(`[onclick*="'${id}'"]`);
+    if (nav) nav.classList.add('activo');
+  }
+}
+
+function cerrarModal(id) { document.getElementById(id)?.classList.remove('abierto'); }
+function cerrarSesionLocal() { cerrarSesion(db); }
+// ── NOTIFICACIONES USUARIO ────────────────────────────────────────────────────
+
+// Registrar notificación cuando se envía una PQRS nueva
+function notificarPqrsEnviada(tipo, radicado) {
+  const iconos = { peticion:'📝', queja:'😤', reclamo:'⚡', sugerencia:'💡', felicitacion:'🌟' };
+  agregarNotificacion({
+    titulo: 'PQRS enviada con éxito',
+    desc: `Tu ${tipo} fue radicada como ${radicado}`,
+    icono: iconos[tipo] || '📋',
+    tipo: 'exito'
+  });
+  mostrarToast('PQRS enviada', `Radicado: ${radicado}`, 'exito');
+  renderNotifPanel(cargarNotifStorage());
+}
+
+// Detectar cambios de estado en mis PQRS (realtime Supabase)
+function suscribirCambiosEstado(userId) {
+  db.channel('mis-pqrs-estado')
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'pqrs',
+      filter: `usuario_id=eq.${userId}`
+    }, payload => {
+      const p = payload.new;
+      const estadoTexto = { asignado:'Asignada a soporte', en_proceso:'En proceso', resuelto:'¡Resuelta!', cerrado:'Cerrada' };
+      const iconoEstado = { asignado:'👤', en_proceso:'🔄', resuelto:'✅', cerrado:'🔒' };
+      const titulo = estadoTexto[p.estado] || `Estado: ${p.estado}`;
+      agregarNotificacion({
+        titulo,
+        desc: `${p.radicado} — ${p.asunto}`,
+        icono: iconoEstado[p.estado] || '🔔',
+        urgente: p.estado === 'resuelto',
+        pqrsId: p.id
+      });
+      mostrarToast(titulo, `${p.radicado} — ${p.asunto}`, p.estado === 'resuelto' ? 'exito' : 'info');
+      renderNotifPanel(cargarNotifStorage());
+      cargarMisPqrs();
+    })
+    .subscribe();
+}
+
+// Notificar respuestas nuevas
+function suscribirRespuestasNuevas(userId) {
+  db.channel('mis-respuestas')
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'respuestas'
+    }, async payload => {
+      const r = payload.new;
+      // Verificar si es de una PQRS del usuario actual
+      const { data: pqrs } = await db.from('pqrs')
+        .select('radicado,asunto,usuario_id').eq('id', r.pqrs_id).single();
+      if (pqrs && pqrs.usuario_id === userId) {
+        agregarNotificacion({
+          titulo: '💬 Nueva respuesta de soporte',
+          desc: `${pqrs.radicado}: ${r.contenido.substring(0,80)}${r.contenido.length > 80 ? '...' : ''}`,
+          icono: '💬',
+          pqrsId: r.pqrs_id
+        });
+        mostrarToast('Nueva respuesta', `Soporte respondió tu PQRS ${pqrs.radicado}`, 'info');
+        renderNotifPanel(cargarNotifStorage());
+      }
+    })
+    .subscribe();
+}
+
+// ── VALORACIÓN DE ESTRELLAS ───────────────────────────────────────────────────
+
+function abrirModalValoracion(pqrsId) {
+  pqrsIdParaValorar   = pqrsId;
+  estrellaSeleccionada = 0;
+  // Reset estrellas
+  document.querySelectorAll('.star-btn').forEach(b => {
+    b.classList.remove('selected', 'filled');
+  });
+  document.getElementById('star-label').textContent = '';
+  document.getElementById('valoracion-comentario').value = '';
+  ocultarMensaje?.('msg-valoracion');
+  document.getElementById('modal-valoracion').classList.add('abierto');
+}
+
+const LABEL_ESTRELLAS = { 1: 'Muy malo 😞', 2: 'Malo 😕', 3: 'Regular 😐', 4: 'Bueno 😊', 5: 'Excelente 🤩' };
+
+function seleccionarEstrella(valor) {
+  estrellaSeleccionada = valor;
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    const v = parseInt(btn.dataset.value);
+    btn.classList.toggle('selected', v === valor);
+    btn.classList.toggle('filled', v <= valor);
+  });
+  document.getElementById('star-label').textContent = LABEL_ESTRELLAS[valor] || '';
+}
+
+// Hover interactivo
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      const v = parseInt(btn.dataset.value);
+      document.querySelectorAll('.star-btn').forEach(b => {
+        b.classList.toggle('hover-active', parseInt(b.dataset.value) <= v);
+      });
+      document.getElementById('star-label').textContent = LABEL_ESTRELLAS[v] || '';
+    });
+    btn.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('hover-active'));
+      document.getElementById('star-label').textContent = estrellaSeleccionada ? LABEL_ESTRELLAS[estrellaSeleccionada] : '';
+    });
+  });
+});
+
+async function enviarValoracion() {
+  if (!estrellaSeleccionada) {
+    mostrarMensaje('msg-valoracion', 'Por favor selecciona al menos una estrella.', 'error');
+    return;
+  }
+  const comentario = document.getElementById('valoracion-comentario').value.trim();
+  const btn = document.getElementById('btn-enviar-valoracion');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    const update = { valoracion: estrellaSeleccionada };
+    if (comentario) update.valoracion_comentario = comentario;
+
+    const { error } = await db.from('pqrs').update(update).eq('id', pqrsIdParaValorar);
+    if (error) throw new Error(error.message);
+
+    btn.disabled = false;
+    btn.textContent = '✅ Enviar valoración';
+    mostrarMensaje('msg-valoracion', '¡Gracias por tu valoración! 🙏', 'exito');
+    setTimeout(() => {
+      cerrarModal('modal-valoracion');
+      // Refrescar el detalle si está abierto
+      if (pqrsIdParaValorar) verDetalle(pqrsIdParaValorar);
+    }, 1800);
+  } catch (err) {
+    mostrarMensaje('msg-valoracion', err.message || 'Error al guardar. Intenta de nuevo.', 'error');
+    btn.disabled = false;
+    btn.textContent = '✅ Enviar valoración';
+  }
+}
+
+// ── SILBATO DE FÚTBOL (Web Audio API) ────────────────────────────────────────
+// Genera el sonido clásico de silbato arbitral: dos pitidos cortos + uno largo
+function silbatoFutbol() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function pitido(startTime, duration, freq = 3800) {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      // Oscilador principal — tono de silbato (onda cuadrada con armónicos)
+      osc.type      = 'square';
+      osc.frequency.setValueAtTime(freq, startTime);
+      // Pequeña variación de pitch al inicio, como un silbato real
+      osc.frequency.linearRampToValueAtTime(freq * 1.015, startTime + 0.04);
+      osc.frequency.linearRampToValueAtTime(freq,         startTime + duration);
+
+      // Envelope: ataque rápido, sustain, caída suave
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.28, startTime + 0.01);
+      gain.gain.setValueAtTime(0.25, startTime + duration - 0.04);
+      gain.gain.linearRampToValueAtTime(0, startTime + duration);
+
+      // Segundo oscilador para añadir cuerpo (armónico)
+      const osc2  = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(freq * 2, startTime);
+      gain2.gain.setValueAtTime(0, startTime);
+      gain2.gain.linearRampToValueAtTime(0.06, startTime + 0.01);
+      gain2.gain.linearRampToValueAtTime(0, startTime + duration);
+
+      osc.connect(gain);
+      osc2.connect(gain2);
+      gain.connect(ctx.destination);
+      gain2.connect(ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + duration + 0.02);
+      osc2.start(startTime);
+      osc2.stop(startTime + duration + 0.02);
+    }
+
+    const t = ctx.currentTime;
+    pitido(t,        0.12);        // primer pitido corto
+    pitido(t + 0.22, 0.12);        // segundo pitido corto
+    pitido(t + 0.50, 0.55, 3900);  // pitido largo final (ligeramente más agudo)
+
+  } catch (e) {
+    // Si el navegador bloquea AudioContext, silencio sin error visible
+    console.warn('silbatoFutbol: AudioContext no disponible', e);
+  }
+}

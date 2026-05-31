@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — PQRS La Tiburona</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/alerts.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+<div class="dash-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/img/logo-tiburona.png" alt="La Tiburona" style="width:42px;height:42px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;">
+      <div>
+        <h2 style="font-size:0.95rem;margin:0;">La Tiburona</h2>
+        <small>Panel Administrador</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item activo" onclick="mostrarSeccionAdmin('todas-pqrs', this)">
+        📋 Todas las PQRS
+      </button>
+      <button class="nav-item" onclick="mostrarSeccionAdmin('usuarios', this)">
+        👥 Usuarios
+      </button>
+      <button class="nav-item" onclick="mostrarSeccionAdmin('soporte-team', this)">
+        🛠 Equipo soporte
+      </button>
+      <button class="nav-item" onclick="mostrarSeccionAdmin('pines', this)">
+        🔐 Gestión de PINes
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <strong id="nombre-admin">Admin</strong>
+      <span class="badge badge-admin" style="margin:6px 0;display:inline-block;">Administrador</span><br>
+      <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro" style="margin-top:10px;width:100%;">
+        🚪 Salir
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- STATS GLOBALES -->
+    <div class="stats-grid" style="margin-bottom:28px;">
+      <div class="stat-card"><div class="numero" id="g-total">0</div><div class="etiqueta">Total PQRS</div></div>
+      <div class="stat-card naranja"><div class="numero" id="g-pendientes">0</div><div class="etiqueta">Sin asignar</div></div>
+      <div class="stat-card"><div class="numero" id="g-en-proceso">0</div><div class="etiqueta">En proceso</div></div>
+      <div class="stat-card verde"><div class="numero" id="g-resueltos">0</div><div class="etiqueta">Resueltos</div></div>
+    </div>
+
+    <!-- ===== TODAS PQRS ===== -->
+    <section id="sec-todas-pqrs">
+      <div class="page-header">
+        <h1>📋 Gestión de PQRS</h1>
+      </div>
+      <div class="filtros">
+        <select id="a-filtro-estado">
+          <option value="">Todos los estados</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="asignado">Asignado</option>
+          <option value="en_proceso">En proceso</option>
+          <option value="resuelto">Resuelto</option>
+        </select>
+        <select id="a-filtro-tipo">
+          <option value="">Todos los tipos</option>
+          <option value="peticion">Petición</option>
+          <option value="queja">Queja</option>
+          <option value="reclamo">Reclamo</option>
+          <option value="sugerencia">Sugerencia</option>
+          <option value="felicitacion">Felicitación</option>
+        </select>
+        <input type="text" id="a-buscar" placeholder="🔍 Buscar por radicado o asunto...">
+      </div>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Radicado</th><th>Usuario</th><th>Tipo</th><th>Asunto</th>
+              <th>Área</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-admin-pqrs">
+            <tr><td colspan="8" style="text-align:center;padding:24px;color:#aaa;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== USUARIOS ===== -->
+    <section id="sec-usuarios" style="display:none;">
+      <div class="page-header"><h1>👥 Usuarios registrados</h1></div>
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Cambiar rol</th></tr></thead>
+          <tbody id="tabla-usuarios">
+            <tr><td colspan="5" style="text-align:center;padding:24px;color:#aaa;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== EQUIPO SOPORTE ===== -->
+    <section id="sec-soporte-team" style="display:none;">
+      <div class="page-header">
+        <h1>🛠 Equipo de soporte</h1>
+      </div>
+      <p style="color:#888;font-size:0.85rem;margin-bottom:20px;">
+        Para agregar soporte: registra el usuario y asígnale el rol "Soporte" desde la sección Usuarios.
+      </p>
+      <div id="cards-soporte"
+        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+    </section>
+
+    <!-- ===== GESTIÓN DE PINes ===== -->
+    <section id="sec-pines" style="display:none;">
+      <div class="page-header">
+        <h1>🔐 Gestión de PINes de acceso</h1>
+      </div>
+      <p style="color:#555;font-size:0.88rem;margin-bottom:24px;line-height:1.6;">
+        Los PINes de 4 dígitos permiten que una persona se registre con el rol de
+        <strong>Soporte</strong> o <strong>Administrador</strong>. Genera un PIN,
+        compártelo con la persona y desactívalo una vez usado.
+      </p>
+
+      <!-- Formulario crear PIN -->
+      <div class="pin-crear-card">
+        <h3 style="font-family:var(--font-display);font-size:1rem;color:var(--azul-oscuro);margin-bottom:16px;">
+          ➕ Generar nuevo PIN
+        </h3>
+        <div id="msg-pines" class="mensaje"></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+          <div class="form-grupo" style="margin:0;flex:1;min-width:160px;">
+            <label>Rol del PIN</label>
+            <select id="pin-rol">
+              <option value="soporte">🛠 Soporte técnico</option>
+              <option value="admin">👑 Administrador</option>
+            </select>
+          </div>
+          <div class="form-grupo" style="margin:0;flex:2;min-width:200px;">
+            <label>Descripción (opcional)</label>
+            <input type="text" id="pin-desc" placeholder="Ej: Para Juan - Nuevo soporte">
+          </div>
+          <button class="btn btn-verde" onclick="generarPin()" id="btn-gen-pin">
+            🎲 Generar PIN
+          </button>
+        </div>
+      </div>
+
+      <!-- Resultado del PIN generado -->
+      <div id="pin-resultado" style="display:none;" class="pin-resultado-card">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div>
+            <p style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">PIN generado</p>
+            <span id="pin-valor" style="font-family:'Courier New',monospace;font-size:2.5rem;font-weight:900;color:var(--azul-rey);letter-spacing:0.2em;"></span>
+          </div>
+          <div>
+            <p id="pin-rol-label" style="font-size:0.85rem;color:#555;margin-bottom:4px;"></p>
+            <p id="pin-desc-label" style="font-size:0.8rem;color:#aaa;"></p>
+          </div>
+          <button class="btn btn-sm" onclick="copiarPin()" style="background:var(--azul-suave);color:var(--azul-rey);">
+            📋 Copiar PIN
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtros y tabla de PINes -->
+      <div style="display:flex;gap:10px;margin:24px 0 14px;flex-wrap:wrap;align-items:center;">
+        <strong style="font-size:0.9rem;color:var(--azul-oscuro);">PINes existentes</strong>
+        <select id="filtro-pin-rol" onchange="cargarPines()" style="padding:7px 12px;border:2px solid var(--gris-medio);border-radius:8px;font-size:0.85rem;">
+          <option value="">Todos los roles</option>
+          <option value="soporte">🛠 Soporte</option>
+          <option value="admin">👑 Admin</option>
+        </select>
+        <button class="btn btn-sm" onclick="cargarPines()" style="background:var(--gris-claro);color:var(--azul-oscuro);">
+          🔄 Actualizar
+        </button>
+      </div>
+
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>PIN</th>
+              <th>Rol</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-pines">
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:#aaa;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL ASIGNAR -->
+<div class="modal-overlay" id="modal-asignar">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📋 Asignar soporte</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-asignar')">×</button>
+    </div>
+    <div id="msg-asignar" class="mensaje"></div>
+    <p id="asignar-radicado" style="color:#888;font-size:0.85rem;margin-bottom:4px;font-weight:600;"></p>
+    <p id="asignar-sla" style="color:var(--azul-medio);font-size:0.8rem;margin-bottom:16px;"></p>
+    <div class="form-grupo">
+      <label>Agente de soporte</label>
+      <select id="sel-soporte"></select>
+    </div>
+    <div class="form-grupo">
+      <label>Prioridad</label>
+      <select id="sel-prioridad">
+        <option value="normal">🟢 Normal</option>
+        <option value="alta">🟡 Alta</option>
+        <option value="urgente">🔴 Urgente</option>
+      </select>
+    </div>
+    <button class="btn btn-primario" onclick="confirmarAsignacion()">✅ Confirmar asignación</button>
+  </div>
+</div>
+
+<!-- MODAL VER DETALLE -->
+<div class="modal-overlay" id="modal-ver">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📋 Detalle PQRS</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-ver')">×</button>
+    </div>
+    <div id="ver-contenido"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/notifications.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/pines.js"></script>
+</body>
+</html>

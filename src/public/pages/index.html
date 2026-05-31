@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQRS — Cancha Sintética La Tiburona</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <!-- reCAPTCHA: onload=onRecaptchaLoad para renderizado explícito y controlado -->
+  <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+</head>
+<body>
+
+<div class="contenedor">
+  <div class="card">
+
+    <!-- LOGO -->
+    <div class="logo-area">
+      <div class="logo-icono">
+        <img src="/img/logo-tiburona.png" alt="La Tiburona" style="width:56px;height:56px;object-fit:contain;border-radius:50%;">
+      </div>
+      <h1>Cancha Sintética<br>La Tiburona</h1>
+      <p>Sistema de PQRS en línea</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn activo" data-panel="panel-login">Ingresar</button>
+      <button class="tab-btn"       data-panel="panel-registro">Registrarse</button>
+    </div>
+
+    <!-- ===== PANEL LOGIN ===== -->
+    <div id="panel-login" class="panel activo">
+      <div id="msg-login" class="mensaje"></div>
+      <form id="form-login" autocomplete="on">
+        <div class="form-grupo">
+          <label for="login-email">📧 Correo electrónico</label>
+          <input type="email" id="login-email" placeholder="tucorreo@gmail.com" required autocomplete="email">
+        </div>
+        <div class="form-grupo">
+          <label for="login-pass">🔑 Contraseña</label>
+          <div class="input-pass-wrap">
+            <input type="password" id="login-pass" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="btn-ojo" data-target="login-pass" aria-label="Ver contraseña">
+              <svg class="ojo-abierto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-cerrado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <!-- reCAPTCHA Login -->
+        <div class="recaptcha-wrap">
+          <div id="captcha-login"></div>
+        </div>
+        <button type="submit" id="btn-login" class="btn btn-primario" style="width:100%;justify-content:center;margin-top:4px;">
+          🚀 Ingresar al sistema
+        </button>
+      </form>
+    </div>
+
+    <!-- ===== PANEL REGISTRO ===== -->
+    <div id="panel-registro" class="panel">
+      <div id="msg-registro" class="mensaje"></div>
+      <form id="form-registro" autocomplete="off">
+        <div class="form-grupo">
+          <label for="reg-nombre">👤 Nombre completo</label>
+          <input type="text" id="reg-nombre" placeholder="Juan Pérez" required>
+        </div>
+        <div class="form-grupo">
+          <label for="reg-email">📧 Correo electrónico</label>
+          <input type="email" id="reg-email" placeholder="tucorreo@gmail.com" required>
+        </div>
+        <div class="form-grupo">
+          <label for="reg-tel">📱 Teléfono (opcional)</label>
+          <input type="tel" id="reg-tel" placeholder="300 000 0000">
+        </div>
+        <div class="form-grupo">
+          <label for="reg-rol">🎭 Tipo de cuenta</label>
+          <select id="reg-rol" required>
+            <option value="usuario">👤 Usuario (Cliente)</option>
+            <option value="soporte">🛠 Soporte técnico</option>
+            <option value="admin">👑 Administrador</option>
+          </select>
+        </div>
+
+        <!-- PIN — visible solo para admin/soporte -->
+        <div id="grupo-pin" style="display:none;">
+          <div class="form-grupo">
+            <label for="reg-pin">🔐 PIN de verificación</label>
+            <div class="input-pass-wrap">
+              <input type="password" id="reg-pin" placeholder="PIN autorizado por el sistema" autocomplete="off">
+              <button type="button" class="btn-ojo" data-target="reg-pin" aria-label="Ver PIN">
+                <svg class="ojo-abierto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="ojo-cerrado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <small style="color:#888;font-size:0.78rem;margin-top:4px;display:block;">
+              El PIN es asignado por el administrador del sistema.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-grupo">
+          <label for="reg-pass">🔑 Contraseña</label>
+          <div class="input-pass-wrap">
+            <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" required autocomplete="new-password">
+            <button type="button" class="btn-ojo" data-target="reg-pass" aria-label="Ver contraseña">
+              <svg class="ojo-abierto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-cerrado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-grupo">
+          <label for="reg-pass2">🔑 Confirmar contraseña</label>
+          <div class="input-pass-wrap">
+            <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" required>
+            <button type="button" class="btn-ojo" data-target="reg-pass2" aria-label="Ver contraseña">
+              <svg class="ojo-abierto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-cerrado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- reCAPTCHA Registro -->
+        <div class="recaptcha-wrap">
+          <div id="captcha-registro"></div>
+        </div>
+
+        <button type="submit" id="btn-registro" class="btn btn-primario">
+          ✅ Crear cuenta
+        </button>
+      </form>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /contenedor -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/auth.js"></script>
+</body>
+</html>

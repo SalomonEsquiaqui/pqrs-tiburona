@@ -1,0 +1,36 @@
+/* ================================================================
+   ESTILOS GESTIÓN DE PINes — agregar al final de dashboard.css
+   ================================================================ */
+
+/* Tarjeta de creación de PIN */
+.pin-crear-card {
+  background: var(--blanco);
+  border: 2px solid var(--gris-medio);
+  border-radius: var(--radio-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+/* Resultado del PIN generado */
+.pin-resultado-card {
+  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+  border: 2px solid var(--azul-claro);
+  border-radius: var(--radio-lg);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Responsive PINes */
+@media (max-width: 600px) {
+  .pin-crear-card > div {
+    flex-direction: column;
+  }
+  .pin-crear-card .btn {
+    width: 100%;
+  }
+  .pin-resultado-card > div {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
