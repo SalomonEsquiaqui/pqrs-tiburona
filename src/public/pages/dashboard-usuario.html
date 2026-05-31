@@ -2,12 +2,70 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Mi Panel — PQRS La Tiburona</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/alerts.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Estilos críticos nav móvil usuario -->
+  <style>
+    /* Forzar visibilidad de la nav inferior en móvil */
+    @media (max-width: 768px) {
+      #nav-bottom {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999 !important;
+        background: #0f172a !important;
+        border-top: 1px solid rgba(255,255,255,0.12) !important;
+        min-height: 60px !important;
+        align-items: stretch !important;
+        padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+        box-shadow: 0 -4px 24px rgba(0,0,0,0.5) !important;
+      }
+      #nav-bottom .nav-item {
+        flex: 1 !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        padding: 8px 4px !important;
+        background: none !important;
+        border: none !important;
+        color: rgba(255,255,255,0.45) !important;
+        cursor: pointer !important;
+        font-family: inherit !important;
+        font-size: 0.6rem !important;
+        font-weight: 600 !important;
+        min-height: 56px !important;
+        border-radius: 0 !important;
+        position: relative !important;
+      }
+      #nav-bottom .nav-item.activo {
+        color: #34d399 !important;
+        background: rgba(52,211,153,0.1) !important;
+      }
+      #nav-bottom .nav-item .nav-emoji {
+        font-size: 1.3rem !important;
+        line-height: 1 !important;
+        display: block !important;
+      }
+      #nav-bottom .nav-item .nav-label {
+        font-size: 0.6rem !important;
+        display: block !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+      }
+      /* Espacio para que el contenido no quede bajo la nav */
+      .main-content {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -376,6 +434,47 @@ document.getElementById('buscar-input')?.addEventListener('input', function() {
     });
   });
 })();
+</script>
+
+
+<script>
+// Forzar visibilidad y sincronización de la nav inferior
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('nav-bottom');
+  if (!nav) return;
+
+  // Forzar display flex en móvil
+  if (window.innerWidth <= 768) {
+    nav.style.display = 'flex';
+  }
+
+  // Sincronizar estado activo entre sidebar y nav inferior
+  var allNavItems = nav.querySelectorAll('.nav-item');
+
+  allNavItems.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      // Quitar activo de todos los botones de la nav inferior
+      allNavItems.forEach(function(b) { b.classList.remove('activo'); });
+      // Marcar este como activo
+      btn.classList.add('activo');
+    });
+  });
+
+  // Sincronizar cuando se llama mostrarSeccion desde la sidebar
+  var sidebarItems = document.querySelectorAll('.sidebar-nav .nav-item');
+  sidebarItems.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var onclick = btn.getAttribute('onclick') || '';
+      var match = onclick.match(/'([a-z-]+)'/);
+      if (match) {
+        var seccion = match[1];
+        allNavItems.forEach(function(b) {
+          b.classList.toggle('activo', b.dataset.seccion === seccion);
+        });
+      }
+    });
+  });
+});
 </script>
 
 </body>
