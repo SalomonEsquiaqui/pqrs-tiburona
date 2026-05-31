@@ -17,8 +17,11 @@
 <div class="dash-layout">
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <h2>⚽ La Tiburona</h2>
-      <small>Panel Soporte</small>
+      <img src="/img/logo-tiburona.png" alt="La Tiburona" style="width:38px;height:38px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;">
+      <div>
+        <h2 style="font-size:0.92rem;margin:0;">La Tiburona</h2>
+        <small>Panel Soporte</small>
+      </div>
     </div>
     <nav class="sidebar-nav">
       <button class="nav-item activo" onclick="mostrarSeccionSoporte('asignadas', this)">
@@ -31,14 +34,17 @@
     </nav>
     <div class="sidebar-user">
       <strong id="nombre-soporte">Soporte</strong>
-      <span class="badge badge-soporte">Soporte</span><br><br>
-      <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro">Salir</button>
+      <span class="badge badge-soporte" style="margin:4px 0;display:inline-block;">Soporte</span>
+      <div id="notif-sidebar-container"></div>
+      <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro" style="margin-top:8px;width:100%;">
+        🚪 Salir
+      </button>
     </div>
   </aside>
 
   <main class="main-content">
 
-    <!-- Mis stats -->
+    <!-- Stats -->
     <div class="stats-grid" style="margin-bottom:24px;">
       <div class="stat-card naranja"><div class="numero" id="s-activas">0</div><div class="etiqueta">Activas</div></div>
       <div class="stat-card rojo"><div class="numero" id="s-urgentes">0</div><div class="etiqueta">Urgentes</div></div>
@@ -47,13 +53,13 @@
 
     <!-- ASIGNADAS -->
     <section id="sec-asignadas">
-      <div class="page-header"><h1>Mis asignaciones activas</h1></div>
+      <div class="page-header"><h1>📋 Mis asignaciones activas</h1></div>
       <div id="lista-asignadas"></div>
     </section>
 
     <!-- RESUELTAS -->
     <section id="sec-resueltas" style="display:none;">
-      <div class="page-header"><h1>PQRS resueltas</h1></div>
+      <div class="page-header"><h1>✅ PQRS resueltas</h1></div>
       <div class="tabla-wrap">
         <table>
           <thead>
@@ -67,6 +73,19 @@
     </section>
 
   </main>
+
+  <!-- NAV INFERIOR MÓVIL -->
+  <nav class="nav-bottom-mobile" id="nav-bottom">
+    <button class="nav-item activo" onclick="mostrarSeccionSoporte('asignadas', this)" data-seccion="asignadas">
+      <span class="nav-emoji">📋</span>
+      <span class="notif-badge" id="badge-pendientes-nav" style="display:none;">0</span>
+      <span class="nav-label">Asignadas</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionSoporte('resueltas', this)" data-seccion="resueltas">
+      <span class="nav-emoji">✅</span>
+      <span class="nav-label">Resueltas</span>
+    </button>
+  </nav>
 </div>
 
 <!-- MODAL RESPONDER -->
@@ -93,7 +112,7 @@
   </div>
 </div>
 
-<!-- MODAL DETALLE (faltaba este modal) -->
+<!-- MODAL DETALLE -->
 <div class="modal-overlay" id="modal-detalle-soporte">
   <div class="modal">
     <div class="modal-header">
@@ -104,11 +123,43 @@
   </div>
 </div>
 
-<!-- CORRECCIÓN: rutas sin /src/public (el servidor sirve estáticos desde src/public) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/js/config.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/js/notifications.js"></script>
 <script src="/js/soporte.js"></script>
+<script>
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const navItems = document.querySelectorAll('.nav-bottom-mobile .nav-item');
+    navItems.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navItems.forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+      });
+    });
+    document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const onclick = btn.getAttribute('onclick') || '';
+        const match = onclick.match(/['"]([a-z-]+)['"]/);
+        if (match) {
+          navItems.forEach(b => b.classList.toggle('activo', b.dataset.seccion === match[1]));
+        }
+      });
+    });
+    // Sincronizar badge de pendientes en nav inferior
+    const badgeSidebar = document.getElementById('badge-pendientes');
+    const badgeNav = document.getElementById('badge-pendientes-nav');
+    if (badgeSidebar && badgeNav) {
+      const observer = new MutationObserver(() => {
+        const val = badgeSidebar.textContent.trim();
+        badgeNav.textContent = val;
+        badgeNav.style.display = (val && val !== '0') ? '' : 'none';
+      });
+      observer.observe(badgeSidebar, { childList: true, subtree: true, characterData: true });
+    }
+  });
+})();
+</script>
 </body>
 </html>

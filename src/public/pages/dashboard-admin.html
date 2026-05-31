@@ -39,6 +39,7 @@
     <div class="sidebar-user">
       <strong id="nombre-admin">Admin</strong>
       <span class="badge badge-admin" style="margin:6px 0;display:inline-block;">Administrador</span><br>
+      <div id="notif-sidebar-container"></div>
       <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro" style="margin-top:10px;width:100%;">
         🚪 Salir
       </button>
@@ -203,6 +204,26 @@
     </section>
 
   </main>
+  <!-- NAV INFERIOR MÓVIL -->
+  <nav class="nav-bottom-mobile" id="nav-bottom">
+    <button class="nav-item activo" onclick="mostrarSeccionAdmin('todas-pqrs', this)" data-seccion="todas-pqrs">
+      <span class="nav-emoji">📋</span>
+      <span class="nav-label">PQRS</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionAdmin('usuarios', this)" data-seccion="usuarios">
+      <span class="nav-emoji">👥</span>
+      <span class="nav-label">Usuarios</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionAdmin('soporte-team', this)" data-seccion="soporte-team">
+      <span class="nav-emoji">🛠️</span>
+      <span class="nav-label">Equipo</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionAdmin('pines', this)" data-seccion="pines">
+      <span class="nav-emoji">🔐</span>
+      <span class="nav-label">PINes</span>
+    </button>
+  </nav>
+
 </div>
 
 <!-- MODAL ASIGNAR -->
@@ -248,5 +269,41 @@
 <script src="/js/notifications.js"></script>
 <script src="/js/admin.js"></script>
 <script src="/js/pines.js"></script>
+
+<script>
+// Sincronizar estado activo entre sidebar y nav inferior móvil
+(function() {
+  const orig = window.mostrarSeccionAdmin;
+  // Se sobreescribirá cuando admin.js lo defina; usamos un proxy
+  const _sync = (seccion) => {
+    document.querySelectorAll('.nav-bottom-mobile .nav-item').forEach(btn => {
+      btn.classList.toggle('activo', btn.dataset.seccion === seccion);
+    });
+    document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
+      const onclick = btn.getAttribute('onclick') || '';
+      btn.classList.toggle('activo', onclick.includes("'" + seccion + "'") || onclick.includes('"' + seccion + '"'));
+    });
+  };
+  // Parche para sincronizar nav inferior
+  document.addEventListener('DOMContentLoaded', () => {
+    const navItems = document.querySelectorAll('.nav-bottom-mobile .nav-item');
+    navItems.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navItems.forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+      });
+    });
+    // Sincronizar clicks del sidebar
+    document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const onclick = btn.getAttribute('onclick') || '';
+        const match = onclick.match(/['"]([\w-]+)['"]/);
+        if (match) _sync(match[1]);
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>

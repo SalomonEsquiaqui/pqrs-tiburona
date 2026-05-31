@@ -16,8 +16,11 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <h2>⚽ La Tiburona</h2>
-      <small>Portal PQRS</small>
+      <img src="/img/logo-tiburona.png" alt="La Tiburona" style="width:38px;height:38px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;">
+      <div>
+        <h2 style="font-size:0.92rem;margin:0;">La Tiburona</h2>
+        <small>Portal PQRS</small>
+      </div>
     </div>
     <nav class="sidebar-nav">
       <button class="nav-item activo" onclick="mostrarSeccion('mis-pqrs', this)">
@@ -237,6 +240,22 @@
     </div>
     <div id="contenido-detalle"></div>
   </div>
+  <!-- NAV INFERIOR MÓVIL -->
+  <nav class="nav-bottom-mobile" id="nav-bottom">
+    <button class="nav-item activo" onclick="mostrarSeccion('mis-pqrs', this)" data-seccion="mis-pqrs">
+      <span class="nav-emoji">📋</span>
+      <span class="nav-label">Mis PQRS</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccion('nueva-pqrs', this)" data-seccion="nueva-pqrs">
+      <span class="nav-emoji">➕</span>
+      <span class="nav-label">Nueva</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccion('buscar-pqrs', this)" data-seccion="buscar-pqrs">
+      <span class="nav-emoji">🔍</span>
+      <span class="nav-label">Consultar</span>
+    </button>
+  </nav>
+
 </div>
 
 <!-- MODAL VALORACIÓN -->
@@ -335,5 +354,29 @@ document.getElementById('buscar-input')?.addEventListener('input', function() {
   });
 });
 </script>
+
+<script>
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const navItems = document.querySelectorAll('.nav-bottom-mobile .nav-item');
+    navItems.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navItems.forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+      });
+    });
+    document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const onclick = btn.getAttribute('onclick') || '';
+        const match = onclick.match(/['"]([\w-]+)['"]/);
+        if (match) {
+          navItems.forEach(b => b.classList.toggle('activo', b.dataset.seccion === match[1]));
+        }
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
