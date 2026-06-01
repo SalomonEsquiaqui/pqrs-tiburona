@@ -172,4 +172,55 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, resetPassword };
+// ─── VERIFICAR IDENTIDAD (para recuperar contraseña) ─────────────────────────
+const verifyIdentity = async (req, res) => {
+  try {
+    const { metodo, valor } = req.body;
+
+    if (!metodo || !valor) {
+      return res.status(400).json({ error: 'Datos incompletos.' });
+    }
+
+    let query;
+
+    if (metodo === 'email') {
+      // Buscar por email exacto (case-insensitive)
+      query = await supabaseAdmin
+        .from('users')
+        .select('id, email')
+        .ilike('email', valor.trim())
+        .maybeSingle();
+    } else if (metodo === 'id') {
+      // Buscar por número de identificación
+      query = await supabaseAdmin
+        .from('users')
+        .select('id, numero_identificacion')
+        .eq('numero_identificacion', valor.trim())
+        .maybeSingle();
+    } else {
+      return res.status(400).json({ error: 'Método de verificación inválido.' });
+    }
+
+    const { data, error } = query;
+
+    if (error) {
+      console.error('[verifyIdentity] DB error:', error);
+      return res.status(500).json({ error: 'Error al consultar la base de datos.' });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: metodo === 'email'
+        ? 'No encontramos ninguna cuenta con ese correo.'
+        : 'No encontramos ninguna cuenta con ese número de identificación.'
+      });
+    }
+
+    return res.json({ userId: data.id });
+
+  } catch (err) {
+    console.error('[verifyIdentity]', err);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+module.exports = { register, login, resetPassword, verifyIdentity };

@@ -65,6 +65,21 @@
 
     <!-- ===== PANEL RECUPERAR CONTRASEÑA ===== -->
     <div id="panel-recuperar" class="panel" style="display:none;">
+      <!-- Cabecera con título y botón cerrar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #e2e8f0;">
+        <div>
+          <p style="font-size:0.95rem;font-weight:800;color:#0f172a;margin:0 0 2px;">🔐 Recuperar contraseña</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin:0;">Cancha Sintética La Tiburona</p>
+        </div>
+        <button type="button" onclick="irALogin()" title="Volver al inicio de sesión"
+          style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:50%;width:34px;height:34px;
+                 font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+                 color:#64748b;transition:all .15s;flex-shrink:0;"
+          onmouseover="this.style.background='#fee2e2';this.style.color='#ef4444';this.style.borderColor='#fca5a5';"
+          onmouseout="this.style.background='#f1f5f9';this.style.color='#64748b';this.style.borderColor='#e2e8f0';">
+          ✕
+        </button>
+      </div>
       <div id="msg-recuperar" class="mensaje"></div>
 
       <!-- PASO 1: elegir método -->

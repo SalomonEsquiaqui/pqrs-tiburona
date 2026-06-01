@@ -248,7 +248,7 @@ function elegirMetodo(metodo) {
   }
 }
 
-// Método 1 — verificar por email
+// Método 1 — verificar por email (llama al backend para evitar RLS)
 async function verificarEmail() {
   const emailIngresado = document.getElementById('rec-email-completo').value.trim().toLowerCase();
   if (!emailIngresado) {
@@ -256,40 +256,32 @@ async function verificarEmail() {
     return;
   }
 
+  const btn = document.querySelector('#rec-paso2-email .btn-primario');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
+
   try {
-    // Buscar usuario por email en tabla users
-    const { data, error } = await db
-      .from('users')
-      .select('id, email')
-      .ilike('email', emailIngresado)
-      .maybeSingle();
+    const res = await apiFetch('/auth/verify-identity', {
+      method: 'POST',
+      body: JSON.stringify({ metodo: 'email', valor: emailIngresado })
+    });
 
-    if (error || !data) {
-      mostrarMensaje('msg-recuperar', '❌ No encontramos ninguna cuenta con ese correo.', 'error');
+    if (res.error) {
+      mostrarMensaje('msg-recuperar', '❌ ' + res.error, 'error');
       return;
     }
 
-    // Verificar que los últimos 3 dígitos del correo local coincidan
-    const localReal    = data.email.split('@')[0];
-    const localIngres  = emailIngresado.split('@')[0];
-    const ultimos3real = localReal.slice(-3).toLowerCase();
-    const ultimos3ing  = localIngres.slice(-3).toLowerCase();
-
-    if (data.email.toLowerCase() !== emailIngresado.toLowerCase()) {
-      mostrarMensaje('msg-recuperar', '❌ El correo no coincide con ninguna cuenta registrada.', 'error');
-      return;
-    }
-
-    _recUserId = data.id;
+    _recUserId = res.userId;
     _mostrarPasoRec('rec-paso3');
     ocultarMensaje('msg-recuperar');
 
   } catch (err) {
-    mostrarMensaje('msg-recuperar', '❌ Error al verificar. Intenta de nuevo.', 'error');
+    mostrarMensaje('msg-recuperar', '❌ Error de conexión. Verifica tu internet e intenta de nuevo.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Verificar correo'; }
   }
 }
 
-// Método 2 — verificar por número de identificación
+// Método 2 — verificar por número de identificación (llama al backend)
 async function verificarId() {
   const numId = document.getElementById('rec-num-id').value.trim();
   if (!numId) {
@@ -297,24 +289,28 @@ async function verificarId() {
     return;
   }
 
-  try {
-    const { data, error } = await db
-      .from('users')
-      .select('id, numero_identificacion')
-      .eq('numero_identificacion', numId)
-      .maybeSingle();
+  const btn = document.querySelector('#rec-paso2-id .btn-primario');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
 
-    if (error || !data) {
-      mostrarMensaje('msg-recuperar', '❌ No encontramos ninguna cuenta con ese número de identificación.', 'error');
+  try {
+    const res = await apiFetch('/auth/verify-identity', {
+      method: 'POST',
+      body: JSON.stringify({ metodo: 'id', valor: numId })
+    });
+
+    if (res.error) {
+      mostrarMensaje('msg-recuperar', '❌ ' + res.error, 'error');
       return;
     }
 
-    _recUserId = data.id;
+    _recUserId = res.userId;
     _mostrarPasoRec('rec-paso3');
     ocultarMensaje('msg-recuperar');
 
   } catch (err) {
-    mostrarMensaje('msg-recuperar', '❌ Error al verificar. Intenta de nuevo.', 'error');
+    mostrarMensaje('msg-recuperar', '❌ Error de conexión. Verifica tu internet e intenta de nuevo.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Verificar identificación'; }
   }
 }
 
