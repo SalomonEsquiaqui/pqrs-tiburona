@@ -277,7 +277,7 @@ async function cambiarRol(userId, nuevoRol) {
     mostrarModalConfirmAdmin({
       titulo: '⚠️ Asignar rol Administrador',
       mensaje: `¿Estás seguro de que deseas darle permisos de <strong>Administrador</strong> a <strong>${usuarioTarget?.nombre}</strong>?<br><br>
-        <span style="color:#ef4444;font-size:0.85rem;">⚠️ Esta acción <strong>no es reversible</strong> desde el frontend. El administrador tendrá acceso completo al sistema.</span>`,
+        <span style="color:#ef4444;font-size:0.85rem;">⚠️ Esta acción <strong>no es reversible</strong> desde el Sitio Web. El administrador tendrá acceso completo al sistema.</span>`,
       onConfirm: async () => {
         try {
           await apiFetch(`/users/${userId}/rol`, { method: 'PATCH', body: JSON.stringify({ rol: nuevoRol }) });
