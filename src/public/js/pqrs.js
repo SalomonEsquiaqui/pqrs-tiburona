@@ -178,7 +178,7 @@ async function subirImagen(pqrsId) {
 }
 
 // ── CARGAR MIS PQRS ──────────────────────────────────────────────────────────
-async function cargarMisPqrs() {
+async function cargarMisPqrs(keepFilter = false) {
   const { data, error } = await db
     .from('pqrs').select('*')
     .eq('usuario_id', sesionActual.user.id)
@@ -186,7 +186,12 @@ async function cargarMisPqrs() {
   if (error) { console.error(error); return; }
   todasMisPqrs = data || [];
   actualizarEstadisticas();
-  renderTabla(todasMisPqrs);
+  // keepFilter=true: respetar filtros activos (usado por realtime)
+  if (keepFilter) {
+    filtrarPqrs();
+  } else {
+    renderTabla(todasMisPqrs);
+  }
 }
 
 // ── ESTADÍSTICAS ────────────────────────────────────────────────────────────
@@ -423,7 +428,6 @@ async function enviarPqrs(e) {
     mostrarAlertaPqrs(tipo);
     notificarPqrsEnviada(tipo, radicado);
     await cargarMisPqrs();
-    setTimeout(() => mostrarSeccion('mis-pqrs'), 11000);
 
   } catch (err) {
     mostrarMensaje('msg-nueva-pqrs', err.message || 'Error al enviar. Intenta de nuevo.', 'error');
@@ -480,7 +484,8 @@ function suscribirCambiosEstado(userId) {
       });
       mostrarToast(titulo, `${p.radicado} — ${p.asunto}`, p.estado === 'resuelto' ? 'exito' : 'info');
       renderNotifPanel(cargarNotifStorage());
-      cargarMisPqrs();
+      // Recargar data pero respetar el filtro activo
+      cargarMisPqrs(true);
     })
     .subscribe();
 }
