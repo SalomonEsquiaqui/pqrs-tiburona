@@ -661,56 +661,57 @@ async function enviarValoracion() {
   }
 }
 
-// ── SILBATO DE FÚTBOL (Web Audio API) ────────────────────────────────────────
-// Genera el sonido clásico de silbato arbitral: dos pitidos cortos + uno largo
+// ── SONIDO MÁGICO DE ENVÍO (Web Audio API) ───────────────────────────────────
+// Tres notas tipo "estrellitas": Do → Mi → Sol ascendente, suave y breve
 function silbatoFutbol() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.18, ctx.currentTime); // volumen general bajo
+    master.connect(ctx.destination);
 
-    function pitido(startTime, duration, freq = 3800) {
-      const osc  = ctx.createOscillator();
-      const gain = ctx.createGain();
+    // Notas: Do5, Mi5, Sol5, Do6 — acorde mágico ascendente
+    const notas = [
+      { freq: 523.25, t: 0.00, dur: 0.18 },  // Do5
+      { freq: 659.25, t: 0.10, dur: 0.18 },  // Mi5
+      { freq: 783.99, t: 0.20, dur: 0.18 },  // Sol5
+      { freq: 1046.5, t: 0.30, dur: 0.22 },  // Do6 — brillo final
+    ];
 
-      // Oscilador principal — tono de silbato (onda cuadrada con armónicos)
-      osc.type      = 'square';
-      osc.frequency.setValueAtTime(freq, startTime);
-      // Pequeña variación de pitch al inicio, como un silbato real
-      osc.frequency.linearRampToValueAtTime(freq * 1.015, startTime + 0.04);
-      osc.frequency.linearRampToValueAtTime(freq,         startTime + duration);
+    notas.forEach(({ freq, t, dur }) => {
+      const start = ctx.currentTime + t;
 
-      // Envelope: ataque rápido, sustain, caída suave
-      gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(0.28, startTime + 0.01);
-      gain.gain.setValueAtTime(0.25, startTime + duration - 0.04);
-      gain.gain.linearRampToValueAtTime(0, startTime + duration);
+      // Oscilador principal — sine suave
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, start);
 
-      // Segundo oscilador para añadir cuerpo (armónico)
-      const osc2  = ctx.createOscillator();
-      const gain2 = ctx.createGain();
+      // Envelope: ataque muy suave, caída con cola de reverb
+      env.gain.setValueAtTime(0, start);
+      env.gain.linearRampToValueAtTime(1, start + 0.015);  // ataque 15ms
+      env.gain.exponentialRampToValueAtTime(0.001, start + dur + 0.18); // cola larga
+
+      osc.connect(env);
+      env.connect(master);
+      osc.start(start);
+      osc.stop(start + dur + 0.25);
+
+      // Armónico de brillo (sine a 2x frecuencia, muy suave)
+      const osc2 = ctx.createOscillator();
+      const env2 = ctx.createGain();
       osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(freq * 2, startTime);
-      gain2.gain.setValueAtTime(0, startTime);
-      gain2.gain.linearRampToValueAtTime(0.06, startTime + 0.01);
-      gain2.gain.linearRampToValueAtTime(0, startTime + duration);
-
-      osc.connect(gain);
-      osc2.connect(gain2);
-      gain.connect(ctx.destination);
-      gain2.connect(ctx.destination);
-
-      osc.start(startTime);
-      osc.stop(startTime + duration + 0.02);
-      osc2.start(startTime);
-      osc2.stop(startTime + duration + 0.02);
-    }
-
-    const t = ctx.currentTime;
-    pitido(t,        0.12);        // primer pitido corto
-    pitido(t + 0.22, 0.12);        // segundo pitido corto
-    pitido(t + 0.50, 0.55, 3900);  // pitido largo final (ligeramente más agudo)
+      osc2.frequency.setValueAtTime(freq * 2, start);
+      env2.gain.setValueAtTime(0, start);
+      env2.gain.linearRampToValueAtTime(0.25, start + 0.01);
+      env2.gain.exponentialRampToValueAtTime(0.001, start + dur + 0.08);
+      osc2.connect(env2);
+      env2.connect(master);
+      osc2.start(start);
+      osc2.stop(start + dur + 0.15);
+    });
 
   } catch (e) {
-    // Si el navegador bloquea AudioContext, silencio sin error visible
-    console.warn('silbatoFutbol: AudioContext no disponible', e);
+    console.warn('sonidoMagico: AudioContext no disponible', e);
   }
 }
