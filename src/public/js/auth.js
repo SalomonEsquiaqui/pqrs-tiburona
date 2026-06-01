@@ -202,8 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ══════════════════════════════════════════════════════════════════════════════
 // RECUPERAR CONTRASEÑA
 // ══════════════════════════════════════════════════════════════════════════════
-let _recUserId = null; // ID del usuario verificado
-
 // ═══════════════════════════════════════════════════════════
 //  RECUPERAR CONTRASEÑA
 //  Flujo: correo → hint teléfono → verificar tel (o ID) → nueva pass
@@ -213,9 +211,14 @@ let _recUserId  = null;   // ID del usuario encontrado
 let _recTelReal = null;   // Teléfono real (para comparar en frontend tras recibir del backend)
 
 function mostrarRecuperar() {
-  document.getElementById('panel-login').style.display = 'none';
+  // Ocultar paneles login y registro, mostrar recuperar
+  document.getElementById('panel-login').style.display    = 'none';
+  document.getElementById('panel-registro').style.display = 'none';
   document.getElementById('panel-recuperar').style.display = 'block';
-  document.querySelector('.card-tabs')?.style.setProperty('display', 'none');
+  // Ocultar tabs visualmente pero sin tocar su estado interno
+  const tabs = document.querySelector('.card-tabs');
+  if (tabs) tabs.style.display = 'none';
+  // Reset estado
   _recUserId  = null;
   _recTelReal = null;
   _mostrarPasoRec('rec-paso1');
@@ -224,9 +227,21 @@ function mostrarRecuperar() {
 }
 
 function irALogin() {
+  // Ocultar recuperar
   document.getElementById('panel-recuperar').style.display = 'none';
-  document.getElementById('panel-login').style.display = 'block';
-  document.querySelector('.card-tabs')?.style.setProperty('display', '');
+  // Restaurar tabs
+  const tabs = document.querySelector('.card-tabs');
+  if (tabs) tabs.style.display = '';
+  // Activar tab login y mostrar su panel correctamente
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('activo'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('activo'));
+  const btnLogin    = document.querySelector('[data-panel="panel-login"]');
+  const panelLogin  = document.getElementById('panel-login');
+  if (btnLogin)   btnLogin.classList.add('activo');
+  if (panelLogin) { panelLogin.classList.add('activo'); panelLogin.style.display = ''; }
+  // Asegurarse de que registro quede oculto
+  const panelReg = document.getElementById('panel-registro');
+  if (panelReg) panelReg.style.display = '';
   _recUserId  = null;
   _recTelReal = null;
 }
