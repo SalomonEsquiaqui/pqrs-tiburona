@@ -65,7 +65,7 @@
 
     <!-- ===== PANEL RECUPERAR CONTRASEÑA ===== -->
     <div id="panel-recuperar" class="panel" style="display:none;">
-      <!-- Cabecera con título y botón cerrar -->
+      <!-- Cabecera -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #e2e8f0;">
         <div>
           <p style="font-size:0.95rem;font-weight:800;color:#0f172a;margin:0 0 2px;">🔐 Recuperar contraseña</p>
@@ -82,49 +82,47 @@
       </div>
       <div id="msg-recuperar" class="mensaje"></div>
 
-      <!-- PASO 1: elegir método -->
+      <!-- PASO 1: ingresar correo -->
       <div id="rec-paso1">
-        <p style="font-size:0.88rem;color:#64748b;margin:0 0 18px;text-align:center;line-height:1.5;">
-          Verificaremos tu identidad antes de cambiar la contraseña.
+        <p style="font-size:0.85rem;color:#64748b;margin:0 0 16px;line-height:1.5;">
+          Ingresa el correo electrónico con el que creaste tu cuenta.
         </p>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <button type="button" onclick="elegirMetodo('email')"
-            class="btn-metodo-rec" id="btn-metodo-email">
-            <span style="font-size:1.4rem;">📧</span>
-            <div>
-              <strong>Verificar con correo</strong>
-              <small>Ingresa los dígitos que faltan de tu email</small>
-            </div>
-          </button>
-          <button type="button" onclick="elegirMetodo('id')"
-            class="btn-metodo-rec" id="btn-metodo-id">
-            <span style="font-size:1.4rem;">🪪</span>
-            <div>
-              <strong>Verificar con identificación</strong>
-              <small>Ingresa el número de documento asociado</small>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- PASO 2A: verificar por EMAIL -->
-      <div id="rec-paso2-email" style="display:none;">
-        <button type="button" onclick="volverPaso1()" class="btn-volver-rec">← Otro método</button>
-        <p id="rec-email-hint" style="font-size:0.88rem;color:#0f172a;margin:12px 0 6px;font-weight:600;"></p>
-        <p style="font-size:0.82rem;color:#64748b;margin:0 0 14px;">Completa el correo electrónico asociado a tu cuenta:</p>
         <div class="form-grupo" style="margin-bottom:12px;">
-          <label>Correo electrónico completo</label>
-          <input type="email" id="rec-email-completo" placeholder="tucorreo@gmail.com" autocomplete="off">
+          <label>Correo electrónico</label>
+          <input type="email" id="rec-correo" placeholder="tucorreo@gmail.com" autocomplete="off">
         </div>
-        <button type="button" onclick="verificarEmail()" class="btn btn-primario" style="width:100%;justify-content:center;">
-          ✅ Verificar correo
+        <button type="button" onclick="buscarCuenta()" class="btn btn-primario" style="width:100%;justify-content:center;">
+          Continuar →
         </button>
       </div>
 
-      <!-- PASO 2B: verificar por ID -->
-      <div id="rec-paso2-id" style="display:none;">
-        <button type="button" onclick="volverPaso1()" class="btn-volver-rec">← Otro método</button>
-        <p style="font-size:0.88rem;color:#64748b;margin:12px 0 14px;">Ingresa el número de documento que registraste en tu cuenta:</p>
+      <!-- PASO 2: confirmar número de teléfono enmascarado -->
+      <div id="rec-paso2" style="display:none;">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-bottom:16px;">
+          <p style="font-size:0.8rem;color:#1e40af;margin:0 0 4px;font-weight:600;">📱 Número afiliado a tu cuenta</p>
+          <p id="rec-tel-hint" style="font-size:1.05rem;font-weight:800;color:#1e3a8a;margin:0;letter-spacing:0.04em;"></p>
+        </div>
+        <p style="font-size:0.84rem;color:#475569;margin:0 0 14px;line-height:1.5;">
+          Ingresa el número completo para confirmar que esta cuenta es tuya:
+        </p>
+        <div class="form-grupo" style="margin-bottom:12px;">
+          <label>Número de teléfono completo</label>
+          <input type="tel" id="rec-tel-completo" placeholder="Ej: 3001234567" maxlength="15" autocomplete="off">
+        </div>
+        <button type="button" onclick="verificarTelefono()" class="btn btn-primario" style="width:100%;justify-content:center;margin-bottom:10px;">
+          ✅ Verificar número
+        </button>
+        <button type="button" onclick="irAMetodoId()" class="btn-volver-rec" style="width:100%;text-align:center;display:block;">
+          🪪 No recuerdo el número — probar con identificación
+        </button>
+      </div>
+
+      <!-- PASO 2B: método alternativo — número de identificación -->
+      <div id="rec-paso2b" style="display:none;">
+        <button type="button" onclick="volverPaso2()" class="btn-volver-rec" style="margin-bottom:14px;">← Volver</button>
+        <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.82rem;color:#92400e;">
+          🪪 Método alternativo: verifica con tu número de documento registrado.
+        </div>
         <div class="form-grupo" style="margin-bottom:12px;">
           <label>Número de identificación</label>
           <input type="text" id="rec-num-id" placeholder="Ej: 1234567890" maxlength="20" autocomplete="off">
@@ -137,7 +135,7 @@
       <!-- PASO 3: nueva contraseña -->
       <div id="rec-paso3" style="display:none;">
         <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.85rem;color:#166534;">
-          ✅ Identidad verificada correctamente
+          ✅ Identidad verificada — ahora crea tu nueva contraseña
         </div>
         <div class="form-grupo">
           <label>Nueva contraseña</label>

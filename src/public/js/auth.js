@@ -204,65 +204,67 @@ document.addEventListener('DOMContentLoaded', () => {
 // ══════════════════════════════════════════════════════════════════════════════
 let _recUserId = null; // ID del usuario verificado
 
+// ═══════════════════════════════════════════════════════════
+//  RECUPERAR CONTRASEÑA
+//  Flujo: correo → hint teléfono → verificar tel (o ID) → nueva pass
+// ═══════════════════════════════════════════════════════════
+
+let _recUserId  = null;   // ID del usuario encontrado
+let _recTelReal = null;   // Teléfono real (para comparar en frontend tras recibir del backend)
+
 function mostrarRecuperar() {
-  // Ocultar panel login, mostrar recuperar
   document.getElementById('panel-login').style.display = 'none';
   document.getElementById('panel-recuperar').style.display = 'block';
-  // Ocultar tabs para no confundir
-  document.querySelector('.card-tabs')?.style.setProperty('display','none');
-  // Reset estado
-  _recUserId = null;
+  document.querySelector('.card-tabs')?.style.setProperty('display', 'none');
+  _recUserId  = null;
+  _recTelReal = null;
   _mostrarPasoRec('rec-paso1');
   ocultarMensaje('msg-recuperar');
+  document.getElementById('rec-correo').value = '';
 }
 
 function irALogin() {
   document.getElementById('panel-recuperar').style.display = 'none';
   document.getElementById('panel-login').style.display = 'block';
-  document.querySelector('.card-tabs')?.style.setProperty('display','');
-  _recUserId = null;
+  document.querySelector('.card-tabs')?.style.setProperty('display', '');
+  _recUserId  = null;
+  _recTelReal = null;
 }
 
 function _mostrarPasoRec(idPaso) {
-  ['rec-paso1','rec-paso2-email','rec-paso2-id','rec-paso3','rec-paso4'].forEach(id => {
+  ['rec-paso1','rec-paso2','rec-paso2b','rec-paso3','rec-paso4'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = id === idPaso ? 'block' : 'none';
   });
 }
 
-function volverPaso1() {
-  _recUserId = null;
+function volverPaso2() {
   ocultarMensaje('msg-recuperar');
-  _mostrarPasoRec('rec-paso1');
+  _mostrarPasoRec('rec-paso2');
+  document.getElementById('rec-num-id').value = '';
 }
 
-function elegirMetodo(metodo) {
+function irAMetodoId() {
   ocultarMensaje('msg-recuperar');
-  if (metodo === 'email') {
-    // Generar hint: mostrar dominio + últimos 3 dígitos de la parte local
-    _mostrarPasoRec('rec-paso2-email');
-    document.getElementById('rec-email-completo').value = '';
-  } else {
-    _mostrarPasoRec('rec-paso2-id');
-    document.getElementById('rec-num-id').value = '';
-  }
+  _mostrarPasoRec('rec-paso2b');
+  document.getElementById('rec-num-id').value = '';
 }
 
-// Método 1 — verificar por email (llama al backend para evitar RLS)
-async function verificarEmail() {
-  const emailIngresado = document.getElementById('rec-email-completo').value.trim().toLowerCase();
-  if (!emailIngresado) {
+// PASO 1: buscar cuenta por correo y mostrar hint del teléfono
+async function buscarCuenta() {
+  const correo = document.getElementById('rec-correo').value.trim().toLowerCase();
+  if (!correo) {
     mostrarMensaje('msg-recuperar', '⚠️ Ingresa tu correo electrónico.', 'error');
     return;
   }
 
-  const btn = document.querySelector('#rec-paso2-email .btn-primario');
-  if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
+  const btn = document.querySelector('#rec-paso1 .btn-primario');
+  if (btn) { btn.disabled = true; btn.textContent = 'Buscando...'; }
 
   try {
-    const res = await apiFetch('/auth/verify-identity', {
+    const res = await apiFetch('/auth/buscar-cuenta', {
       method: 'POST',
-      body: JSON.stringify({ metodo: 'email', valor: emailIngresado })
+      body: JSON.stringify({ email: correo })
     });
 
     if (res.error) {
@@ -270,18 +272,55 @@ async function verificarEmail() {
       return;
     }
 
+    // Mostrar hint enmascarado del teléfono
     _recUserId = res.userId;
-    _mostrarPasoRec('rec-paso3');
+    document.getElementById('rec-tel-hint').textContent = res.telefonoHint;
+    document.getElementById('rec-tel-completo').value = '';
     ocultarMensaje('msg-recuperar');
+    _mostrarPasoRec('rec-paso2');
 
   } catch (err) {
     mostrarMensaje('msg-recuperar', '❌ Error de conexión. Verifica tu internet e intenta de nuevo.', 'error');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '✅ Verificar correo'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Continuar →'; }
   }
 }
 
-// Método 2 — verificar por número de identificación (llama al backend)
+// PASO 2: verificar teléfono completo
+async function verificarTelefono() {
+  const telIngresado = document.getElementById('rec-tel-completo').value.trim();
+  if (!telIngresado) {
+    mostrarMensaje('msg-recuperar', '⚠️ Ingresa el número de teléfono completo.', 'error');
+    return;
+  }
+
+  const btn = document.querySelector('#rec-paso2 .btn-primario');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
+
+  try {
+    const res = await apiFetch('/auth/verify-identity', {
+      method: 'POST',
+      body: JSON.stringify({ metodo: 'telefono', userId: _recUserId, valor: telIngresado })
+    });
+
+    if (res.error) {
+      mostrarMensaje('msg-recuperar', '❌ ' + res.error, 'error');
+      return;
+    }
+
+    document.getElementById('rec-pass-nueva').value = '';
+    document.getElementById('rec-pass-confirm').value = '';
+    ocultarMensaje('msg-recuperar');
+    _mostrarPasoRec('rec-paso3');
+
+  } catch (err) {
+    mostrarMensaje('msg-recuperar', '❌ Error de conexión. Intenta de nuevo.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Verificar número'; }
+  }
+}
+
+// PASO 2B: verificar por número de identificación
 async function verificarId() {
   const numId = document.getElementById('rec-num-id').value.trim();
   if (!numId) {
@@ -289,13 +328,13 @@ async function verificarId() {
     return;
   }
 
-  const btn = document.querySelector('#rec-paso2-id .btn-primario');
+  const btn = document.querySelector('#rec-paso2b .btn-primario');
   if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
 
   try {
     const res = await apiFetch('/auth/verify-identity', {
       method: 'POST',
-      body: JSON.stringify({ metodo: 'id', valor: numId })
+      body: JSON.stringify({ metodo: 'id', userId: _recUserId, valor: numId })
     });
 
     if (res.error) {
@@ -303,14 +342,56 @@ async function verificarId() {
       return;
     }
 
-    _recUserId = res.userId;
+    document.getElementById('rec-pass-nueva').value = '';
+    document.getElementById('rec-pass-confirm').value = '';
+    ocultarMensaje('msg-recuperar');
     _mostrarPasoRec('rec-paso3');
+
+  } catch (err) {
+    mostrarMensaje('msg-recuperar', '❌ Error de conexión. Intenta de nuevo.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Verificar identificación'; }
+  }
+}
+
+// PASO 3: cambiar contraseña
+async function cambiarContrasena() {
+  if (!_recUserId) {
+    mostrarMensaje('msg-recuperar', '❌ Sesión expirada. Vuelve a verificar tu identidad.', 'error');
+    _mostrarPasoRec('rec-paso1');
+    return;
+  }
+
+  const pass1 = document.getElementById('rec-pass-nueva').value;
+  const pass2 = document.getElementById('rec-pass-confirm').value;
+
+  if (!pass1 || pass1.length < 6) {
+    mostrarMensaje('msg-recuperar', '⚠️ La contraseña debe tener mínimo 6 caracteres.', 'error');
+    return;
+  }
+  if (pass1 !== pass2) {
+    mostrarMensaje('msg-recuperar', '⚠️ Las contraseñas no coinciden.', 'error');
+    return;
+  }
+
+  const btn = document.querySelector('#rec-paso3 .btn-verde');
+  if (btn) { btn.disabled = true; btn.textContent = 'Cambiando...'; }
+
+  try {
+    const res = await apiFetch('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ userId: _recUserId, newPassword: pass1 })
+    });
+
+    if (res.error) throw new Error(res.error);
+
+    _recUserId = null;
+    _mostrarPasoRec('rec-paso4');
     ocultarMensaje('msg-recuperar');
 
   } catch (err) {
-    mostrarMensaje('msg-recuperar', '❌ Error de conexión. Verifica tu internet e intenta de nuevo.', 'error');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '✅ Verificar identificación'; }
+    mostrarMensaje('msg-recuperar', '❌ ' + (err.message || 'Error al cambiar la contraseña.'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = '🔐 Cambiar contraseña'; }
   }
 }
 

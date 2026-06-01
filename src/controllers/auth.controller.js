@@ -172,50 +172,93 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// ─── VERIFICAR IDENTIDAD (para recuperar contraseña) ─────────────────────────
-const verifyIdentity = async (req, res) => {
+// ─── BUSCAR CUENTA POR EMAIL (devuelve hint de teléfono) ─────────────────────
+const buscarCuenta = async (req, res) => {
   try {
-    const { metodo, valor } = req.body;
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'El correo es requerido.' });
 
-    if (!metodo || !valor) {
-      return res.status(400).json({ error: 'Datos incompletos.' });
-    }
-
-    let query;
-
-    if (metodo === 'email') {
-      // Buscar por email exacto (case-insensitive)
-      query = await supabaseAdmin
-        .from('users')
-        .select('id, email')
-        .ilike('email', valor.trim())
-        .maybeSingle();
-    } else if (metodo === 'id') {
-      // Buscar por número de identificación
-      query = await supabaseAdmin
-        .from('users')
-        .select('id, numero_identificacion')
-        .eq('numero_identificacion', valor.trim())
-        .maybeSingle();
-    } else {
-      return res.status(400).json({ error: 'Método de verificación inválido.' });
-    }
-
-    const { data, error } = query;
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .select('id, telefono')
+      .ilike('email', email.trim())
+      .maybeSingle();
 
     if (error) {
-      console.error('[verifyIdentity] DB error:', error);
+      console.error('[buscarCuenta] DB error:', error);
       return res.status(500).json({ error: 'Error al consultar la base de datos.' });
     }
 
     if (!data) {
-      return res.status(404).json({ error: metodo === 'email'
-        ? 'No encontramos ninguna cuenta con ese correo.'
-        : 'No encontramos ninguna cuenta con ese número de identificación.'
-      });
+      return res.status(404).json({ error: 'No encontramos ninguna cuenta con ese correo electrónico.' });
     }
 
-    return res.json({ userId: data.id });
+    // Enmascarar teléfono: mostrar solo últimos 2 dígitos
+    const tel = (data.telefono || '').toString().trim();
+    let telefonoHint = 'Tu cuenta tiene un número afiliado';
+    if (tel.length >= 2) {
+      const asteriscos = '*'.repeat(Math.max(tel.length - 2, 4));
+      const ultimos2   = tel.slice(-2);
+      telefonoHint = `Tu cuenta tiene un número afiliado: ${asteriscos} terminado en ${ultimos2}`;
+    }
+
+    return res.json({ userId: data.id, telefonoHint });
+
+  } catch (err) {
+    console.error('[buscarCuenta]', err);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+// ─── VERIFICAR IDENTIDAD (teléfono o identificación) ─────────────────────────
+const verifyIdentity = async (req, res) => {
+  try {
+    const { metodo, userId, valor } = req.body;
+
+    if (!metodo || !userId || !valor) {
+      return res.status(400).json({ error: 'Datos incompletos.' });
+    }
+
+    if (metodo === 'telefono') {
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .select('id, telefono')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error || !data) {
+        return res.status(404).json({ error: 'Usuario no encontrado.' });
+      }
+
+      const telReal     = (data.telefono || '').toString().trim().replace(/\s/g, '');
+      const telIngresado = valor.toString().trim().replace(/\s/g, '');
+
+      if (telReal !== telIngresado) {
+        return res.status(401).json({ error: 'El número de teléfono no coincide con el registrado.' });
+      }
+
+      return res.json({ ok: true });
+
+    } else if (metodo === 'id') {
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .select('id, numero_identificacion')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error || !data) {
+        return res.status(404).json({ error: 'Usuario no encontrado.' });
+      }
+
+      if ((data.numero_identificacion || '').toString().trim() !== valor.trim()) {
+        return res.status(401).json({ error: 'El número de identificación no coincide con el registrado.' });
+      }
+
+      return res.json({ ok: true });
+
+    } else {
+      return res.status(400).json({ error: 'Método de verificación inválido.' });
+    }
 
   } catch (err) {
     console.error('[verifyIdentity]', err);
@@ -223,4 +266,4 @@ const verifyIdentity = async (req, res) => {
   }
 };
 
-module.exports = { register, login, resetPassword, verifyIdentity };
+module.exports = { register, login, resetPassword, buscarCuenta, verifyIdentity };
