@@ -199,3 +199,159 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+// ══════════════════════════════════════════════════════════════════════════════
+// RECUPERAR CONTRASEÑA
+// ══════════════════════════════════════════════════════════════════════════════
+let _recUserId = null; // ID del usuario verificado
+
+function mostrarRecuperar() {
+  // Ocultar panel login, mostrar recuperar
+  document.getElementById('panel-login').style.display = 'none';
+  document.getElementById('panel-recuperar').style.display = 'block';
+  // Ocultar tabs para no confundir
+  document.querySelector('.card-tabs')?.style.setProperty('display','none');
+  // Reset estado
+  _recUserId = null;
+  _mostrarPasoRec('rec-paso1');
+  ocultarMensaje('msg-recuperar');
+}
+
+function irALogin() {
+  document.getElementById('panel-recuperar').style.display = 'none';
+  document.getElementById('panel-login').style.display = 'block';
+  document.querySelector('.card-tabs')?.style.setProperty('display','');
+  _recUserId = null;
+}
+
+function _mostrarPasoRec(idPaso) {
+  ['rec-paso1','rec-paso2-email','rec-paso2-id','rec-paso3','rec-paso4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === idPaso ? 'block' : 'none';
+  });
+}
+
+function volverPaso1() {
+  _recUserId = null;
+  ocultarMensaje('msg-recuperar');
+  _mostrarPasoRec('rec-paso1');
+}
+
+function elegirMetodo(metodo) {
+  ocultarMensaje('msg-recuperar');
+  if (metodo === 'email') {
+    // Generar hint: mostrar dominio + últimos 3 dígitos de la parte local
+    _mostrarPasoRec('rec-paso2-email');
+    document.getElementById('rec-email-completo').value = '';
+  } else {
+    _mostrarPasoRec('rec-paso2-id');
+    document.getElementById('rec-num-id').value = '';
+  }
+}
+
+// Método 1 — verificar por email
+async function verificarEmail() {
+  const emailIngresado = document.getElementById('rec-email-completo').value.trim().toLowerCase();
+  if (!emailIngresado) {
+    mostrarMensaje('msg-recuperar', '⚠️ Ingresa tu correo electrónico.', 'error');
+    return;
+  }
+
+  try {
+    // Buscar usuario por email en tabla users
+    const { data, error } = await db
+      .from('users')
+      .select('id, email')
+      .ilike('email', emailIngresado)
+      .maybeSingle();
+
+    if (error || !data) {
+      mostrarMensaje('msg-recuperar', '❌ No encontramos ninguna cuenta con ese correo.', 'error');
+      return;
+    }
+
+    // Verificar que los últimos 3 dígitos del correo local coincidan
+    const localReal    = data.email.split('@')[0];
+    const localIngres  = emailIngresado.split('@')[0];
+    const ultimos3real = localReal.slice(-3).toLowerCase();
+    const ultimos3ing  = localIngres.slice(-3).toLowerCase();
+
+    if (data.email.toLowerCase() !== emailIngresado.toLowerCase()) {
+      mostrarMensaje('msg-recuperar', '❌ El correo no coincide con ninguna cuenta registrada.', 'error');
+      return;
+    }
+
+    _recUserId = data.id;
+    _mostrarPasoRec('rec-paso3');
+    ocultarMensaje('msg-recuperar');
+
+  } catch (err) {
+    mostrarMensaje('msg-recuperar', '❌ Error al verificar. Intenta de nuevo.', 'error');
+  }
+}
+
+// Método 2 — verificar por número de identificación
+async function verificarId() {
+  const numId = document.getElementById('rec-num-id').value.trim();
+  if (!numId) {
+    mostrarMensaje('msg-recuperar', '⚠️ Ingresa tu número de identificación.', 'error');
+    return;
+  }
+
+  try {
+    const { data, error } = await db
+      .from('users')
+      .select('id, numero_identificacion')
+      .eq('numero_identificacion', numId)
+      .maybeSingle();
+
+    if (error || !data) {
+      mostrarMensaje('msg-recuperar', '❌ No encontramos ninguna cuenta con ese número de identificación.', 'error');
+      return;
+    }
+
+    _recUserId = data.id;
+    _mostrarPasoRec('rec-paso3');
+    ocultarMensaje('msg-recuperar');
+
+  } catch (err) {
+    mostrarMensaje('msg-recuperar', '❌ Error al verificar. Intenta de nuevo.', 'error');
+  }
+}
+
+// Paso 3 — cambiar contraseña
+async function cambiarContrasena() {
+  if (!_recUserId) {
+    mostrarMensaje('msg-recuperar', '❌ Sesión expirada. Vuelve a verificar tu identidad.', 'error');
+    volverPaso1();
+    return;
+  }
+
+  const pass1 = document.getElementById('rec-pass-nueva').value;
+  const pass2 = document.getElementById('rec-pass-confirm').value;
+
+  if (!pass1 || pass1.length < 6) {
+    mostrarMensaje('msg-recuperar', '⚠️ La contraseña debe tener mínimo 6 caracteres.', 'error');
+    return;
+  }
+  if (pass1 !== pass2) {
+    mostrarMensaje('msg-recuperar', '⚠️ Las contraseñas no coinciden.', 'error');
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ userId: _recUserId, newPassword: pass1 })
+    });
+
+    if (res.error) throw new Error(res.error);
+
+    // Éxito
+    _recUserId = null;
+    _mostrarPasoRec('rec-paso4');
+    ocultarMensaje('msg-recuperar');
+
+  } catch (err) {
+    mostrarMensaje('msg-recuperar', '❌ ' + (err.message || 'Error al cambiar la contraseña.'), 'error');
+  }
+}

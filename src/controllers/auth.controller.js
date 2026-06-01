@@ -134,4 +134,42 @@ const login = async (req, res) => {
 }
 };
 
-module.exports = { register, login };
+// exports al final del archivo
+// ─── RESET CONTRASEÑA (sin email, verificado por frontend) ──────────────────
+const resetPassword = async (req, res) => {
+  try {
+    const { userId, newPassword } = req.body;
+
+    if (!userId || !newPassword) {
+      return res.status(400).json({ error: 'Datos incompletos.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'La contraseña debe tener mínimo 6 caracteres.' });
+    }
+
+    // Verificar que el usuario existe
+    const { data: usuario } = await supabaseAdmin
+      .from('users').select('id').eq('id', userId).maybeSingle();
+
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    // Cambiar contraseña usando el cliente admin de Supabase
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      password: newPassword
+    });
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.json({ message: 'Contraseña actualizada correctamente.' });
+
+  } catch (err) {
+    console.error('[resetPassword]', err);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+module.exports = { register, login, resetPassword };

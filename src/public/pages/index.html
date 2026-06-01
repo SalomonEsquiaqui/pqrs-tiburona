@@ -54,7 +54,120 @@
         <button type="submit" id="btn-login" class="btn btn-primario" style="width:100%;justify-content:center;margin-top:4px;">
           🚀 Ingresar al sistema
         </button>
+        <p style="text-align:center;margin-top:14px;margin-bottom:0;">
+          <button type="button" onclick="mostrarRecuperar()" 
+            style="background:none;border:none;color:#3b82f6;font-size:0.83rem;cursor:pointer;padding:0;font-family:inherit;text-decoration:underline;">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </p>
       </form>
+    </div>
+
+    <!-- ===== PANEL RECUPERAR CONTRASEÑA ===== -->
+    <div id="panel-recuperar" class="panel" style="display:none;">
+      <div id="msg-recuperar" class="mensaje"></div>
+
+      <!-- PASO 1: elegir método -->
+      <div id="rec-paso1">
+        <p style="font-size:0.88rem;color:#64748b;margin:0 0 18px;text-align:center;line-height:1.5;">
+          Verificaremos tu identidad antes de cambiar la contraseña.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button type="button" onclick="elegirMetodo('email')"
+            class="btn-metodo-rec" id="btn-metodo-email">
+            <span style="font-size:1.4rem;">📧</span>
+            <div>
+              <strong>Verificar con correo</strong>
+              <small>Ingresa los dígitos que faltan de tu email</small>
+            </div>
+          </button>
+          <button type="button" onclick="elegirMetodo('id')"
+            class="btn-metodo-rec" id="btn-metodo-id">
+            <span style="font-size:1.4rem;">🪪</span>
+            <div>
+              <strong>Verificar con identificación</strong>
+              <small>Ingresa el número de documento asociado</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 2A: verificar por EMAIL -->
+      <div id="rec-paso2-email" style="display:none;">
+        <button type="button" onclick="volverPaso1()" class="btn-volver-rec">← Otro método</button>
+        <p id="rec-email-hint" style="font-size:0.88rem;color:#0f172a;margin:12px 0 6px;font-weight:600;"></p>
+        <p style="font-size:0.82rem;color:#64748b;margin:0 0 14px;">Completa el correo electrónico asociado a tu cuenta:</p>
+        <div class="form-grupo" style="margin-bottom:12px;">
+          <label>Correo electrónico completo</label>
+          <input type="email" id="rec-email-completo" placeholder="tucorreo@gmail.com" autocomplete="off">
+        </div>
+        <button type="button" onclick="verificarEmail()" class="btn btn-primario" style="width:100%;justify-content:center;">
+          ✅ Verificar correo
+        </button>
+      </div>
+
+      <!-- PASO 2B: verificar por ID -->
+      <div id="rec-paso2-id" style="display:none;">
+        <button type="button" onclick="volverPaso1()" class="btn-volver-rec">← Otro método</button>
+        <p style="font-size:0.88rem;color:#64748b;margin:12px 0 14px;">Ingresa el número de documento que registraste en tu cuenta:</p>
+        <div class="form-grupo" style="margin-bottom:12px;">
+          <label>Número de identificación</label>
+          <input type="text" id="rec-num-id" placeholder="Ej: 1234567890" maxlength="20" autocomplete="off">
+        </div>
+        <button type="button" onclick="verificarId()" class="btn btn-primario" style="width:100%;justify-content:center;">
+          ✅ Verificar identificación
+        </button>
+      </div>
+
+      <!-- PASO 3: nueva contraseña -->
+      <div id="rec-paso3" style="display:none;">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.85rem;color:#166534;">
+          ✅ Identidad verificada correctamente
+        </div>
+        <div class="form-grupo">
+          <label>Nueva contraseña</label>
+          <div class="input-pass-wrap">
+            <input type="password" id="rec-pass-nueva" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+            <button type="button" class="btn-ojo" data-target="rec-pass-nueva" aria-label="Ver contraseña">
+              <svg class="ojo-abierto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-cerrado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-grupo">
+          <label>Confirmar nueva contraseña</label>
+          <div class="input-pass-wrap">
+            <input type="password" id="rec-pass-confirm" placeholder="Repite la contraseña" autocomplete="new-password">
+            <button type="button" class="btn-ojo" data-target="rec-pass-confirm" aria-label="Ver contraseña">
+              <svg class="ojo-abierto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-cerrado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <button type="button" onclick="cambiarContrasena()" class="btn btn-verde" style="width:100%;justify-content:center;min-height:48px;">
+          🔐 Cambiar contraseña
+        </button>
+      </div>
+
+      <!-- PASO 4: éxito -->
+      <div id="rec-paso4" style="display:none;">
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;
+                      border-radius:14px;padding:20px 16px;margin-bottom:18px;">
+            <p style="font-size:1rem;font-weight:800;color:#166534;margin:0 0 6px;">
+              ¡Contraseña cambiada exitosamente!
+            </p>
+            <p style="font-size:0.84rem;color:#15803d;margin:0;">
+              Ya puedes iniciar sesión con tu nueva contraseña.
+            </p>
+          </div>
+          <button type="button" onclick="irALogin()" class="btn btn-primario" style="width:100%;justify-content:center;">
+            🚀 Ir a iniciar sesión
+          </button>
+        </div>
+      </div>
+
     </div>
 
     <!-- ===== PANEL REGISTRO ===== -->
@@ -70,13 +183,14 @@
           <input type="email" id="reg-email" placeholder="tucorreo@gmail.com" required>
         </div>
         <div class="form-grupo">
-          <label for="reg-tipo-id">🆔 TIPO DE IDENTIFICACIÓN</label>
+          <label for="reg-tipo-id">🪪 TIPO DE IDENTIFICACIÓN</label>
           <select id="reg-tipo-id" required>
-            <option value="cedula_ciudadania">Cédula de ciudadanía</option>
-            <option value="tarjeta_identidad">Tarjeta de identidad</option>
-            <option value="cedula_extranjeria">Cédula de extranjería</option>
-            <option value="pasaporte">Pasaporte</option>
-            <option value="permiso_permanencia">Permiso especial de permanencia (PEP)</option>
+            <option value="">Selecciona un tipo...</option>
+            <option value="cedula_ciudadania">🇨🇴 Cédula de ciudadanía</option>
+            <option value="tarjeta_identidad">🪪 Tarjeta de identidad</option>
+            <option value="cedula_extranjeria">🌍 Cédula de extranjería</option>
+            <option value="pasaporte">📘 Pasaporte</option>
+            <option value="permiso_permanencia">📄 Permiso especial de permanencia (PEP)</option>
           </select>
         </div>
 
