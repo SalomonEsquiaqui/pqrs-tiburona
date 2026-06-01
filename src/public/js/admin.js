@@ -45,7 +45,14 @@ async function cargarTodasPqrs() {
     .order('created_at', { ascending: false });
   todasPqrs = data || [];
   actualizarStats();
-  renderAdminPqrs(todasPqrs);
+  // Respetar filtro activo al recargar (no resetear a "todos")
+  const estadoActivo = document.getElementById('a-filtro-estado')?.value;
+  const tipoActivo   = document.getElementById('a-filtro-tipo')?.value;
+  if (estadoActivo || tipoActivo) {
+    filtrarAdmin();
+  } else {
+    renderAdminPqrs(todasPqrs);
+  }
   // Verificar y notificar PQRS pendientes
   setTimeout(verificarPendientesAdmin, 100);
 }
@@ -87,9 +94,12 @@ function _renderAdminTablaDesktop(lista) {
       <td><span class="estado estado-${estadoClass}">${p.estado.replace('_',' ')}</span></td>
       <td>${formatFecha(p.created_at)}</td>
       <td style="display:flex;gap:6px;">
-        <button class="btn btn-sm btn-primario" onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
-          ${p.estado === 'pendiente' ? '📋 Asignar' : '🔄 Reasignar'}
-        </button>
+        ${['resuelto','cerrado'].includes(p.estado)
+          ? `<button class="btn btn-sm" disabled style="opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;">✅ Resuelto</button>`
+          : `<button class="btn btn-sm btn-primario" onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
+              ${p.estado === 'pendiente' ? '📋 Asignar' : '🔄 Reasignar'}
+             </button>`
+        }
         <button class="btn btn-sm btn-verde" onclick="abrirModalVer('${p.id}')">👁</button>
       </td>
     </tr>`;
@@ -136,10 +146,13 @@ function _renderAdminCardsMobile(lista) {
       <div style="font-size:0.78rem;color:#64748b;margin-bottom:2px;">👤 ${p.users?.nombre||'—'} &nbsp;·&nbsp; ${iconos[p.tipo]||'📋'} ${p.tipo}</div>
       <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;">📅 ${formatFecha(p.created_at)} &nbsp;·&nbsp; 🏢 ${p.area||'—'}</div>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;min-height:42px;"
-          onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
-          ${p.estado==='pendiente'?'📋 Asignar':'🔄 Reasignar'}
-        </button>
+        ${['resuelto','cerrado'].includes(p.estado)
+          ? `<button class="btn btn-sm" disabled style="flex:1;opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-height:42px;">✅ Resuelto</button>`
+          : `<button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;min-height:42px;"
+              onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
+              ${p.estado==='pendiente'?'📋 Asignar':'🔄 Reasignar'}
+             </button>`
+        }
         <button class="btn btn-sm btn-verde" style="min-height:42px;padding:0 16px;"
           onclick="abrirModalVer('${p.id}')">👁</button>
       </div>
@@ -182,11 +195,16 @@ async function cargarUsuarios() {
       <td>${u.telefono || '—'}</td>
       <td><span class="badge badge-${u.rol}">${u.rol}</span></td>
       <td>
-        <select onchange="cambiarRol('${u.id}',this.value)" style="padding:5px 8px;border:1px solid var(--gris-medio);border-radius:6px;font-size:0.8rem;">
-          <option value="usuario" ${u.rol==='usuario'?'selected':''}>Usuario</option>
-          <option value="soporte" ${u.rol==='soporte'?'selected':''}>Soporte</option>
-          <option value="admin"   ${u.rol==='admin'?'selected':''}>Admin</option>
-        </select>
+        ${u.rol === 'admin'
+          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;">
+               🔒 Admin (no editable)
+             </span>`
+          : `<select onchange="cambiarRol('${u.id}',this.value)" style="padding:5px 8px;border:1px solid var(--gris-medio);border-radius:6px;font-size:0.8rem;">
+               <option value="usuario" ${u.rol==='usuario'?'selected':''}>Usuario</option>
+               <option value="soporte" ${u.rol==='soporte'?'selected':''}>Soporte</option>
+               <option value="admin">Administrador</option>
+             </select>`
+        }
       </td>
     </tr>`).join('');
 }
@@ -223,24 +241,113 @@ function _renderUsuariosMobile(data) {
       <p style="font-size:0.8rem;color:#64748b;margin-bottom:2px;">✉️ ${u.email}</p>
       <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">📞 ${u.telefono||'—'}</p>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:0.75rem;color:#64748b;flex-shrink:0;">Cambiar rol:</span>
-        <select onchange="cambiarRol('${u.id}',this.value)"
-          style="flex:1;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:#fff;min-height:40px;">
-          <option value="usuario" ${u.rol==='usuario'?'selected':''}>👤 Usuario</option>
-          <option value="soporte" ${u.rol==='soporte'?'selected':''}>🛠️ Soporte</option>
-          <option value="admin"   ${u.rol==='admin'?'selected':''}>⚙️ Admin</option>
-        </select>
+        ${u.rol === 'admin'
+          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;width:100%;display:block;text-align:center;">🔒 Administrador (no editable)</span>`
+          : `<span style="font-size:0.75rem;color:#64748b;flex-shrink:0;">Cambiar rol:</span>
+             <select onchange="cambiarRol('${u.id}',this.value)"
+               style="flex:1;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:#fff;min-height:40px;">
+               <option value="usuario" ${u.rol==='usuario'?'selected':''}>👤 Usuario</option>
+               <option value="soporte" ${u.rol==='soporte'?'selected':''}>🛠️ Soporte</option>
+               <option value="admin">⚙️ Administrador</option>
+             </select>`
+        }
       </div>
     </div>`;
   }).join('');
 }
 
 async function cambiarRol(userId, nuevoRol) {
+  // Buscar el usuario actual en la lista
+  const { data: usuarioTarget } = await db.from('users').select('rol,nombre').eq('id', userId).single();
+
+  // BLOQUEO: no se puede cambiar el rol de otro administrador
+  if (usuarioTarget?.rol === 'admin') {
+    mostrarModalConfirmAdmin({
+      titulo: '⛔ Acción no permitida',
+      mensaje: `<strong>${usuarioTarget.nombre}</strong> ya es administrador.<br>No es posible cambiar el rol de otro administrador desde este panel.`,
+      soloInfo: true
+    });
+    // Revertir el select visualmente
+    await cargarUsuarios();
+    return;
+  }
+
+  // CONFIRMACIÓN ESPECIAL: asignar rol de admin es irreversible
+  if (nuevoRol === 'admin') {
+    mostrarModalConfirmAdmin({
+      titulo: '⚠️ Asignar rol Administrador',
+      mensaje: `¿Estás seguro de que deseas darle permisos de <strong>Administrador</strong> a <strong>${usuarioTarget?.nombre}</strong>?<br><br>
+        <span style="color:#ef4444;font-size:0.85rem;">⚠️ Esta acción <strong>no es reversible</strong> desde el frontend. El administrador tendrá acceso completo al sistema.</span>`,
+      onConfirm: async () => {
+        try {
+          await apiFetch(`/users/${userId}/rol`, { method: 'PATCH', body: JSON.stringify({ rol: nuevoRol }) });
+          await cargarSoporte();
+          await cargarUsuarios();
+          mostrarToast('✅ Rol de administrador asignado correctamente.', 'exito', 4000);
+        } catch (err) { alert('Error al cambiar rol: ' + err.message); }
+      },
+      onCancel: async () => {
+        await cargarUsuarios(); // revertir select
+      }
+    });
+    return;
+  }
+
+  // Cambio normal (usuario ↔ soporte)
   try {
     await apiFetch(`/users/${userId}/rol`, { method: 'PATCH', body: JSON.stringify({ rol: nuevoRol }) });
     await cargarSoporte();
     await cargarUsuarios();
   } catch (err) { alert('Error al cambiar rol: ' + err.message); }
+}
+
+// ── MODAL DE CONFIRMACIÓN ADMIN ───────────────────────────────────────────────
+function mostrarModalConfirmAdmin({ titulo, mensaje, onConfirm, onCancel, soloInfo = false }) {
+  // Eliminar modal previo si existe
+  document.getElementById('modal-confirm-admin')?.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modal-confirm-admin';
+  modal.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(15,23,42,0.7);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;animation:fadeIn .15s ease;
+  `;
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:18px;padding:28px 24px;max-width:400px;width:100%;
+                box-shadow:0 24px 64px rgba(15,23,42,0.25);position:relative;">
+      <h3 style="font-size:1rem;font-weight:800;color:#0f172a;margin:0 0 12px;line-height:1.3;">${titulo}</h3>
+      <p style="font-size:0.88rem;color:#475569;line-height:1.6;margin:0 0 22px;">${mensaje}</p>
+      <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+        ${soloInfo ? `
+          <button onclick="document.getElementById('modal-confirm-admin').remove()"
+            class="btn btn-primario" style="min-height:42px;padding:0 24px;">
+            Entendido
+          </button>
+        ` : `
+          <button onclick="document.getElementById('modal-confirm-admin').remove();(window._cancelConfirm&&window._cancelConfirm())"
+            class="btn btn-outline" style="min-height:42px;padding:0 20px;">
+            Cancelar
+          </button>
+          <button onclick="document.getElementById('modal-confirm-admin').remove();(window._okConfirm&&window._okConfirm())"
+            class="btn btn-peligro" style="min-height:42px;padding:0 20px;background:#ef4444;color:#fff;border-color:#ef4444;">
+            Sí, asignar admin
+          </button>
+        `}
+      </div>
+    </div>
+  `;
+
+  window._okConfirm     = onConfirm;
+  window._cancelConfirm = onCancel;
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      modal.remove();
+      onCancel && onCancel();
+    }
+  });
+  document.body.appendChild(modal);
 }
 
 // ── SOPORTE ───────────────────────────────────────────────────────────────────
