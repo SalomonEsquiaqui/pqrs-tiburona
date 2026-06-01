@@ -638,3 +638,19 @@ body {
   .nav-bottom-mobile .nav-item .nav-emoji { font-size: 1.1rem; }
   .nav-bottom-mobile .nav-item .nav-label { font-size: 0.52rem; }
 }
+/* ── ADJUNTO MULTIMEDIA ── */
+.adjunto-wrap {
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--gris-claro, #f8fafc);
+  border-radius: 12px;
+  border: 1.5px solid var(--gris-medio, #e2e8f0);
+}
+.adjunto-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 6px;
+}

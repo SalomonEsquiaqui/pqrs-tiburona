@@ -207,7 +207,9 @@ async function verDetalleSoporte(asignacionId) {
       <div><strong>Prioridad</strong><br><span class="badge prioridad-${a.prioridad}">${a.prioridad}</span></div>
     </div>
     <div class="detalle-campo"><strong>Asunto</strong><p>${pqrs.asunto}</p></div>
-    <div class="detalle-campo"><strong>Descripción</strong><p style="white-space:pre-wrap;">${pqrs.descripcion}</p></div>
+    <div class="detalle-campo"><strong>Área</strong><p>${pqrs.area||'—'}</p></div>
+    <div class="detalle-campo"><strong>Descripción</strong><p style="white-space:pre-wrap;line-height:1.6;">${pqrs.descripcion}</p></div>
+    ${renderAdjunto(pqrs.imagen_url)}
     <hr style="margin:16px 0;border:none;border-top:1px solid var(--gris-medio);">
     <h4 style="margin-bottom:10px;">💬 Historial de respuestas</h4>
     ${respuestas?.length
@@ -480,3 +482,106 @@ function initNotifSoporte() {
     if (!wrap.contains(e.target)) panel?.classList.remove('open');
   });
 }
+// ── VIEWER MULTIMEDIA (soporte) ──
+
+// ── VIEWER MULTIMEDIA UNIVERSAL ──────────────────────────────────────────────
+function renderAdjunto(url) {
+  if (!url) return '';
+  const ext = url.split('.').pop().toLowerCase().split('?')[0];
+  const isVideo = ['mp4','mov','avi','webm'].includes(ext);
+  const isAudio = ['mp3','wav','ogg','m4a'].includes(ext);
+  const isPDF   = ext === 'pdf';
+
+  if (isVideo) return `
+    <div class="adjunto-wrap">
+      <p class="adjunto-label">🎬 Video adjunto</p>
+      <video controls playsinline
+        style="width:100%;max-height:300px;border-radius:12px;background:#000;margin-top:6px;outline:none;"
+        preload="metadata">
+        <source src="${url}">
+        <p style="color:#94a3b8;font-size:0.85rem;">Tu navegador no soporta este video.
+          <a href="${url}" target="_blank" style="color:#3b82f6;">Descargar</a>
+        </p>
+      </video>
+      <a href="${url}" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:0.8rem;color:#3b82f6;">
+        ⬇️ Descargar video
+      </a>
+    </div>`;
+
+  if (isAudio) return `
+    <div class="adjunto-wrap">
+      <p class="adjunto-label">🎵 Audio adjunto</p>
+      <audio controls style="width:100%;margin-top:6px;border-radius:8px;" preload="metadata">
+        <source src="${url}">
+        <p style="color:#94a3b8;font-size:0.85rem;">Tu navegador no soporta audio.
+          <a href="${url}" target="_blank" style="color:#3b82f6;">Descargar</a>
+        </p>
+      </audio>
+      <a href="${url}" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:0.8rem;color:#3b82f6;">
+        ⬇️ Descargar audio
+      </a>
+    </div>`;
+
+  if (isPDF) return `
+    <div class="adjunto-wrap">
+      <p class="adjunto-label">📄 PDF adjunto</p>
+      <div style="border:1.5px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-top:6px;">
+        <iframe src="${url}" style="width:100%;height:420px;border:none;display:block;"
+          title="PDF adjunto">
+        </iframe>
+      </div>
+      <a href="${url}" target="_blank" rel="noopener"
+        class="btn btn-outline btn-sm" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;">
+        🔗 Abrir en nueva pestaña
+      </a>
+    </div>`;
+
+  // Imagen por defecto
+  return `
+    <div class="adjunto-wrap">
+      <p class="adjunto-label">📎 Imagen adjunta</p>
+      <img src="${url}" alt="Adjunto"
+        style="width:100%;max-height:280px;object-fit:contain;border-radius:12px;
+               cursor:zoom-in;background:#f8fafc;border:1.5px solid #e2e8f0;margin-top:6px;"
+        onclick="abrirLightbox('${url}')"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <p style="display:none;color:#94a3b8;font-size:0.85rem;text-align:center;padding:20px 0;">
+        No se pudo cargar la imagen.
+        <a href="${url}" target="_blank" style="color:#3b82f6;">Ver enlace</a>
+      </p>
+    </div>`;
+}
+
+// ── LIGHTBOX IMAGEN ───────────────────────────────────────────────────────────
+function abrirLightbox(url) {
+  const overlay = document.createElement('div');
+  overlay.id = 'lightbox-overlay';
+  overlay.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(0,0,0,0.92);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;cursor:zoom-out;
+    animation: fadeIn 0.15s ease;
+  `;
+  overlay.innerHTML = `
+    <button onclick="document.getElementById('lightbox-overlay').remove()"
+      style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);
+             border:none;color:#fff;width:40px;height:40px;border-radius:50%;
+             font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      ×
+    </button>
+    <img src="${url}"
+      style="max-width:92vw;max-height:88vh;border-radius:10px;
+             box-shadow:0 32px 64px rgba(0,0,0,0.6);object-fit:contain;">
+  `;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', esc); }
+  });
+  document.body.appendChild(overlay);
+}
+
+// Alias para compatibilidad con código existente
+function verImagenCompleta(url) { abrirLightbox(url); }
