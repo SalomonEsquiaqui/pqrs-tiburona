@@ -3,10 +3,36 @@ const { supabase, supabaseAdmin } = require('../config/supabase');
 // ─── REGISTRO ───────────────────────────────────────────────────────────────
 const register = async (req, res) => {
   try {
-    const { nombre, email, password, telefono, rol, pin } = req.body;
+    const { nombre, email, password, telefono, tipo_identificacion, numero_identificacion, rol, pin } = req.body;
 
     if (!nombre || !email || !password) {
       return res.status(400).json({ error: 'Nombre, email y contraseña son obligatorios.' });
+    }
+    if (!tipo_identificacion || !numero_identificacion) {
+      return res.status(400).json({ error: 'El tipo y número de identificación son obligatorios.' });
+    }
+
+    // ── Validar unicidad: email ─────────────────────────────────────────────
+    const { data: emailExiste } = await supabaseAdmin
+      .from('users').select('id').eq('email', email).maybeSingle();
+    if (emailExiste) {
+      return res.status(409).json({ error: '❌ Este correo electrónico ya está registrado.' });
+    }
+
+    // ── Validar unicidad: teléfono ──────────────────────────────────────────
+    if (telefono) {
+      const { data: telExiste } = await supabaseAdmin
+        .from('users').select('id').eq('telefono', telefono).maybeSingle();
+      if (telExiste) {
+        return res.status(409).json({ error: '❌ Este número de teléfono ya está registrado.' });
+      }
+    }
+
+    // ── Validar unicidad: número de identificación ──────────────────────────
+    const { data: idExiste } = await supabaseAdmin
+      .from('users').select('id').eq('numero_identificacion', numero_identificacion).maybeSingle();
+    if (idExiste) {
+      return res.status(409).json({ error: '❌ Este número de identificación ya está registrado.' });
     }
 
     const rolFinal = ['admin', 'soporte'].includes(rol) ? rol : 'usuario';
@@ -46,11 +72,13 @@ const register = async (req, res) => {
     const { error: profileError } = await supabaseAdmin
       .from('users')
       .insert({
-        id:       authData.user.id,
+        id:                   authData.user.id,
         nombre,
         email,
-        telefono: telefono || '',
-        rol:      rolFinal
+        telefono:             telefono || '',
+        tipo_identificacion,
+        numero_identificacion,
+        rol:                  rolFinal
       });
 
     if (profileError) {
