@@ -30,45 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Redirigir si ya hay sesión ──────────────────────────────────────────
   db.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
-      // Manejar callback de OAuth (Google) — crear perfil si es usuario nuevo
-      const isOAuth = session.user?.app_metadata?.provider === 'google';
-      if (isOAuth) {
-        const { data: perfil } = await db.from('users').select('rol').eq('id', session.user.id).single();
-        if (!perfil) {
-          // Primera vez con Google — crear registro en tabla users
-          const nombre = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
-          await db.from('users').insert({
-            id:     session.user.id,
-            nombre: nombre,
-            email:  session.user.email,
-            rol:    'usuario',
-            telefono: null
-          });
-          redirigirPorRol('usuario');
-        } else {
-          redirigirPorRol(perfil.rol);
-        }
-        return;
-      }
       const { data: perfil } = await db.from('users').select('rol').eq('id', session.user.id).single();
       if (perfil) redirigirPorRol(perfil.rol);
     }
   });
 
-  // ── LOGIN CON GOOGLE ──────────────────────────────────────────────────
-  window.loginConGoogle = async function() {
-    try {
-      const { error } = await db.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/pages/index.html'
-        }
-      });
-      if (error) throw error;
-    } catch (err) {
-      mostrarMensaje('msg-login', '❌ Error al conectar con Google: ' + err.message, 'error');
-    }
-  };
 
   // ── OJO — mostrar/ocultar contraseña ──────────────────────────────────
   document.querySelectorAll('.btn-ojo').forEach(btn => {
