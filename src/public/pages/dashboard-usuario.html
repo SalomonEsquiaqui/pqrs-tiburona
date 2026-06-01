@@ -281,17 +281,7 @@
     </section>
 
   </main>
-</div>
 
-<!-- ✅ contenido-detalle — necesario para verDetalle() en pqrs.js -->
-<div class="modal-overlay" id="modal-detalle">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>📋 Detalle de solicitud</h2>
-      <button class="btn-cerrar" onclick="cerrarModal('modal-detalle')">×</button>
-    </div>
-    <div id="contenido-detalle"></div>
-  </div>
   <!-- NAV INFERIOR MÓVIL -->
   <nav class="nav-bottom-mobile" id="nav-bottom">
     <button class="nav-item activo" onclick="mostrarSeccion('mis-pqrs', this)" data-seccion="mis-pqrs">
@@ -307,6 +297,18 @@
       <span class="nav-label">Consultar</span>
     </button>
   </nav>
+
+</div>
+
+<!-- ✅ contenido-detalle — necesario para verDetalle() en pqrs.js -->
+<div class="modal-overlay" id="modal-detalle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📋 Detalle de solicitud</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-detalle')">×</button>
+    </div>
+    <div id="contenido-detalle"></div>
+  </div>
 
 </div>
 
@@ -407,28 +409,7 @@ document.getElementById('buscar-input')?.addEventListener('input', function() {
 });
 </script>
 
-<script>
-(function() {
-  document.addEventListener('DOMContentLoaded', () => {
-    const navItems = document.querySelectorAll('.nav-bottom-mobile .nav-item');
-    navItems.forEach(btn => {
-      btn.addEventListener('click', () => {
-        navItems.forEach(b => b.classList.remove('activo'));
-        btn.classList.add('activo');
-      });
-    });
-    document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const onclick = btn.getAttribute('onclick') || '';
-        const match = onclick.match(/['"]([\w-]+)['"]/);
-        if (match) {
-          navItems.forEach(b => b.classList.toggle('activo', b.dataset.seccion === match[1]));
-        }
-      });
-    });
-  });
-})();
-</script>
+
 
 
 <script>
