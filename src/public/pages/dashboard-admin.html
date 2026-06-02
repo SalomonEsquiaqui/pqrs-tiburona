@@ -133,9 +133,9 @@
       <div class="page-header"><h1>👥 Usuarios registrados</h1></div>
       <div class="tabla-wrap">
         <table>
-          <thead><tr><th>Foto</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Cambiar rol</th></tr></thead>
+          <thead><tr><th>Usuario</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Cambiar rol</th><th>Acciones</th></tr></thead>
           <tbody id="tabla-usuarios">
-            <tr><td colspan="5" style="text-align:center;padding:24px;color:#aaa;">Cargando...</td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:#aaa;">Cargando...</td></tr>
           </tbody>
         </table>
       </div>
@@ -265,6 +265,17 @@
     </button>
   </nav>
 
+</div>
+
+<!-- MODAL INFO USUARIO -->
+<div class="modal-overlay" id="modal-info-usuario">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h2>👤 Perfil de usuario</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-info-usuario')">×</button>
+    </div>
+    <div id="info-usuario-contenido" style="padding:4px 0;"></div>
+  </div>
 </div>
 
 <!-- MODAL ASIGNAR -->

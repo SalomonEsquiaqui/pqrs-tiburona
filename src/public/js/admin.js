@@ -190,25 +190,30 @@ async function cargarUsuarios() {
   if (!data?.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;">Sin usuarios</td></tr>'; return; }
   tbody.innerHTML = data.map(u => {
     const iniciales = (u.nombre || 'U').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
-    const avatarHTML = u.avatar_url
-      ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:36px;height:36px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.75rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`
-      : `<span style="display:inline-flex;width:36px;height:36px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.75rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`;
+    const avatarCell = u.avatar_url
+      ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'"><span style="display:none;width:34px;height:34px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.72rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`
+      : `<span style="display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.72rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`;
+    const uJson = encodeURIComponent(JSON.stringify({ id: u.id, nombre: u.nombre, email: u.email, telefono: u.telefono, rol: u.rol, avatar_url: u.avatar_url || '', created_at: u.created_at }));
     return `<tr>
-      <td><div style="display:flex;align-items:center;gap:10px;">${avatarHTML}<span>${u.nombre}</span></div></td>
-      <td>${u.email}</td>
-      <td>${u.telefono || '—'}</td>
+      <td><div style="display:flex;align-items:center;gap:10px;">${avatarCell}<span style="font-weight:500;">${u.nombre}</span></div></td>
+      <td style="font-size:0.83rem;color:#64748b;">${u.email}</td>
+      <td style="font-size:0.83rem;">${u.telefono || '—'}</td>
       <td><span class="badge badge-${u.rol}">${u.rol}</span></td>
       <td>
         ${u.rol === 'admin'
-          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;">
-               🔒 Admin (no editable)
-             </span>`
+          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;">🔒 Admin (no editable)</span>`
           : `<select onchange="cambiarRol('${u.id}',this.value)" style="padding:5px 8px;border:1px solid var(--gris-medio);border-radius:6px;font-size:0.8rem;">
                <option value="usuario" ${u.rol==='usuario'?'selected':''}>Usuario</option>
                <option value="soporte" ${u.rol==='soporte'?'selected':''}>Soporte</option>
                <option value="admin">Administrador</option>
              </select>`
         }
+      </td>
+      <td>
+        <button onclick="verInfoUsuario('${uJson}')"
+          style="background:rgba(99,102,241,0.07);color:#6366f1;border:1px solid rgba(99,102,241,0.22);padding:5px 11px;border-radius:7px;font-size:0.75rem;cursor:pointer;font-weight:600;white-space:nowrap;">
+          ℹ️ Info
+        </button>
       </td>
     </tr>`;
   }).join('');
@@ -241,6 +246,7 @@ function _renderUsuariosMobile(data) {
     const avatarHTML = u.avatar_url
       ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid ${color}40;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:42px;height:42px;border-radius:50%;background:${color}18;color:${color};font-size:0.8rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`
       : `<span style="display:inline-flex;width:42px;height:42px;border-radius:50%;background:${color}18;color:${color};font-size:0.8rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`;
+    const uJson = encodeURIComponent(JSON.stringify({ id: u.id, nombre: u.nombre, email: u.email, telefono: u.telefono, rol: u.rol, avatar_url: u.avatar_url || '', created_at: u.created_at }));
     return `
     <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${color};">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
@@ -256,15 +262,18 @@ function _renderUsuariosMobile(data) {
       <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">📞 ${u.telefono||'—'}</p>
       <div style="display:flex;align-items:center;gap:8px;">
         ${u.rol === 'admin'
-          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;width:100%;display:block;text-align:center;">🔒 Administrador (no editable)</span>`
-          : `<span style="font-size:0.75rem;color:#64748b;flex-shrink:0;">Cambiar rol:</span>
-             <select onchange="cambiarRol('${u.id}',this.value)"
+          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;flex:1;display:block;text-align:center;">🔒 Administrador (no editable)</span>`
+          : `<select onchange="cambiarRol('${u.id}',this.value)"
                style="flex:1;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:#fff;min-height:40px;">
                <option value="usuario" ${u.rol==='usuario'?'selected':''}>👤 Usuario</option>
                <option value="soporte" ${u.rol==='soporte'?'selected':''}>🛠️ Soporte</option>
                <option value="admin">⚙️ Administrador</option>
              </select>`
         }
+        <button onclick="verInfoUsuario('${uJson}')"
+          style="background:rgba(99,102,241,0.07);color:#6366f1;border:1px solid rgba(99,102,241,0.22);padding:8px 13px;border-radius:8px;font-size:0.75rem;cursor:pointer;font-weight:600;flex-shrink:0;">
+          ℹ️
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -785,3 +794,64 @@ function abrirLightbox(url) {
 
 // Alias para compatibilidad con código existente
 function verImagenCompleta(url) { abrirLightbox(url); }
+
+// ── INFO USUARIO (modal admin) ────────────────────────────────────────────────
+function verInfoUsuario(uJson) {
+  const u = JSON.parse(decodeURIComponent(uJson));
+  const iniciales = (u.nombre || 'U').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+  const rolColor  = { usuario:'#3b82f6', soporte:'#8b5cf6', admin:'#059669' }[u.rol] || '#64748b';
+  const rolLabel  = { usuario:'Usuario', soporte:'Soporte', admin:'Administrador' }[u.rol] || u.rol;
+
+  const avatarHTML = u.avatar_url
+    ? `<img src="${u.avatar_url}" alt="${u.nombre}"
+         style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid ${rolColor}30;"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+       <span style="display:none;width:72px;height:72px;border-radius:50%;background:${rolColor}15;color:${rolColor};font-size:1.3rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`
+    : `<span style="display:inline-flex;width:72px;height:72px;border-radius:50%;background:${rolColor}15;color:${rolColor};font-size:1.3rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`;
+
+  const fechaReg = u.created_at
+    ? new Date(u.created_at).toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric' })
+    : '—';
+  const idCorto = u.id ? u.id.slice(0,8).toUpperCase() : '—';
+
+  document.getElementById('info-usuario-contenido').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid #f1f5f9;">
+      ${avatarHTML}
+      <div>
+        <strong style="font-size:1.05rem;color:#0f172a;display:block;margin-bottom:4px;">${u.nombre}</strong>
+        <span style="background:${rolColor}15;color:${rolColor};border:1px solid ${rolColor}30;padding:3px 12px;border-radius:99px;font-size:0.72rem;font-weight:700;">${rolLabel}</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:1rem;flex-shrink:0;width:22px;">✉️</span>
+        <div style="min-width:0;">
+          <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">Correo</p>
+          <p style="font-size:0.88rem;color:#334155;margin:0;word-break:break-all;">${u.email}</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:1rem;flex-shrink:0;width:22px;">📞</span>
+        <div>
+          <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">Teléfono</p>
+          <p style="font-size:0.88rem;color:#334155;margin:0;">${u.telefono || '—'}</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:1rem;flex-shrink:0;width:22px;">📅</span>
+        <div>
+          <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">Fecha de registro</p>
+          <p style="font-size:0.88rem;color:#334155;margin:0;">${fechaReg}</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:1rem;flex-shrink:0;width:22px;">🪪</span>
+        <div>
+          <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">ID de usuario</p>
+          <code style="font-size:0.78rem;color:#475569;background:#f1f5f9;padding:3px 8px;border-radius:5px;letter-spacing:.05em;">${idCorto}…</code>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modal-info-usuario').classList.add('abierto');
+}
