@@ -122,6 +122,12 @@ async function initPerfil() {
             <h2 id="perfil-nombre-display">${perfil.nombre || '—'}</h2>
             <span class="perfil-badge-rol rol-${rol}">${rolLabel}</span>
             <p class="perfil-avatar-hint">Toca la foto para cambiarla · JPG, PNG o WEBP · Máx. 2 MB</p>
+            ${perfil.avatar_url ? `
+            <button id="btn-eliminar-foto" onclick="eliminarFotoPerfil()" type="button"
+              style="margin-top:10px;background:none;border:1px solid #fca5a5;color:#ef4444;padding:5px 13px;border-radius:7px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:background .18s,color .18s;"
+              onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'">
+              🗑 Eliminar foto
+            </button>` : ''}
           </div>
         </div>
         <div id="perfil-avatar-toast" class="perfil-toast"></div>
@@ -344,6 +350,56 @@ async function subirFotoPerfil(e) {
   }
 
   e.target.value = '';
+}
+
+// ── Eliminar foto de perfil ─────────────────────────────────
+async function eliminarFotoPerfil() {
+  const btn = document.getElementById('btn-eliminar-foto');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.textContent = '⏳ Eliminando…';
+
+  try {
+    // 1. Limpiar avatar_url en la BD
+    const { error: dbErr } = await db
+      .from('users')
+      .update({ avatar_url: null })
+      .eq('id', _perfilDatos.uid);
+    if (dbErr) throw new Error(dbErr.message);
+
+    // 2. Animación de desvanecido sobre la imagen
+    const ring = document.querySelector('.perfil-avatar-ring');
+    const img  = ring?.querySelector('.perfil-avatar-img');
+    if (img) {
+      img.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+      img.style.opacity    = '0';
+      img.style.transform  = 'scale(0.85)';
+      await new Promise(r => setTimeout(r, 460));
+      img.remove();
+    }
+
+    // 3. Insertar iniciales con fade-in
+    const iniciales = (_perfilDatos.nombre || 'U')
+      .split(' ').slice(0,2).map(p => p[0]).join('').toUpperCase();
+    const span = document.createElement('div');
+    span.className = 'perfil-avatar-initials';
+    span.id = 'perfil-avatar-initials';
+    span.textContent = iniciales;
+    span.style.opacity = '0';
+    span.style.transition = 'opacity 0.35s ease';
+    ring.insertBefore(span, ring.querySelector('.perfil-avatar-btn'));
+    requestAnimationFrame(() => { span.style.opacity = '1'; });
+
+    // 4. Quitar botón eliminar
+    btn.remove();
+
+    _perfilDatos.avatar_url = null;
+    mostrarPerfilToast('perfil-avatar-toast', '✅ Foto de perfil eliminada.', 'exito');
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = '🗑 Eliminar foto';
+    mostrarPerfilToast('perfil-avatar-toast', '❌ ' + (err.message || 'Error al eliminar.'), 'error');
+  }
 }
 
 // ── Modal teléfono — abrir ────────────────────────────────
