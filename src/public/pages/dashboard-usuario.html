@@ -97,7 +97,7 @@
 
       <!-- Sistema de notificaciones -->
       <div id="notif-sidebar-container"></div>
-      <!-- ✅ BOTÓN REFRESCAR — necesario para refrescarDatos() en pqrs.js -->
+      <!-- <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> BOTÓN REFRESCAR — necesario para refrescarDatos() en pqrs.js -->
       <button id="btn-refrescar" class="btn-refrescar" onclick="refrescarDatos()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -157,7 +157,7 @@
         <table>
           <thead>
             <tr>
-              <!-- ✅ 7 columnas — coincide con colspan="7" en pqrs.js -->
+              <!-- <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> 7 columnas — coincide con colspan="7" en pqrs.js -->
               <th>Radicado</th>
               <th>Tipo</th>
               <th>Asunto</th>
@@ -180,7 +180,7 @@
         <h1>Nueva solicitud PQRS</h1>
       </div>
       <div class="card" style="max-width:640px;">
-        <!-- ✅ msg-nueva-pqrs — necesario para mostrarMensaje() / ocultarMensaje() -->
+        <!-- <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> msg-nueva-pqrs — necesario para mostrarMensaje() / ocultarMensaje() -->
         <div id="msg-nueva-pqrs" class="mensaje"></div>
 
         <form id="form-nueva-pqrs">
@@ -188,11 +188,11 @@
             <label>Tipo de solicitud</label>
             <select id="pqrs-tipo" required>
               <option value="">Selecciona el tipo</option>
-              <option value="peticion">📝 Petición (7 días hábiles)</option>
-              <option value="queja">😤 Queja (4 días hábiles)</option>
-              <option value="reclamo">⚡ Reclamo (5 días hábiles)</option>
-              <option value="sugerencia">💡 Sugerencia (10 días hábiles)</option>
-              <option value="felicitacion">🌟 Felicitación (10 días hábiles)</option>
+              <option value="peticion"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> Petición (7 días hábiles)</option>
+              <option value="queja"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span> Queja (4 días hábiles)</option>
+              <option value="reclamo"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Reclamo (5 días hábiles)</option>
+              <option value="sugerencia"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span> Sugerencia (10 días hábiles)</option>
+              <option value="felicitacion"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Felicitación (10 días hábiles)</option>
             </select>
           </div>
           <div class="form-grupo">
@@ -221,27 +221,27 @@
             <label>Fecha y hora del hecho <span style="font-weight:400;color:#94a3b8;">(opcional)</span></label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <div>
-                <label for="pqrs-fecha-hecho" style="font-size:0.76rem;color:#94a3b8;font-weight:500;display:block;margin-bottom:4px;">📅 Fecha</label>
+                <label for="pqrs-fecha-hecho" style="font-size:0.76rem;color:#94a3b8;font-weight:500;display:block;margin-bottom:4px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Fecha</label>
                 <input type="date" id="pqrs-fecha-hecho" style="width:100%;">
               </div>
               <div>
-                <label for="pqrs-hora-hecho" style="font-size:0.76rem;color:#94a3b8;font-weight:500;display:block;margin-bottom:4px;">🕐 Hora</label>
+                <label for="pqrs-hora-hecho" style="font-size:0.76rem;color:#94a3b8;font-weight:500;display:block;margin-bottom:4px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Hora</label>
                 <input type="time" id="pqrs-hora-hecho" style="width:100%;">
               </div>
             </div>
             <small style="color:#94a3b8;font-size:0.76rem;margin-top:4px;display:block;">Indica cuándo ocurrió el hecho que motiva tu solicitud.</small>
           </div>
 
-          <!-- ✅ ZONA DE UPLOAD MULTIMEDIA — admite jpg, png, mp4, mp3, pdf -->
+          <!-- <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> ZONA DE UPLOAD MULTIMEDIA — admite jpg, png, mp4, mp3, pdf -->
           <div class="form-grupo">
             <label>Archivo adjunto <span style="font-weight:400;color:#94a3b8;">(opcional)</span></label>
 
             <!-- Chips de tipo de archivo -->
             <div class="media-type-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-              <span class="media-chip active" data-type="imagen" onclick="cambiarTipoMedia('imagen',this)">🖼️ Imagen</span>
-              <span class="media-chip" data-type="video" onclick="cambiarTipoMedia('video',this)">🎬 Video</span>
-              <span class="media-chip" data-type="audio" onclick="cambiarTipoMedia('audio',this)">🎵 Audio</span>
-              <span class="media-chip" data-type="pdf" onclick="cambiarTipoMedia('pdf',this)">📄 PDF</span>
+              <span class="media-chip active" data-type="imagen" onclick="cambiarTipoMedia('imagen',this)"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> Imagen</span>
+              <span class="media-chip" data-type="video" onclick="cambiarTipoMedia('video',this)"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span> Video</span>
+              <span class="media-chip" data-type="audio" onclick="cambiarTipoMedia('audio',this)"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> Audio</span>
+              <span class="media-chip" data-type="pdf" onclick="cambiarTipoMedia('pdf',this)"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> PDF</span>
             </div>
 
             <div id="upload-area" class="upload-area">
@@ -251,12 +251,12 @@
               <p id="upload-label-main">Arrastra una imagen aquí o <strong>haz clic para seleccionar</strong></p>
               <p id="upload-label-hint" style="font-size:0.76rem;margin-top:4px;color:#94a3b8;">JPG, PNG, WEBP · Máx. 5 MB</p>
             </div>
-            <!-- ✅ upload-preview — necesario para procesarArchivo() en pqrs.js -->
+            <!-- <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> upload-preview — necesario para procesarArchivo() en pqrs.js -->
             <div id="upload-preview"></div>
           </div>
 
           <button type="submit" id="btn-enviar-pqrs" class="btn btn-primario btn-full">
-            📤 Enviar solicitud
+            <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span> Enviar solicitud
           </button>
         </form>
       </div>
@@ -313,7 +313,7 @@
 
 </div>
 
-<!-- ✅ contenido-detalle — necesario para verDetalle() en pqrs.js -->
+<!-- <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> contenido-detalle — necesario para verDetalle() en pqrs.js -->
 <div class="modal-overlay" id="modal-detalle">
   <div class="modal">
     <div class="modal-header">
@@ -340,7 +340,7 @@
 <div class="modal-overlay" id="modal-valoracion">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header">
-      <h2>⭐ Valorar atención</h2>
+      <h2><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Valorar atención</h2>
       <button class="btn-cerrar" onclick="cerrarModal('modal-valoracion')">×</button>
     </div>
     <div style="text-align:center;padding:8px 0 16px;">
@@ -393,7 +393,7 @@ async function ejecutarBusquedaGlobal() {
       <td>${p.asunto}</td>
       <td>${formatFecha(p.created_at)}</td>
       <td><span class="estado estado-${p.estado.replace('_','-')}">${p.estado.replace('_',' ')}</span></td>
-      <td><button class="btn btn-sm btn-primario" onclick="verDetalle('${p.id}')">👁 Ver</button></td>
+      <td><button class="btn btn-sm btn-primario" onclick="verDetalle('${p.id}')"><span class="ni ni-sm" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span> Ver</button></td>
     </tr>`).join('');
   } catch (e) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:red;">Error al buscar.</td></tr>';
