@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/alerts.css">
+  <link rel="stylesheet" href="/css/perfil.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
   <!-- Estilos nav móvil usuario — sin media query para máxima compatibilidad iOS -->
@@ -83,6 +84,9 @@
       </button>
       <button class="nav-item" onclick="mostrarSeccion('buscar-pqrs', this)">
         🔍 Consultar PQRS
+      </button>
+      <button class="nav-item" onclick="mostrarSeccion('perfil', this)">
+        ⚙️ Mi cuenta
       </button>
     </nav>
     <div class="sidebar-user">
@@ -280,6 +284,9 @@
       </div>
     </section>
 
+    <!-- ===== PERFIL / MI CUENTA ===== -->
+    <section id="sec-perfil" style="display:none;"></section>
+
   </main>
 
   <!-- NAV INFERIOR MÓVIL -->
@@ -295,6 +302,10 @@
     <button class="nav-item" onclick="mostrarSeccion('buscar-pqrs', this)" data-seccion="buscar-pqrs">
       <span class="nav-emoji">🔍</span>
       <span class="nav-label">Consultar</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccion('perfil', this)" data-seccion="perfil">
+      <span class="nav-emoji">⚙️</span>
+      <span class="nav-label">Cuenta</span>
     </button>
   </nav>
 
@@ -346,6 +357,7 @@
 <script src="/js/utils.js"></script>
 <script src="/js/notifications.js"></script>
 <script src="/js/pqrs.js"></script>
+<script src="/js/perfil.js"></script>
 <script>
 // Búsqueda global en sección de consulta
 async function ejecutarBusquedaGlobal() {

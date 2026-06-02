@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/alerts.css">
+  <link rel="stylesheet" href="/css/perfil.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <style>
     @media (max-width: 768px) {
@@ -61,6 +62,9 @@
       <button class="nav-item" onclick="mostrarSeccionSoporte('resueltas', this)">
         ✅ Resueltas
       </button>
+      <button class="nav-item" onclick="mostrarSeccionSoporte('perfil', this)">
+        ⚙️ Mi cuenta
+      </button>
     </nav>
     <div class="sidebar-user">
       <strong id="nombre-soporte">Soporte</strong>
@@ -102,6 +106,9 @@
       </div>
     </section>
 
+    <!-- PERFIL -->
+    <section id="sec-perfil" style="display:none;"></section>
+
   </main>
 
   <!-- NAV INFERIOR MÓVIL -->
@@ -114,6 +121,10 @@
     <button class="nav-item" onclick="mostrarSeccionSoporte('resueltas', this)" data-seccion="resueltas">
       <span class="nav-emoji">✅</span>
       <span class="nav-label">Resueltas</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionSoporte('perfil', this)" data-seccion="perfil">
+      <span class="nav-emoji">⚙️</span>
+      <span class="nav-label">Cuenta</span>
     </button>
   </nav>
 </div>
@@ -158,6 +169,7 @@
 <script src="/js/utils.js"></script>
 <script src="/js/notifications.js"></script>
 <script src="/js/soporte.js"></script>
+<script src="/js/perfil.js"></script>
 <script>
 (function() {
   document.addEventListener('DOMContentLoaded', () => {

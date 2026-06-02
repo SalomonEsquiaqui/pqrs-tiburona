@@ -294,6 +294,7 @@ function mostrarSeccionSoporte(id, btn) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('activo'));
   document.getElementById(`sec-${id}`).style.display = 'block';
   if (btn) btn.classList.add('activo');
+  if (id === 'perfil') initPerfil();
 }
 function cerrarModal(id) { document.getElementById(id)?.classList.remove('abierto'); }
 function cerrarSesionLocal() { cerrarSesion(db); }

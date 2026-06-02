@@ -516,6 +516,7 @@ function mostrarSeccion(id, btn) {
   // Marcar activo en sidebar Y en nav inferior
   document.querySelectorAll(`[data-seccion="${id}"], [onclick*="'${id}'"]`).forEach(b => b.classList.add('activo'));
   if (btn) btn.classList.add('activo');
+  if (id === 'perfil') initPerfil();
 }
 
 function cerrarModal(id) { document.getElementById(id)?.classList.remove('abierto'); }

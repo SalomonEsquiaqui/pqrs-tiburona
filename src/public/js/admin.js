@@ -445,6 +445,7 @@ function mostrarSeccionAdmin(id, btn) {
   if (id === 'pines')        cargarPines();
   if (id === 'usuarios')     cargarUsuarios();
   if (id === 'soporte-team') cargarSoporte();
+  if (id === 'perfil')       initPerfil();
 }
 
 
