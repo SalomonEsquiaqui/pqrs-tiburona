@@ -187,10 +187,14 @@ async function cargarUsuarios() {
   const cards = document.getElementById('cards-mobile-usuarios');
   if (cards) cards.style.display = 'none';
 
-  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;">Sin usuarios</td></tr>'; return; }
-  tbody.innerHTML = data.map(u => `
-    <tr>
-      <td>${u.nombre}</td>
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#aaa;">Sin usuarios</td></tr>'; return; }
+  tbody.innerHTML = data.map(u => {
+    const iniciales = (u.nombre || 'U').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+    const avatarHTML = u.avatar_url
+      ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:36px;height:36px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.75rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`
+      : `<span style="display:inline-flex;width:36px;height:36px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.75rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`;
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px;">${avatarHTML}<span>${u.nombre}</span></div></td>
       <td>${u.email}</td>
       <td>${u.telefono || '—'}</td>
       <td><span class="badge badge-${u.rol}">${u.rol}</span></td>
@@ -206,7 +210,8 @@ async function cargarUsuarios() {
              </select>`
         }
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function _renderUsuariosMobile(data) {
@@ -232,13 +237,22 @@ function _renderUsuariosMobile(data) {
 
   cardsWrap.innerHTML = data.map(u => {
     const color = rolColor[u.rol] || '#64748b';
+    const iniciales = (u.nombre || 'U').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+    const avatarHTML = u.avatar_url
+      ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid ${color}40;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:42px;height:42px;border-radius:50%;background:${color}18;color:${color};font-size:0.8rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`
+      : `<span style="display:inline-flex;width:42px;height:42px;border-radius:50%;background:${color}18;color:${color};font-size:0.8rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`;
     return `
     <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${color};">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <strong style="font-size:0.92rem;color:#0f172a;">${u.nombre}</strong>
-        <span style="background:${color}18;color:${color};border:1px solid ${color}40;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;">${u.rol}</span>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        ${avatarHTML}
+        <div style="min-width:0;flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <strong style="font-size:0.92rem;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.nombre}</strong>
+            <span style="background:${color}18;color:${color};border:1px solid ${color}40;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;flex-shrink:0;">${u.rol}</span>
+          </div>
+          <p style="font-size:0.8rem;color:#64748b;margin:2px 0 0;">✉️ ${u.email}</p>
+        </div>
       </div>
-      <p style="font-size:0.8rem;color:#64748b;margin-bottom:2px;">✉️ ${u.email}</p>
       <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">📞 ${u.telefono||'—'}</p>
       <div style="display:flex;align-items:center;gap:8px;">
         ${u.rol === 'admin'
@@ -366,15 +380,24 @@ async function cargarSoporte() {
     container.innerHTML = '<p style="color:#aaa;">No hay agentes. Asigna el rol "soporte" a un usuario.</p>';
     return;
   }
-  container.innerHTML = agenteSoporte.map(s => `
-    <div class="card card-agente">
-      <div class="agente-avatar">${s.nombre.charAt(0).toUpperCase()}</div>
-      <div>
-        <strong style="color:var(--azul-oscuro);">${s.nombre}</strong>
-        <small style="color:#888;display:block;">${s.email}</small>
+  container.innerHTML = agenteSoporte.map(s => {
+    const iniciales = (s.nombre || 'S').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+    const avatarHTML = s.avatar_url
+      ? `<img src="${s.avatar_url}" alt="${s.nombre}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--azul-suave);flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:52px;height:52px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.9rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`
+      : `<span style="display:inline-flex;width:52px;height:52px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.9rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`;
+    return `
+    <div class="card card-agente" style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        ${avatarHTML}
+        <div style="min-width:0;">
+          <strong style="color:var(--azul-oscuro);display:block;">${s.nombre}</strong>
+          <small style="color:#888;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.email}</small>
+          <span class="badge badge-soporte" style="margin-top:4px;display:inline-block;">Soporte</span>
+        </div>
       </div>
-      <span class="badge badge-soporte">Soporte</span>
-    </div>`).join('');
+      ${s.descripcion ? `<p style="font-size:0.8rem;color:#64748b;background:#f8fafc;border-radius:8px;padding:8px 10px;margin:0;line-height:1.5;border-left:3px solid var(--azul-suave);">${s.descripcion}</p>` : ''}
+    </div>`;
+  }).join('');
 }
 
 // ── MODAL ASIGNAR ─────────────────────────────────────────────────────────────

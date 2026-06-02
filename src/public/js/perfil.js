@@ -19,7 +19,7 @@ async function initPerfil() {
   let perfil = null;
   const { data: d1, error: e1 } = await db
     .from('users')
-    .select('nombre, telefono, rol, avatar_url')
+    .select('nombre, telefono, rol, avatar_url, descripcion')
     .eq('id', uid)
     .single();
 
@@ -64,6 +64,32 @@ async function initPerfil() {
   const avatarHTML = perfil.avatar_url
     ? `<img class="perfil-avatar-img" id="perfil-avatar-preview" src="${perfil.avatar_url}" alt="Foto de perfil">`
     : `<div class="perfil-avatar-initials" id="perfil-avatar-initials">${iniciales}</div>`;
+
+  // Bloque descripción — solo para soporte
+  const descBlock = rol === 'soporte' ? `
+    <!-- ── CARD DESCRIPCIÓN SOPORTE ── -->
+    <div class="perfil-card">
+      <div class="perfil-card-header">
+        <div class="perfil-card-header-icon" style="background:#ede9fe;color:#7c3aed;">🛠</div>
+        <div>
+          <h3>Descripción de soporte</h3>
+          <p>Áreas asignadas y funciones como agente de soporte</p>
+        </div>
+      </div>
+      <div class="perfil-card-body">
+        <div class="perfil-field">
+          <label>Descripción (visible para los usuarios)</label>
+          <textarea id="perfil-input-descripcion" rows="3" maxlength="300"
+            placeholder="Ej: Área de facturación y cobranzas. Atiendo solicitudes de pagos, ajustes de cuenta y reclamos relacionados con el servicio…"
+            style="resize:vertical;font-family:inherit;font-size:0.9rem;line-height:1.5;">${perfil.descripcion || ''}</textarea>
+          <span style="font-size:0.72rem;color:#94a3b8;text-align:right;display:block;margin-top:4px;"><span id="desc-count">${(perfil.descripcion||'').length}</span>/300</span>
+        </div>
+        <button class="perfil-save-btn" id="perfil-btn-desc" onclick="guardarDescripcion()" type="button" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+          💾 Guardar descripción
+        </button>
+        <div id="perfil-desc-toast" class="perfil-toast"></div>
+      </div>
+    </div>` : '';
 
   const seccion = document.getElementById('sec-perfil');
   if (!seccion) return;
@@ -142,6 +168,8 @@ async function initPerfil() {
       </div>
     </div>
 
+    ${descBlock}
+
   </div>
 
   <!-- ══ MODAL CONFIRMACIÓN TELÉFONO ══ -->
@@ -192,6 +220,15 @@ async function initPerfil() {
 
   // ── Listener: subir foto ──
   document.getElementById('perfil-file-input').addEventListener('change', subirFotoPerfil);
+
+  // Contador de caracteres descripción
+  const inputDesc = document.getElementById('perfil-input-descripcion');
+  if (inputDesc) {
+    inputDesc.addEventListener('input', () => {
+      const count = document.getElementById('desc-count');
+      if (count) count.textContent = inputDesc.value.length;
+    });
+  }
 }
 
 // ── Guardar nombre ─────────────────────────────────────────
@@ -230,6 +267,28 @@ async function guardarPerfil() {
   } finally {
     btn.disabled = false;
     btn.innerHTML = '💾 Guardar cambios';
+  }
+}
+
+// ── Guardar descripción soporte ────────────────────────────
+async function guardarDescripcion() {
+  const btn  = document.getElementById('perfil-btn-desc');
+  const desc = document.getElementById('perfil-input-descripcion')?.value.trim();
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Guardando…';
+  try {
+    await apiFetch(`/users/${_perfilDatos.uid}/perfil`, {
+      method: 'PATCH',
+      body: JSON.stringify({ descripcion: desc })
+    });
+    _perfilDatos.descripcion = desc;
+    mostrarPerfilToast('perfil-desc-toast', '✅ Descripción guardada correctamente.', 'exito');
+  } catch (e) {
+    mostrarPerfilToast('perfil-desc-toast', '❌ ' + (e.message || 'Error al guardar.'), 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '💾 Guardar descripción';
   }
 }
 

@@ -31,11 +31,12 @@ const cambiarRol = async (req, res) => {
 const actualizarPerfil = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, telefono, avatar_url } = req.body;
+    const { nombre, telefono, avatar_url, descripcion } = req.body;
     const campos = {};
-    if (nombre)     campos.nombre     = nombre;
-    if (telefono)   campos.telefono   = telefono;
-    if (avatar_url) campos.avatar_url = avatar_url;
+    if (nombre)                       campos.nombre     = nombre;
+    if (telefono)                     campos.telefono   = telefono;
+    if (avatar_url)                   campos.avatar_url = avatar_url;
+    if (descripcion !== undefined)    campos.descripcion = descripcion;
     if (!Object.keys(campos).length) return res.status(400).json({ error: 'Nada que actualizar.' });
 
     const { error } = await supabaseAdmin.from('users').update(campos).eq('id', id);

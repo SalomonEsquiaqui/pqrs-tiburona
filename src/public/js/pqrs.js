@@ -302,6 +302,28 @@ async function verDetalle(id) {
   const { data: respuestas } = await db
     .from('respuestas').select('*, users(nombre)').eq('pqrs_id', id).order('created_at');
 
+  // Buscar agente asignado
+  let agente = null;
+  if (['asignado','en_proceso','resuelto'].includes(p.estado)) {
+    const { data: asig } = await db
+      .from('asignaciones')
+      .select('*, users!asignaciones_soporte_id_fkey(nombre,email,avatar_url,descripcion)')
+      .eq('pqrs_id', id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+    if (asig?.users) agente = asig.users;
+  }
+
+  // Botón info soporte
+  let btnInfoSoporte = '';
+  if (agente) {
+    btnInfoSoporte = `<button class="btn btn-sm" onclick="verInfoSoporte('${encodeURIComponent(JSON.stringify(agente))}')"
+      style="background:rgba(99,102,241,0.08);color:#6366f1;border:1px solid rgba(99,102,241,0.25);font-size:0.75rem;padding:4px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
+      ℹ️ Info del soporte
+    </button>`;
+  }
+
   // Adjunto multimedia
   const adjunto = renderAdjunto(p.imagen_url);
 
@@ -329,6 +351,7 @@ async function verDetalle(id) {
     <div class="detalle-campo"><strong>Área</strong><p>${p.area || '—'}</p></div>
     <div class="detalle-campo"><strong>Descripción</strong><p style="white-space:pre-wrap;line-height:1.6;">${p.descripcion}</p></div>
     ${p.fecha_hecho ? `<div class="detalle-campo"><strong>Fecha y hora del hecho</strong><p>📅 ${p.fecha_hecho}${p.hora_hecho ? ' &nbsp;🕐 ' + p.hora_hecho : ''}</p></div>` : ''}
+    ${agente ? `<div class="detalle-campo" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"><div><strong>Agente asignado</strong><p style="margin:2px 0 0;">${agente.nombre}</p></div>${btnInfoSoporte}</div>` : ''}
     ${adjunto}
     ${valoracionHtml}
     ${btnValorar}
@@ -348,6 +371,33 @@ async function verDetalle(id) {
     }
   `;
   document.getElementById('modal-detalle').classList.add('abierto');
+}
+
+// ── INFO SOPORTE MODAL ─────────────────────────────────────────────────────────
+function verInfoSoporte(agentJson) {
+  const agente = JSON.parse(decodeURIComponent(agentJson));
+  const iniciales = (agente.nombre || 'S').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+  const avatarHTML = agente.avatar_url
+    ? `<img src="${agente.avatar_url}" alt="${agente.nombre}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #e0e7ff;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:64px;height:64px;border-radius:50%;background:#e0e7ff;color:#6366f1;font-size:1.1rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`
+    : `<span style="display:inline-flex;width:64px;height:64px;border-radius:50%;background:#e0e7ff;color:#6366f1;font-size:1.1rem;font-weight:700;align-items:center;justify-content:center;">${iniciales}</span>`;
+
+  document.getElementById('modal-info-soporte').classList.add('abierto');
+  document.getElementById('info-soporte-contenido').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+      ${avatarHTML}
+      <div>
+        <strong style="font-size:1rem;color:#0f172a;display:block;">${agente.nombre}</strong>
+        <span style="font-size:0.8rem;color:#6366f1;font-weight:600;">🛠 Agente de soporte</span>
+      </div>
+    </div>
+    ${agente.descripcion
+      ? `<div style="background:#f8fafc;border-radius:10px;padding:12px 14px;border-left:3px solid #6366f1;">
+           <p style="font-size:0.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;font-weight:700;">Áreas y funciones</p>
+           <p style="font-size:0.88rem;color:#475569;line-height:1.6;margin:0;">${agente.descripcion}</p>
+         </div>`
+      : `<p style="color:#94a3b8;font-size:0.85rem;text-align:center;padding:12px 0;">Este agente aún no ha registrado una descripción.</p>`
+    }
+  `;
 }
 
 
