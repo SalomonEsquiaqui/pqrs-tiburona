@@ -1,0 +1,76 @@
+/* =====================================================
+   ICONS.CSS — SVG icon helpers
+   Solo geometría/tamaño, sin cambios de color ni fuente.
+   ===================================================== */
+
+/* ── Icono inline en nav-item del sidebar ── */
+.ni {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.ni svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.nav-item:hover .ni,
+.nav-item.activo .ni {
+  opacity: 1;
+}
+
+/* ── Icono pequeño en modal headers / botones ── */
+.ni-sm {
+  width: 15px;
+  height: 15px;
+  opacity: 0.75;
+}
+.ni-sm svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── Icono en nav bottom móvil ── */
+.ni-mob {
+  display: block;
+  width: 22px;
+  height: 22px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.ni-mob svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+.nav-item.activo .ni-mob {
+  opacity: 1;
+}
+
+/* ── Upload icon area ── */
+.upload-icon svg {
+  width: 32px;
+  height: 32px;
+  color: #94a3b8;
+}
+
+/* ── Botón cerrar sesión: icono + texto bien alineados ── */
+.btn-salir-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+.btn-salir-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
