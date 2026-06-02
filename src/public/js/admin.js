@@ -944,7 +944,7 @@ function verInfoUsuario(uJson) {
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:1rem;flex-shrink:0;width:22px;">🪪</span>
+        <span style="font-size:1rem;flex-shrink:0;width:22px;">🆔</span>
         <div>
           <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">N° Identificación</p>
           <code style="font-size:0.78rem;color:#475569;background:#f1f5f9;padding:3px 8px;border-radius:5px;letter-spacing:.05em;">${numId}</code>
