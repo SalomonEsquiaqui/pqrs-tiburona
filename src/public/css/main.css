@@ -277,7 +277,8 @@ body::after {
 }
 .btn-outline:hover { background: var(--azul-suave); }
 
-.btn-sm { padding: 7px 14px; font-size: 0.8rem; border-radius: var(--r-sm); }
+.btn-sm { padding: 7px 14px; font-size: 0.8rem; border-radius: var(--r-sm); min-width: 110px; width: 110px; justify-content: center; text-align: center; box-sizing: border-box; }
+.btn-sm.btn-verde { min-width: unset; width: unset; padding: 7px 14px; }
 .btn-lg { padding: 14px 28px; font-size: 1rem; }
 .btn-full { width: 100%; }
 

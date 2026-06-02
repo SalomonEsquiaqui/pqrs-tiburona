@@ -93,10 +93,10 @@ function _renderAdminTablaDesktop(lista) {
       <td>${p.area || '—'}</td>
       <td><span class="estado estado-${estadoClass}">${p.estado.replace('_',' ')}</span></td>
       <td>${formatFecha(p.created_at)}</td>
-      <td style="display:flex;gap:6px;">
+      <td style="display:flex;gap:6px;align-items:center;">
         ${['resuelto','cerrado'].includes(p.estado)
-          ? `<button class="btn btn-sm" disabled style="opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;">✅ Resuelto</button>`
-          : `<button class="btn btn-sm btn-primario" onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
+          ? `<button class="btn btn-sm" disabled style="opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-width:110px;width:110px;justify-content:center;text-align:center;">✅ Resuelto</button>`
+          : `<button class="btn btn-sm btn-primario" style="min-width:110px;width:110px;justify-content:center;text-align:center;" onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
               ${p.estado === 'pendiente' ? '📋 Asignar' : '🔄 Reasignar'}
              </button>`
         }
@@ -147,8 +147,8 @@ function _renderAdminCardsMobile(lista) {
       <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;">📅 ${formatFecha(p.created_at)} &nbsp;·&nbsp; 🏢 ${p.area||'—'}</div>
       <div style="display:flex;gap:8px;">
         ${['resuelto','cerrado'].includes(p.estado)
-          ? `<button class="btn btn-sm" disabled style="flex:1;opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-height:42px;">✅ Resuelto</button>`
-          : `<button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;min-height:42px;"
+          ? `<button class="btn btn-sm" disabled style="flex:1;opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-height:42px;justify-content:center;text-align:center;">✅ Resuelto</button>`
+          : `<button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;text-align:center;min-height:42px;"
               onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
               ${p.estado==='pendiente'?'📋 Asignar':'🔄 Reasignar'}
              </button>`
