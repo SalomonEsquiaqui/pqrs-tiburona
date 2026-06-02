@@ -300,7 +300,7 @@ function filtrarPqrs() {
 async function verDetalle(id) {
   const { data: p } = await db.from('pqrs').select('*').eq('id', id).single();
   const { data: respuestas } = await db
-    .from('respuestas').select('*, users(nombre)').eq('pqrs_id', id).order('created_at');
+    .from('respuestas').select('*, users(nombre,rol)').eq('pqrs_id', id).order('created_at');
 
   // Buscar agente asignado
   let agente = null;
@@ -359,14 +359,27 @@ async function verDetalle(id) {
     <hr style="margin:18px 0;border:none;border-top:1px solid var(--gris-medio);">
     <h3 style="font-size:0.92rem;font-weight:700;margin-bottom:12px;">💬 Respuestas (${respuestas?.length || 0})</h3>
     ${respuestas?.length
-      ? respuestas.map(r => `
-          <div class="respuesta-item">
-            <div class="respuesta-header">
-              <strong>${r.users?.nombre || 'Soporte'}</strong>
-              <span>${formatFecha(r.created_at)}</span>
-            </div>
-            <p>${r.contenido}</p>
-          </div>`).join('')
+      ? respuestas.map(r => {
+          const esAdmin = r.users?.rol === 'admin';
+          if (esAdmin) return `
+            <div style="margin-bottom:12px;background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1px solid #c7d7fe;border-radius:12px;padding:12px 14px;border-left:4px solid #6366f1;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap;">
+                <strong style="font-size:0.82rem;color:#4338ca;display:flex;align-items:center;gap:5px;">
+                  👑 ${r.users?.nombre||'Administrador'} <span style="font-size:0.68rem;background:#e0e7ff;color:#6366f1;padding:1px 7px;border-radius:99px;font-weight:600;">Administración</span>
+                </strong>
+                <span style="font-size:0.73rem;color:#94a3b8;">${formatFecha(r.created_at)}</span>
+              </div>
+              <p style="margin:0;font-size:0.87rem;line-height:1.55;color:#1e293b;white-space:pre-wrap;">${r.contenido}</p>
+            </div>`;
+          return `
+            <div class="respuesta-item">
+              <div class="respuesta-header">
+                <strong>${r.users?.nombre || 'Soporte'}</strong>
+                <span>${formatFecha(r.created_at)}</span>
+              </div>
+              <p>${r.contenido}</p>
+            </div>`;
+        }).join('')
       : '<p style="color:#94a3b8;font-size:0.85rem;">Sin respuestas aún.</p>'
     }
   `;

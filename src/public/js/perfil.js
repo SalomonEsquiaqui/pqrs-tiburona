@@ -65,15 +65,15 @@ async function initPerfil() {
     ? `<img class="perfil-avatar-img" id="perfil-avatar-preview" src="${perfil.avatar_url}" alt="Foto de perfil">`
     : `<div class="perfil-avatar-initials" id="perfil-avatar-initials">${iniciales}</div>`;
 
-  // Bloque descripción — solo para soporte
-  const descBlock = rol === 'soporte' ? `
-    <!-- ── CARD DESCRIPCIÓN SOPORTE ── -->
+  // Bloque descripción — para soporte y admin
+  const descBlock = (rol === 'soporte' || rol === 'admin') ? `
+    <!-- ── CARD DESCRIPCIÓN (SOPORTE / ADMIN) ── -->
     <div class="perfil-card">
       <div class="perfil-card-header">
-        <div class="perfil-card-header-icon" style="background:#ede9fe;color:#7c3aed;">🛠</div>
+        <div class="perfil-card-header-icon" style="background:${rol==='admin'?'#e0e7ff':'#ede9fe'};color:${rol==='admin'?'#4f46e5':'#7c3aed'};">${rol==='admin'?'👑':'🛠'}</div>
         <div>
-          <h3>Descripción de soporte</h3>
-          <p>Áreas asignadas y funciones como agente de soporte</p>
+          <h3>${rol==='admin'?'Descripción del administrador':'Descripción de soporte'}</h3>
+          <p>${rol==='admin'?'Descripción visible en tu perfil de administrador (máx. 300 caracteres)':'Áreas asignadas y funciones como agente de soporte'}</p>
         </div>
       </div>
       <div class="perfil-card-body">

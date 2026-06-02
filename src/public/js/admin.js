@@ -441,9 +441,12 @@ async function confirmarAsignacion() {
 }
 
 // ── MODAL VER DETALLE ─────────────────────────────────────────────────────────
+let _verPqrsId = null;
+
 async function abrirModalVer(id) {
-  const { data: p }         = await db.from('pqrs').select('*, users!pqrs_usuario_id_fkey(nombre,email)').eq('id', id).single();
-  const { data: respuestas } = await db.from('respuestas').select('*, users(nombre)').eq('pqrs_id', id).order('created_at');
+  _verPqrsId = id;
+  const { data: p }          = await db.from('pqrs').select('*, users!pqrs_usuario_id_fkey(nombre,email)').eq('id', id).single();
+  const { data: respuestas } = await db.from('respuestas').select('*, users(nombre,rol)').eq('pqrs_id', id).order('created_at');
 
   document.getElementById('ver-contenido').innerHTML = `
     <div class="detalle-header">
@@ -458,12 +461,108 @@ async function abrirModalVer(id) {
     ${renderAdjunto(p.imagen_url)}
     <p style="color:#94a3b8;font-size:0.79rem;margin-top:10px;">📅 Enviado el ${formatFecha(p.created_at)}</p>
     <hr style="margin:16px 0;border:none;border-top:1px solid var(--gris-medio);">
-    <h4 style="margin-bottom:10px;">💬 Respuestas (${respuestas?.length||0})</h4>
+    <h4 style="margin-bottom:10px;">💬 Conversación (${respuestas?.length||0})</h4>
+    <div id="hilo-respuestas-ver">
     ${respuestas?.length
-      ? respuestas.map(r=>`<div class="respuesta-item"><div class="respuesta-header"><strong>${r.users?.nombre||'Soporte'}</strong><span>${formatFecha(r.created_at)}</span></div><p>${r.contenido}</p></div>`).join('')
-      : '<p style="color:#bbb;font-size:0.85rem;">Sin respuestas aún.</p>'}
+      ? respuestas.map(r => _renderRespuestaItem(r)).join('')
+      : '<p style="color:#bbb;font-size:0.85rem;">Sin mensajes aún.</p>'}
+    </div>
+
+    <!-- ── INTERVENCIÓN DEL ADMINISTRADOR ── -->
+    <div style="margin-top:20px;background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1.5px solid #c7d7fe;border-radius:14px;padding:16px;">
+      <h5 style="font-size:0.82rem;font-weight:700;color:#3730a3;margin:0 0 10px;display:flex;align-items:center;gap:6px;">
+        👑 Intervención del administrador
+        <span style="font-size:0.7rem;font-weight:500;color:#6366f1;background:#e0e7ff;padding:2px 8px;border-radius:99px;">Visible para el cliente y soporte</span>
+      </h5>
+      <textarea id="admin-intervencion-txt" rows="3" maxlength="1000"
+        placeholder="Escribe un mensaje de intervención… será visible para el cliente y el equipo de soporte."
+        style="width:100%;box-sizing:border-box;resize:vertical;border:1.5px solid #c7d7fe;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:0.88rem;line-height:1.5;background:#fff;color:#1e293b;outline:none;transition:border-color .18s;"
+        onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#c7d7fe'"></textarea>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
+        <select id="admin-intervencion-estado"
+          style="padding:7px 10px;border:1.5px solid #c7d7fe;border-radius:8px;font-size:0.82rem;background:#fff;color:#334155;">
+          <option value="">— Sin cambiar estado —</option>
+          <option value="en_proceso">🔄 Marcar En proceso</option>
+          <option value="resuelto">✅ Marcar Resuelto</option>
+          <option value="cerrado">🔒 Cerrar PQRS</option>
+        </select>
+        <button onclick="enviarIntervencionAdmin()" id="btn-enviar-intervencion"
+          style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .18s;"
+          onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          📤 Enviar mensaje
+        </button>
+        <span id="admin-intervencion-msg" style="font-size:0.8rem;color:#059669;display:none;"></span>
+      </div>
+    </div>
   `;
   document.getElementById('modal-ver').classList.add('abierto');
+}
+
+function _renderRespuestaItem(r) {
+  const esAdmin = r.users?.rol === 'admin';
+  if (esAdmin) {
+    return `
+    <div style="margin-bottom:12px;background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1px solid #c7d7fe;border-radius:12px;padding:12px 14px;border-left:4px solid #6366f1;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap;">
+        <strong style="font-size:0.82rem;color:#4338ca;display:flex;align-items:center;gap:5px;">
+          👑 ${r.users?.nombre||'Administrador'} <span style="font-size:0.68rem;background:#e0e7ff;color:#6366f1;padding:1px 7px;border-radius:99px;font-weight:600;">Admin</span>
+        </strong>
+        <span style="font-size:0.73rem;color:#94a3b8;">${formatFecha(r.created_at)}</span>
+      </div>
+      <p style="margin:0;font-size:0.87rem;line-height:1.55;color:#1e293b;white-space:pre-wrap;">${r.contenido}</p>
+    </div>`;
+  }
+  return `<div class="respuesta-item"><div class="respuesta-header"><strong>${r.users?.nombre||'Soporte'}</strong><span>${formatFecha(r.created_at)}</span></div><p>${r.contenido}</p></div>`;
+}
+
+async function enviarIntervencionAdmin() {
+  const contenido   = document.getElementById('admin-intervencion-txt')?.value?.trim();
+  const nuevoEstado = document.getElementById('admin-intervencion-estado')?.value || null;
+  const msgEl       = document.getElementById('admin-intervencion-msg');
+  const btn         = document.getElementById('btn-enviar-intervencion');
+
+  if (!contenido) {
+    msgEl.textContent = '⚠️ Escribe un mensaje antes de enviar.';
+    msgEl.style.color = '#ef4444';
+    msgEl.style.display = 'inline';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  msgEl.style.display = 'none';
+
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    await apiFetch(`/pqrs/${_verPqrsId}/responder`, {
+      method: 'POST',
+      body: JSON.stringify({ soporte_id: session.user.id, contenido, nuevo_estado: nuevoEstado || undefined })
+    });
+
+    msgEl.textContent = '✅ Mensaje enviado correctamente.';
+    msgEl.style.color = '#059669';
+    msgEl.style.display = 'inline';
+    document.getElementById('admin-intervencion-txt').value = '';
+    document.getElementById('admin-intervencion-estado').value = '';
+
+    // Recargar hilo de respuestas en el modal sin cerrarlo
+    const { data: respuestas } = await db.from('respuestas').select('*, users(nombre,rol)').eq('pqrs_id', _verPqrsId).order('created_at');
+    const hilo = document.getElementById('hilo-respuestas-ver');
+    if (hilo) {
+      hilo.innerHTML = respuestas?.length
+        ? respuestas.map(r => _renderRespuestaItem(r)).join('')
+        : '<p style="color:#bbb;font-size:0.85rem;">Sin mensajes aún.</p>';
+    }
+
+    await cargarTodasPqrs();
+  } catch (err) {
+    msgEl.textContent = '❌ ' + (err.message || 'Error al enviar.');
+    msgEl.style.color = '#ef4444';
+    msgEl.style.display = 'inline';
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────

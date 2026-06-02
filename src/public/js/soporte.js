@@ -198,7 +198,7 @@ async function verDetalleSoporte(asignacionId) {
   if (!a) return;
   const pqrs = a.pqrs;
   const { data: respuestas } = await db
-    .from('respuestas').select('*, users(nombre)').eq('pqrs_id', pqrs.id).order('created_at');
+    .from('respuestas').select('*, users(nombre,rol)').eq('pqrs_id', pqrs.id).order('created_at');
 
   document.getElementById('detalle-soporte-contenido').innerHTML = `
     <div class="detalle-header">
@@ -213,7 +213,11 @@ async function verDetalleSoporte(asignacionId) {
     <hr style="margin:16px 0;border:none;border-top:1px solid var(--gris-medio);">
     <h4 style="margin-bottom:10px;">💬 Historial de respuestas</h4>
     ${respuestas?.length
-      ? respuestas.map(r=>`<div class="respuesta-item"><div class="respuesta-header"><strong>${r.users?.nombre||'Soporte'}</strong><span>${formatFecha(r.created_at)}</span></div><p>${r.contenido}</p></div>`).join('')
+      ? respuestas.map(r => {
+          const esAdmin = r.users?.rol === 'admin';
+          if (esAdmin) return `<div style="margin-bottom:10px;background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1px solid #c7d7fe;border-radius:12px;padding:11px 13px;border-left:4px solid #6366f1;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:8px;flex-wrap:wrap;"><strong style="font-size:0.8rem;color:#4338ca;">👑 ${r.users?.nombre||'Admin'} <span style="font-size:0.67rem;background:#e0e7ff;color:#6366f1;padding:1px 7px;border-radius:99px;">Admin</span></strong><span style="font-size:0.72rem;color:#94a3b8;">${formatFecha(r.created_at)}</span></div><p style="margin:0;font-size:0.86rem;line-height:1.5;color:#1e293b;white-space:pre-wrap;">${r.contenido}</p></div>`;
+          return `<div class="respuesta-item"><div class="respuesta-header"><strong>${r.users?.nombre||'Soporte'}</strong><span>${formatFecha(r.created_at)}</span></div><p>${r.contenido}</p></div>`;
+        }).join('')
       : '<p style="color:#bbb;font-size:0.85rem;">Sin respuestas aún.</p>'}
   `;
   document.getElementById('modal-detalle-soporte').classList.add('abierto');
