@@ -19,7 +19,7 @@ async function initPerfil() {
   let perfil = null;
   const { data: d1, error: e1 } = await db
     .from('users')
-    .select('nombre, telefono, rol, avatar_url, descripcion')
+    .select('nombre, telefono, rol, avatar_url, descripcion, numero_identificacion')
     .eq('id', uid)
     .single();
 
@@ -156,7 +156,7 @@ async function initPerfil() {
           </div>
           <div class="perfil-field">
             <label>Identificación</label>
-            <input type="text" value="${uid.slice(0,8).toUpperCase()}…" class="perfil-readonly" disabled>
+            <input type="text" value="${perfil.numero_identificacion || '—'}" class="perfil-readonly" disabled>
             <span class="perfil-lock-hint">🔒 No editable</span>
           </div>
         </div>

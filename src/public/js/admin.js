@@ -193,7 +193,7 @@ async function cargarUsuarios() {
     const avatarCell = u.avatar_url
       ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'"><span style="display:none;width:34px;height:34px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.72rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`
       : `<span style="display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--azul-suave);color:var(--azul-rey);font-size:0.72rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`;
-    const uJson = encodeURIComponent(JSON.stringify({ id: u.id, nombre: u.nombre, email: u.email, telefono: u.telefono, rol: u.rol, avatar_url: u.avatar_url || '', created_at: u.created_at }));
+    const uJson = encodeURIComponent(JSON.stringify({ id: u.id, nombre: u.nombre, email: u.email, telefono: u.telefono, rol: u.rol, avatar_url: u.avatar_url || '', created_at: u.created_at, numero_identificacion: u.numero_identificacion || '' }));
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:10px;">${avatarCell}<span style="font-weight:500;">${u.nombre}</span></div></td>
       <td style="font-size:0.83rem;color:#64748b;">${u.email}</td>
@@ -246,7 +246,7 @@ function _renderUsuariosMobile(data) {
     const avatarHTML = u.avatar_url
       ? `<img src="${u.avatar_url}" alt="${u.nombre}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid ${color}40;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:42px;height:42px;border-radius:50%;background:${color}18;color:${color};font-size:0.8rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`
       : `<span style="display:inline-flex;width:42px;height:42px;border-radius:50%;background:${color}18;color:${color};font-size:0.8rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0;">${iniciales}</span>`;
-    const uJson = encodeURIComponent(JSON.stringify({ id: u.id, nombre: u.nombre, email: u.email, telefono: u.telefono, rol: u.rol, avatar_url: u.avatar_url || '', created_at: u.created_at }));
+    const uJson = encodeURIComponent(JSON.stringify({ id: u.id, nombre: u.nombre, email: u.email, telefono: u.telefono, rol: u.rol, avatar_url: u.avatar_url || '', created_at: u.created_at, numero_identificacion: u.numero_identificacion || '' }));
     return `
     <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #e2e8f0;border-left:4px solid ${color};">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
@@ -812,7 +812,7 @@ function verInfoUsuario(uJson) {
   const fechaReg = u.created_at
     ? new Date(u.created_at).toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric' })
     : '—';
-  const idCorto = u.id ? u.id.slice(0,8).toUpperCase() : '—';
+  const numId = u.numero_identificacion || '—';
 
   document.getElementById('info-usuario-contenido').innerHTML = `
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid #f1f5f9;">
@@ -845,10 +845,10 @@ function verInfoUsuario(uJson) {
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:1rem;flex-shrink:0;width:22px;">🆔</span>
+        <span style="font-size:1rem;flex-shrink:0;width:22px;">🪪</span>
         <div>
-          <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">ID de usuario</p>
-          <code style="font-size:0.78rem;color:#475569;background:#f1f5f9;padding:3px 8px;border-radius:5px;letter-spacing:.05em;">${idCorto}…</code>
+          <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">N° Identificación</p>
+          <code style="font-size:0.78rem;color:#475569;background:#f1f5f9;padding:3px 8px;border-radius:5px;letter-spacing:.05em;">${numId}</code>
         </div>
       </div>
     </div>
