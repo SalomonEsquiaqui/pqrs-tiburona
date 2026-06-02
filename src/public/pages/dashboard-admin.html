@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="stylesheet" href="/css/alerts.css">
   <link rel="stylesheet" href="/css/perfil.css">
+  <link rel="stylesheet" href="/css/football-theme.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <style>
     @media (max-width: 768px) {
@@ -34,7 +35,7 @@
         border-radius: 0 !important; position: relative !important;
       }
       #nav-bottom .nav-item.activo { color: #34d399 !important; background: rgba(52,211,153,0.1) !important; }
-      #nav-bottom .nav-item .nav-emoji { font-size: 1.3rem !important; line-height: 1 !important; display: block !important; }
+      #nav-bottom .nav-item .nav-icon { font-size: 1.3rem !important; line-height: 1 !important; display: block !important; }
       #nav-bottom .nav-item .nav-label { font-size: 0.6rem !important; display: block !important; text-align: center !important; }
       .main-content { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important; }
     }
@@ -55,19 +56,19 @@
     </div>
     <nav class="sidebar-nav">
       <button class="nav-item activo" onclick="mostrarSeccionAdmin('todas-pqrs', this)">
-        📋 Todas las PQRS
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Todas las PQRS
       </button>
       <button class="nav-item" onclick="mostrarSeccionAdmin('usuarios', this)">
-        👥 Usuarios
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg> Usuarios
       </button>
       <button class="nav-item" onclick="mostrarSeccionAdmin('soporte-team', this)">
-        🛠 Equipo soporte
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Equipo soporte
       </button>
       <button class="nav-item" onclick="mostrarSeccionAdmin('pines', this)">
-        🔐 Gestión de PINes
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Gestión de PINes
       </button>
       <button class="nav-item" onclick="mostrarSeccionAdmin('perfil', this)">
-        ⚙️ Mi cuenta
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Mi cuenta
       </button>
     </nav>
     <div class="sidebar-user">
@@ -75,7 +76,7 @@
       <span class="badge badge-admin" style="margin:6px 0;display:inline-block;">Administrador</span><br>
       <div id="notif-sidebar-container"></div>
       <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro" style="margin-top:10px;width:100%;">
-        🚪 Salir
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Salir
       </button>
     </div>
   </aside>
@@ -93,7 +94,7 @@
     <!-- ===== TODAS PQRS ===== -->
     <section id="sec-todas-pqrs">
       <div class="page-header">
-        <h1>📋 Gestión de PQRS</h1>
+        <h1>Gestión de PQRS</h1>
       </div>
       <div class="filtros">
         <select id="a-filtro-estado">
@@ -111,7 +112,7 @@
           <option value="sugerencia">Sugerencia</option>
           <option value="felicitacion">Felicitación</option>
         </select>
-        <input type="text" id="a-buscar" placeholder="🔍 Buscar por radicado o asunto...">
+        <input type="text" id="a-buscar" placeholder="Buscar por radicado o asunto...">
       </div>
       <div class="tabla-wrap">
         <table>
@@ -130,7 +131,7 @@
 
     <!-- ===== USUARIOS ===== -->
     <section id="sec-usuarios" style="display:none;">
-      <div class="page-header"><h1>👥 Usuarios registrados</h1></div>
+      <div class="page-header"><h1>Usuarios registrados</h1></div>
       <div class="tabla-wrap">
         <table>
           <thead><tr><th>Usuario</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Cambiar rol</th><th>Acciones</th></tr></thead>
@@ -144,7 +145,7 @@
     <!-- ===== EQUIPO SOPORTE ===== -->
     <section id="sec-soporte-team" style="display:none;">
       <div class="page-header">
-        <h1>🛠 Equipo de soporte</h1>
+        <h1>Equipo de soporte</h1>
       </div>
       <p style="color:#888;font-size:0.85rem;margin-bottom:20px;">
         Para agregar soporte: registra el usuario y asígnale el rol "Soporte" desde la sección Usuarios.
@@ -156,7 +157,7 @@
     <!-- ===== GESTIÓN DE PINes ===== -->
     <section id="sec-pines" style="display:none;">
       <div class="page-header">
-        <h1>🔐 Gestión de PINes de acceso</h1>
+        <h1>Gestión de PINes</h1>
       </div>
       <p style="color:#555;font-size:0.88rem;margin-bottom:24px;line-height:1.6;">
         Los PINes de 4 dígitos permiten que una persona se registre con el rol de
@@ -167,7 +168,7 @@
       <!-- Formulario crear PIN -->
       <div class="pin-crear-card">
         <h3 style="font-family:var(--font-display);font-size:1rem;color:var(--azul-oscuro);margin-bottom:16px;">
-          ➕ Generar nuevo PIN
+          Generar nuevo PIN
         </h3>
         <div id="msg-pines" class="mensaje"></div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
@@ -200,7 +201,7 @@
             <p id="pin-desc-label" style="font-size:0.8rem;color:#aaa;"></p>
           </div>
           <button class="btn btn-sm" onclick="copiarPin()" style="background:var(--azul-suave);color:var(--azul-rey);">
-            📋 Copiar PIN
+            Copiar PIN
           </button>
         </div>
       </div>
@@ -244,23 +245,23 @@
   <!-- NAV INFERIOR MÓVIL -->
   <nav class="nav-bottom-mobile" id="nav-bottom">
     <button class="nav-item activo" onclick="mostrarSeccionAdmin('todas-pqrs', this)" data-seccion="todas-pqrs">
-      <span class="nav-emoji">📋</span>
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
       <span class="nav-label">PQRS</span>
     </button>
     <button class="nav-item" onclick="mostrarSeccionAdmin('usuarios', this)" data-seccion="usuarios">
-      <span class="nav-emoji">👥</span>
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
       <span class="nav-label">Usuarios</span>
     </button>
     <button class="nav-item" onclick="mostrarSeccionAdmin('soporte-team', this)" data-seccion="soporte-team">
-      <span class="nav-emoji">🛠️</span>
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
       <span class="nav-label">Equipo</span>
     </button>
     <button class="nav-item" onclick="mostrarSeccionAdmin('pines', this)" data-seccion="pines">
-      <span class="nav-emoji">🔐</span>
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
       <span class="nav-label">PINes</span>
     </button>
     <button class="nav-item" onclick="mostrarSeccionAdmin('perfil', this)" data-seccion="perfil">
-      <span class="nav-emoji">⚙️</span>
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
       <span class="nav-label">Cuenta</span>
     </button>
   </nav>
@@ -282,7 +283,7 @@
 <div class="modal-overlay" id="modal-asignar">
   <div class="modal">
     <div class="modal-header">
-      <h2>📋 Asignar soporte</h2>
+      <h2>Asignar soporte</h2>
       <button class="btn-cerrar" onclick="cerrarModal('modal-asignar')">×</button>
     </div>
     <div id="msg-asignar" class="mensaje"></div>
@@ -300,7 +301,7 @@
         <option value="urgente">🔴 Urgente</option>
       </select>
     </div>
-    <button class="btn btn-primario" onclick="confirmarAsignacion()">✅ Confirmar asignación</button>
+    <button class="btn btn-primario" onclick="confirmarAsignacion()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmar asignación</button>
   </div>
 </div>
 
