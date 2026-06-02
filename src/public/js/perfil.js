@@ -12,17 +12,44 @@ async function initPerfil() {
   const { data: { session } } = await db.auth.getSession();
   if (!session) return;
 
-  const uid = session.user.id;
+  const uid   = session.user.id;
   const email = session.user.email;
 
-  // Cargar datos de la tabla users
-  const { data: perfil } = await db
+  // Intentar con todas las columnas; si falla (columnas no existen), caer a las básicas
+  let perfil = null;
+  const { data: d1, error: e1 } = await db
     .from('users')
     .select('nombre, telefono, rol, avatar_url')
     .eq('id', uid)
     .single();
 
-  if (!perfil) return;
+  if (e1) {
+    // Columnas opcionales no existen aún — traer solo las básicas
+    const { data: d2 } = await db
+      .from('users')
+      .select('nombre, rol')
+      .eq('id', uid)
+      .single();
+    perfil = d2 ? { ...d2, telefono: null, avatar_url: null } : null;
+  } else {
+    perfil = d1;
+  }
+
+  // Si no hay perfil en absoluto, mostrar error amigable
+  if (!perfil) {
+    const sec = document.getElementById('sec-perfil');
+    if (sec) sec.innerHTML = `
+      <div class="perfil-wrap">
+        <div class="page-header"><h1>⚙️ Mi cuenta</h1></div>
+        <div class="perfil-card">
+          <div class="perfil-card-body" style="text-align:center;padding:32px;color:#94a3b8;">
+            ⚠️ No se pudo cargar la información del perfil.<br>
+            <small>Verifica tu conexión o intenta recargar la página.</small>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
 
   _perfilDatos = { uid, email, ...perfil };
 
