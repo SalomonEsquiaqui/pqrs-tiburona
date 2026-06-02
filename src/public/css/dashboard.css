@@ -653,15 +653,38 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.07em;
   margin: 0 0 6px;
+}
 
-  @keyframes shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
+/* ── STAT COUNTERS — soporte para animación ── */
+
+/* El número hereda la transición de scale del JS */
+.stat-card .numero {
+  display: inline-block; /* necesario para que transform funcione */
+  will-change: transform;
 }
-.skeleton {
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.4s infinite;
-  border-radius: 8px;
+
+/* Pulso sutil al cambiar de valor */
+@keyframes statPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.25); }
+  70%  { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+  100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
 }
+.stat-card.actualizando {
+  animation: statPulse 0.6s ease-out;
+}
+.stat-card.naranja.actualizando {
+  animation-name: statPulseNaranja;
+}
+.stat-card.verde.actualizando {
+  animation-name: statPulseVerde;
+}
+@keyframes statPulseNaranja {
+  0%   { box-shadow: 0 0 0 0 rgba(249,115,22,0.25); }
+  70%  { box-shadow: 0 0 0 8px rgba(249,115,22,0); }
+  100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+}
+@keyframes statPulseVerde {
+  0%   { box-shadow: 0 0 0 0 rgba(5,150,105,0.25); }
+  70%  { box-shadow: 0 0 0 8px rgba(5,150,105,0); }
+  100% { box-shadow: 0 0 0 0 rgba(5,150,105,0); }
 }
