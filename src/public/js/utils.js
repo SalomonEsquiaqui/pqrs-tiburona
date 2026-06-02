@@ -33,7 +33,26 @@ function redirigirPorRol(rol) {
     soporte: '/pages/dashboard-soporte.html',
     usuario: '/pages/dashboard-usuario.html'
   };
-  window.location.href = rutas[rol] || '/pages/index.html';
+  const destino = rutas[rol] || '/pages/index.html';
+  _transicionSalida(destino);
+}
+
+function _transicionSalida(url) {
+  // Crear overlay de desvanecimiento
+  const overlay = document.createElement('div');
+  overlay.style.cssText = [
+    'position:fixed', 'inset:0', 'z-index:99999',
+    'background:#0f172a', 'opacity:0',
+    'transition:opacity 0.45s cubic-bezier(.4,0,.2,1)',
+    'pointer-events:all'
+  ].join(';');
+  document.body.appendChild(overlay);
+
+  // Forzar reflow para que la transición arranque
+  overlay.getBoundingClientRect();
+  overlay.style.opacity = '1';
+
+  setTimeout(() => { window.location.href = url; }, 460);
 }
 
 async function cerrarSesion(db) {

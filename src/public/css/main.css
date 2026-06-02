@@ -929,3 +929,12 @@ body::after {
   gap: 4px;
 }
 .btn-volver-rec:hover { text-decoration: underline; }
+
+/* ── Transición de entrada entre páginas ── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+body {
+  animation: pageFadeIn 0.45s cubic-bezier(.4,0,.2,1) both;
+}
