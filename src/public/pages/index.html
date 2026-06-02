@@ -36,11 +36,11 @@
       <div id="msg-login" class="mensaje"></div>
       <form id="form-login" autocomplete="on">
         <div class="form-grupo">
-          <label for="login-email">📧 Correo electrónico</label>
+          <label for="login-email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg> Correo electrónico</label>
           <input type="email" id="login-email" placeholder="tucorreo@gmail.com" required autocomplete="email">
         </div>
         <div class="form-grupo">
-          <label for="login-pass">🔑 Contraseña</label>
+          <label for="login-pass"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><circle cx="7.5" cy="15.5" r="3.5"/><path d="M11 12l9-9"/><path d="M16 7l2 2"/><path d="M19 4l2 2"/></svg> Contraseña</label>
           <div class="input-pass-wrap">
             <input type="password" id="login-pass" placeholder="••••••••" required autocomplete="current-password">
             <button type="button" class="btn-ojo" data-target="login-pass" aria-label="Ver contraseña">
@@ -54,7 +54,7 @@
           <div id="captcha-login"></div>
         </div>
         <button type="submit" id="btn-login" class="btn btn-primario" style="width:100%;justify-content:center;margin-top:4px;">
-          🚀 Ingresar al sistema
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Ingresar al sistema
         </button>
         <p style="text-align:center;margin-top:14px;margin-bottom:0;">
           <button type="button" onclick="mostrarRecuperar()" 
@@ -70,7 +70,7 @@
       <!-- Cabecera -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #e2e8f0;">
         <div>
-          <p style="font-size:0.95rem;font-weight:800;color:#0f172a;margin:0 0 2px;">🔐 Recuperar contraseña</p>
+          <p style="font-size:0.95rem;font-weight:800;color:#0f172a;margin:0 0 2px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Recuperar contraseña</p>
           <p style="font-size:0.75rem;color:#94a3b8;margin:0;">Cancha Sintética La Tiburona</p>
         </div>
         <button type="button" onclick="irALogin()" title="Volver al inicio de sesión"
@@ -79,7 +79,7 @@
                  color:#64748b;transition:all .15s;flex-shrink:0;"
           onmouseover="this.style.background='#fee2e2';this.style.color='#ef4444';this.style.borderColor='#fca5a5';"
           onmouseout="this.style.background='#f1f5f9';this.style.color='#64748b';this.style.borderColor='#e2e8f0';">
-          ✕
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:16px;height:16px;" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div id="msg-recuperar" class="mensaje"></div>
@@ -101,7 +101,7 @@
       <!-- PASO 2: confirmar número de teléfono enmascarado -->
       <div id="rec-paso2" style="display:none;">
         <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-bottom:16px;">
-          <p style="font-size:0.8rem;color:#1e40af;margin:0 0 4px;font-weight:600;">📱 Número afiliado a tu cuenta</p>
+          <p style="font-size:0.8rem;color:#1e40af;margin:0 0 4px;font-weight:600;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Número afiliado a tu cuenta</p>
           <p id="rec-tel-hint" style="font-size:1.05rem;font-weight:800;color:#1e3a8a;margin:0;letter-spacing:0.04em;"></p>
         </div>
         <p style="font-size:0.84rem;color:#475569;margin:0 0 14px;line-height:1.5;">
@@ -112,7 +112,7 @@
           <input type="tel" id="rec-tel-completo" placeholder="Ej: 3001234567" maxlength="15" autocomplete="off">
         </div>
         <button type="button" onclick="verificarTelefono()" class="btn btn-primario" style="width:100%;justify-content:center;margin-bottom:10px;">
-          ✅ Verificar número
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Verificar número
         </button>
         <button type="button" onclick="irAMetodoId()" class="btn-volver-rec" style="width:100%;text-align:center;display:block;">
            No recuerdo el número — probar con identificación
@@ -123,21 +123,21 @@
       <div id="rec-paso2b" style="display:none;">
         <button type="button" onclick="volverPaso2()" class="btn-volver-rec" style="margin-bottom:14px;">← Volver</button>
         <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.82rem;color:#92400e;">
-          🪪 Método alternativo: verifica con tu número de documento registrado.
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M7 15h.01"/><path d="M11 15h4"/></svg> Método alternativo: verifica con tu número de documento registrado.
         </div>
         <div class="form-grupo" style="margin-bottom:12px;">
           <label>Número de identificación</label>
           <input type="text" id="rec-num-id" placeholder="Ej: 1234567890" maxlength="20" autocomplete="off">
         </div>
         <button type="button" onclick="verificarId()" class="btn btn-primario" style="width:100%;justify-content:center;">
-          ✅ Verificar identificación
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Verificar identificación
         </button>
       </div>
 
       <!-- PASO 3: nueva contraseña -->
       <div id="rec-paso3" style="display:none;">
         <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.85rem;color:#166534;">
-          ✅ Identidad verificada — ahora crea tu nueva contraseña
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Identidad verificada — ahora crea tu nueva contraseña
         </div>
         <div class="form-grupo">
           <label>Nueva contraseña</label>
@@ -160,14 +160,14 @@
           </div>
         </div>
         <button type="button" onclick="cambiarContrasena()" class="btn btn-verde" style="width:100%;justify-content:center;min-height:48px;">
-          🔐 Cambiar contraseña
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Cambiar contraseña
         </button>
       </div>
 
       <!-- PASO 4: éxito -->
       <div id="rec-paso4" style="display:none;">
         <div style="text-align:center;padding:20px 0;">
-          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <div style="font-size:3rem;margin-bottom:12px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2z"/></svg></div>
           <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;
                       border-radius:14px;padding:20px 16px;margin-bottom:18px;">
             <p style="font-size:1rem;font-weight:800;color:#166534;margin:0 0 6px;">
@@ -178,7 +178,7 @@
             </p>
           </div>
           <button type="button" onclick="irALogin()" class="btn btn-primario" style="width:100%;justify-content:center;">
-            🚀 Ir a iniciar sesión
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Ir a iniciar sesión
           </button>
         </div>
       </div>
@@ -190,15 +190,15 @@
       <div id="msg-registro" class="mensaje"></div>
       <form id="form-registro" autocomplete="off">
         <div class="form-grupo">
-          <label for="reg-nombre">👤 Nombre completo</label>
+          <label for="reg-nombre"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Nombre completo</label>
           <input type="text" id="reg-nombre" placeholder="Juan Pérez" required>
         </div>
         <div class="form-grupo">
-          <label for="reg-email">📧 Correo electrónico</label>
+          <label for="reg-email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg> Correo electrónico</label>
           <input type="email" id="reg-email" placeholder="tucorreo@gmail.com" required>
         </div>
         <div class="form-grupo">
-          <label for="reg-tipo-id">🆔 TIPO DE IDENTIFICACIÓN</label>
+          <label for="reg-tipo-id"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6 10h6"/><path d="M6 14h4"/><circle cx="9" cy="9" r="2"/><path d="M7 15c0-1.1.9-2 2-2s2 .9 2 2"/></svg> TIPO DE IDENTIFICACIÓN</label>
           <select id="reg-tipo-id" required>
             <option value="cedula_ciudadania">Cédula de ciudadanía</option>
             <option value="tarjeta_identidad">Tarjeta de identidad</option>
@@ -209,28 +209,28 @@
         </div>
 
         <div class="form-grupo">
-          <label for="reg-num-id">🔢 NÚMERO DE IDENTIFICACIÓN</label>
+          <label for="reg-num-id"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h2v10H8z"/><path d="M14 7h2v4h-2"/><path d="M14 13h2v4h-2"/></svg> NÚMERO DE IDENTIFICACIÓN</label>
           <input type="text" id="reg-num-id" placeholder="Ej: 1234567890"
             maxlength="20" required>
         </div>
 
         <div class="form-grupo">
-          <label for="reg-tel">📱 TELÉFONO (OPCIONAL)</label>
+          <label for="reg-tel"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> TELÉFONO (OPCIONAL)</label>
           <input type="tel" id="reg-tel" placeholder="300 000 0000" maxlength="15">
         </div>
         <div class="form-grupo">
-          <label for="reg-rol">🎭 Tipo de cuenta</label>
+          <label for="reg-rol"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg> Tipo de cuenta</label>
           <select id="reg-rol" required>
-            <option value="usuario">👤 Usuario (Cliente)</option>
-            <option value="soporte">🛠 Soporte técnico</option>
-            <option value="admin">👑 Administrador</option>
+            <option value="usuario"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Usuario (Cliente)</option>
+            <option value="soporte"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Soporte técnico</option>
+            <option value="admin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><path d="M2 20h20"/><path d="M5 20V9l7-5 7 5v11"/><path d="M2 9l4.5 3L12 4l5.5 8L22 9"/></svg> Administrador</option>
           </select>
         </div>
 
         <!-- PIN — visible solo para admin/soporte -->
         <div id="grupo-pin" style="display:none;">
           <div class="form-grupo">
-            <label for="reg-pin">🔐 PIN de verificación</label>
+            <label for="reg-pin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> PIN de verificación</label>
             <div class="input-pass-wrap">
               <input type="password" id="reg-pin" placeholder="PIN autorizado por el sistema" autocomplete="off">
               <button type="button" class="btn-ojo" data-target="reg-pin" aria-label="Ver PIN">
@@ -245,7 +245,7 @@
         </div>
 
         <div class="form-grupo">
-          <label for="reg-pass">🔑 Contraseña</label>
+          <label for="reg-pass"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><circle cx="7.5" cy="15.5" r="3.5"/><path d="M11 12l9-9"/><path d="M16 7l2 2"/><path d="M19 4l2 2"/></svg> Contraseña</label>
           <div class="input-pass-wrap">
             <input type="password" id="reg-pass" placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
             <button type="button" class="btn-ojo" data-target="reg-pass" aria-label="Ver contraseña">
@@ -255,7 +255,7 @@
           </div>
         </div>
         <div class="form-grupo">
-          <label for="reg-pass2">🔑 Confirmar contraseña</label>
+          <label for="reg-pass2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><circle cx="7.5" cy="15.5" r="3.5"/><path d="M11 12l9-9"/><path d="M16 7l2 2"/><path d="M19 4l2 2"/></svg> Confirmar contraseña</label>
           <div class="input-pass-wrap">
             <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" required>
             <button type="button" class="btn-ojo" data-target="reg-pass2" aria-label="Ver contraseña">
@@ -271,7 +271,7 @@
         </div>
 
         <button type="submit" id="btn-registro" class="btn btn-primario" style="display:block;margin:0 auto;">
-          ✅ Crear cuenta
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;display:inline-block;" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Crear cuenta
         </button>
       </form>
     </div>
