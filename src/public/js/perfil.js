@@ -79,7 +79,7 @@ async function initPerfil() {
       <div class="perfil-card-body">
         <div class="perfil-field">
           <label>Descripción (visible para los usuarios)</label>
-          <textarea id="perfil-input-descripcion" rows="3" maxlength="300"
+          <textarea id="perfil-input-descripcion" rows="3" maxlength="350"
             placeholder="Ej: Área de facturación y cobranzas. Atiendo solicitudes de pagos, ajustes de cuenta y reclamos relacionados con el servicio…"
             style="resize:vertical;font-family:inherit;font-size:0.9rem;line-height:1.5;">${perfil.descripcion || ''}</textarea>
           <span style="font-size:0.72rem;color:#94a3b8;text-align:right;display:block;margin-top:4px;"><span id="desc-count">${(perfil.descripcion||'').length}</span>/300</span>
