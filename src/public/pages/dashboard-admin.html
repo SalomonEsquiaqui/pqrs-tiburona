@@ -67,6 +67,9 @@
       <button class="nav-item" onclick="mostrarSeccionAdmin('pines', this)">
         <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Gestión de PINes
       </button>
+      <button class="nav-item" onclick="mostrarSeccionAdmin('valoraciones', this)">
+        <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Valoraciones
+      </button>
       <button class="nav-item" onclick="mostrarSeccionAdmin('perfil', this)">
         <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Mi cuenta
       </button>
@@ -239,6 +242,25 @@
       </div>
     </section>
 
+    <!-- ===== VALORACIONES ===== -->
+    <section id="sec-valoraciones" style="display:none;">
+      <div class="page-header">
+        <h1><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Valoraciones del equipo</h1>
+      </div>
+      <p style="color:#64748b;font-size:0.86rem;margin:-8px 0 18px;">Promedio de satisfacción por agente de soporte basado en las valoraciones de usuarios.</p>
+      <div class="val-filtros">
+        <select id="val-orden" onchange="renderValoraciones()" style="padding:7px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:0.83rem;background:#fff;">
+          <option value="promedio">Ordenar por promedio</option>
+          <option value="total">Ordenar por total</option>
+          <option value="nombre">Ordenar por nombre</option>
+        </select>
+        <button class="btn btn-sm" onclick="cargarValoraciones()" style="background:#f1f5f9;color:#334155;display:inline-flex;align-items:center;gap:6px;">
+          <span style="display:inline-flex;align-items:center;width:14px;height:14px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Actualizar
+        </button>
+      </div>
+      <div id="val-contenido" class="val-loading">Cargando valoraciones...</div>
+    </section>
+
     <!-- ===== PERFIL / MI CUENTA ===== -->
     <section id="sec-perfil" style="display:none;"></section>
 
@@ -260,6 +282,10 @@
     <button class="nav-item" onclick="mostrarSeccionAdmin('pines', this)" data-seccion="pines">
       <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
       <span class="nav-label">PINes</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionAdmin('valoraciones', this)" data-seccion="valoraciones">
+      <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      <span class="nav-label">Valores</span>
     </button>
     <button class="nav-item" onclick="mostrarSeccionAdmin('perfil', this)" data-seccion="perfil">
       <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
@@ -314,6 +340,18 @@
       <button class="btn-cerrar" onclick="cerrarModal('modal-ver')">×</button>
     </div>
     <div id="ver-contenido"></div>
+  </div>
+</div>
+
+<!-- MODAL COMENTARIOS VALORACION -->
+<div class="modal-overlay" id="modal-val-comentarios">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <h2><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Comentarios de valoración</h2>
+      <button class="btn-cerrar" onclick="cerrarModal('modal-val-comentarios')">×</button>
+    </div>
+    <p id="val-modal-agente" style="color:#64748b;font-size:0.84rem;margin-bottom:14px;"></p>
+    <div id="val-modal-lista" class="val-modal-lista"></div>
   </div>
 </div>
 

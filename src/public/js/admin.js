@@ -576,7 +576,8 @@ function mostrarSeccionAdmin(id, btn) {
   if (id === 'pines')        cargarPines();
   if (id === 'usuarios')     cargarUsuarios();
   if (id === 'soporte-team') cargarSoporte();
-  if (id === 'perfil')       initPerfil();
+  if (id === 'perfil')         initPerfil();
+  if (id === 'valoraciones')   cargarValoraciones();
 }
 
 
@@ -953,4 +954,165 @@ function verInfoUsuario(uJson) {
     </div>
   `;
   document.getElementById('modal-info-usuario').classList.add('abierto');
+}
+
+// ── VALORACIONES ─────────────────────────────────────────────────────────────
+let valData = []; // [{agente, pqrsList}]
+
+async function cargarValoraciones() {
+  const cont = document.getElementById('val-contenido');
+  if (!cont) return;
+  cont.innerHTML = '<div class="val-loading">Cargando valoraciones...</div>';
+
+  // Obtener todas las pqrs con valoracion + soporte asignado
+  const { data: pqrs, error } = await db
+    .from('pqrs')
+    .select('id, soporte_id, soporte_nombre, valoracion, valoracion_comentario, creado_en, asunto')
+    .not('valoracion', 'is', null)
+    .order('creado_en', { ascending: false });
+
+  if (error || !pqrs) {
+    cont.innerHTML = '<div class="val-sin-datos">No se pudieron cargar las valoraciones.</div>';
+    return;
+  }
+
+  // Agrupar por soporte_id
+  const map = {};
+  pqrs.forEach(p => {
+    const sid = p.soporte_id || '_sin';
+    if (!map[sid]) map[sid] = { id: sid, nombre: p.soporte_nombre || 'Sin agente', items: [] };
+    map[sid].items.push(p);
+  });
+
+  // Enriquecer con datos reales de users si están disponibles
+  const sids = Object.keys(map).filter(k => k !== '_sin');
+  if (sids.length) {
+    const { data: users } = await db.from('users').select('id,nombre,email,avatar_url').in('id', sids);
+    (users || []).forEach(u => {
+      if (map[u.id]) {
+        map[u.id].nombre = u.nombre;
+        map[u.id].email = u.email;
+        map[u.id].avatar_url = u.avatar_url;
+      }
+    });
+  }
+
+  valData = Object.values(map).map(ag => {
+    const total = ag.items.length;
+    const suma  = ag.items.reduce((a, p) => a + (p.valoracion || 0), 0);
+    const promedio = total ? +(suma / total).toFixed(2) : 0;
+    const dist = [0,0,0,0,0];
+    ag.items.forEach(p => { if (p.valoracion >= 1 && p.valoracion <= 5) dist[p.valoracion-1]++; });
+    return { ...ag, total, promedio, dist };
+  });
+
+  renderValoraciones();
+}
+
+function renderValoraciones() {
+  const cont = document.getElementById('val-contenido');
+  if (!cont) return;
+
+  if (!valData.length) {
+    cont.innerHTML = '<div class="val-sin-datos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;opacity:.35"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Aún no hay valoraciones registradas.</div>';
+    return;
+  }
+
+  const orden = document.getElementById('val-orden')?.value || 'promedio';
+  const sorted = [...valData].sort((a, b) => {
+    if (orden === 'promedio') return b.promedio - a.promedio;
+    if (orden === 'total')    return b.total - a.total;
+    return (a.nombre || '').localeCompare(b.nombre || '');
+  });
+
+  cont.innerHTML = `<div class="val-grid">${sorted.map((ag, i) => buildValCard(ag, i, sorted.length)).join('')}</div>`;
+
+  // Animar barras con delay
+  setTimeout(() => {
+    cont.querySelectorAll('.val-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.w + '%';
+    });
+  }, 80);
+}
+
+function buildValCard(ag, rank, total) {
+  const iniciales = (ag.nombre || 'S').split(' ').slice(0,2).map(p => p[0]).join('').toUpperCase();
+  const avatarHTML = ag.avatar_url
+    ? `<img src="${ag.avatar_url}" alt="${ag.nombre}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #e0e7ff;flex-shrink:0;" onerror="this.style.display='none'">`
+    : `<span class="val-avatar">${iniciales}</span>`;
+
+  const estrellasSVG = (n, cls) => `<svg class="val-star ${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${cls==='vacia'?'none':'currentColor'}" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+
+  let starsHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    starsHTML += i <= Math.round(ag.promedio) ? estrellasSVG(i,'llena') : estrellasSVG(i,'vacia');
+  }
+
+  const maxDist = Math.max(...ag.dist, 1);
+  const barras = [5,4,3,2,1].map(n => {
+    const cnt = ag.dist[n-1];
+    const pct = Math.round((cnt / maxDist) * 100);
+    return `<div class="val-bar-row">
+      <span class="val-bar-label">${n}★</span>
+      <div class="val-bar-bg"><div class="val-bar-fill" data-w="${pct}" style="width:0"></div></div>
+      <span class="val-bar-count">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  const conComentario = ag.items.filter(p => p.valoracion_comentario).length;
+  const rankBadge = rank === 0
+    ? `<span class="val-badge-rank top">🏆 #1</span>`
+    : rank < 3 ? `<span class="val-badge-rank">#${rank+1}</span>` : '';
+
+  const colorProm = ag.promedio >= 4 ? '#059669' : ag.promedio >= 3 ? '#d97706' : '#ef4444';
+
+  return `
+  <div class="val-card">
+    ${rankBadge}
+    <div class="val-card-header">
+      ${avatarHTML}
+      <div style="min-width:0;">
+        <span class="val-nombre">${ag.nombre}</span>
+        ${ag.email ? `<span class="val-email">${ag.email}</span>` : ''}
+      </div>
+    </div>
+    <div class="val-stars-row">
+      <div class="val-stars">${starsHTML}</div>
+      <span class="val-promedio-num" style="color:${colorProm}">${ag.promedio}</span>
+      <span class="val-total-text">/ 5 &nbsp;·&nbsp; ${ag.total} valoracion${ag.total!==1?'es':''}</span>
+    </div>
+    <div class="val-bar-wrap">${barras}</div>
+    ${conComentario ? `
+    <button class="val-comentarios-btn" onclick="verComentariosVal('${ag.id}')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Ver ${conComentario} comentario${conComentario!==1?'s':''}
+    </button>` : ''}
+  </div>`;
+}
+
+function verComentariosVal(agenteId) {
+  const ag = valData.find(a => a.id === agenteId);
+  if (!ag) return;
+
+  document.getElementById('val-modal-agente').textContent = `Agente: ${ag.nombre} · Promedio ${ag.promedio}/5`;
+  const items = ag.items.filter(p => p.valoracion_comentario);
+
+  const estrellasSVGmin = (n) => Array.from({length:5},(_,i)=>
+    `<svg class="val-coment-star" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${i<n?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5" style="color:${i<n?'#f59e0b':'#e2e8f0'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+  ).join('');
+
+  document.getElementById('val-modal-lista').innerHTML = items.length
+    ? items.map(p => {
+        const fecha = p.creado_en ? new Date(p.creado_en).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}) : '';
+        return `<div class="val-comentario-item">
+          <div class="val-coment-meta">
+            <div class="val-coment-stars">${estrellasSVGmin(p.valoracion)}</div>
+            <span class="val-coment-date">${fecha}</span>
+          </div>
+          <div class="val-coment-text">${p.valoracion_comentario}</div>
+        </div>`;
+      }).join('')
+    : '<p style="color:#aaa;text-align:center;padding:20px;">Sin comentarios con texto.</p>';
+
+  document.getElementById('modal-val-comentarios').classList.add('abierto');
 }
