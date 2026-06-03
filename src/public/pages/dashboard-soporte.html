@@ -11,8 +11,165 @@
   <link rel="stylesheet" href="/css/icons.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <style>
+    /* ── MIS VALORACIONES ── */
+    .val-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #064e3b 100%);
+      border-radius: 18px; padding: 28px 28px 24px;
+      display: flex; align-items: center; gap: 28px;
+      margin-bottom: 24px; position: relative; overflow: hidden;
+      animation: fadeSlideUp 0.45s ease both;
+    }
+    .val-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 80% 50%, rgba(52,211,153,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .val-score-ring {
+      flex-shrink: 0; width: 96px; height: 96px; position: relative;
+    }
+    .val-score-ring svg { width: 96px; height: 96px; transform: rotate(-90deg); }
+    .val-score-ring .ring-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 7; }
+    .val-score-ring .ring-fill {
+      fill: none; stroke: #34d399; stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 251.2;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    .val-score-ring .ring-fill.amarillo { stroke: #fbbf24; }
+    .val-score-ring .ring-fill.rojo     { stroke: #f87171; }
+    .val-score-num {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #fff; font-weight: 800;
+    }
+    .val-score-num .num { font-size: 1.7rem; line-height: 1; letter-spacing: -0.03em; }
+    .val-score-num .de5 { font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .val-hero-info { flex: 1; }
+    .val-hero-info h2 { color: #fff; font-size: 1.2rem; font-weight: 800; margin: 0 0 6px; }
+    .val-hero-info p  { color: rgba(255,255,255,0.55); font-size: 0.82rem; margin: 0 0 14px; }
+    .val-stars-display { display: flex; gap: 5px; }
+    .val-stars-display svg { width: 20px; height: 20px; }
+    .val-stars-display .estrella-llena  { color: #fbbf24; fill: #fbbf24; }
+    .val-stars-display .estrella-media  { color: #fbbf24; fill: none; }
+    .val-stars-display .estrella-vacia  { color: rgba(255,255,255,0.2); fill: none; }
+    .val-mini-stats {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+    }
+    .val-mini-stat {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 8px 14px; text-align: center;
+      transition: background 0.2s;
+    }
+    .val-mini-stat:hover { background: rgba(255,255,255,0.13); }
+    .val-mini-stat .vsn { font-size: 1.2rem; font-weight: 800; color: #34d399; display: block; }
+    .val-mini-stat .vsl { font-size: 0.67rem; color: rgba(255,255,255,0.45); display: block; margin-top: 1px; }
+
+    /* Barra de distribución */
+    .val-dist-card {
+      background: #fff; border-radius: 14px; padding: 20px 22px;
+      border: 1px solid #e2e8f0; margin-bottom: 22px;
+      animation: fadeSlideUp 0.5s ease 0.1s both;
+    }
+    .val-dist-card h3 {
+      font-size: 0.88rem; font-weight: 700; color: #0f172a;
+      margin: 0 0 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .val-dist-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    }
+    .val-dist-label {
+      display: flex; align-items: center; gap: 4px;
+      width: 68px; flex-shrink: 0; font-size: 0.78rem; color: #475569; font-weight: 600;
+    }
+    .val-dist-label svg { width: 12px; height: 12px; flex-shrink: 0; }
+    .val-dist-bar-wrap {
+      flex: 1; height: 10px; background: #f1f5f9; border-radius: 99px; overflow: hidden;
+    }
+    .val-dist-bar {
+      height: 100%; border-radius: 99px;
+      width: 0; transition: width 1s cubic-bezier(.4,0,.2,1);
+    }
+    .vdb-5 { background: linear-gradient(90deg, #34d399, #059669); }
+    .vdb-4 { background: linear-gradient(90deg, #6ee7b7, #34d399); }
+    .vdb-3 { background: linear-gradient(90deg, #fcd34d, #fbbf24); }
+    .vdb-2 { background: linear-gradient(90deg, #fca5a5, #f87171); }
+    .vdb-1 { background: linear-gradient(90deg, #f87171, #ef4444); }
+    .val-dist-count {
+      width: 28px; text-align: right; font-size: 0.78rem;
+      font-weight: 700; color: #64748b; flex-shrink: 0;
+    }
+
+    /* Lista de valoraciones */
+    .val-lista { display: flex; flex-direction: column; gap: 12px; }
+    .val-item {
+      background: #fff; border-radius: 14px; padding: 16px 18px;
+      border: 1px solid #e2e8f0; border-left: 4px solid #e2e8f0;
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+      animation: fadeSlideUp 0.4s ease both;
+    }
+    .val-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(15,23,42,0.09);
+    }
+    .val-item.est-5 { border-left-color: #34d399; }
+    .val-item.est-4 { border-left-color: #6ee7b7; }
+    .val-item.est-3 { border-left-color: #fbbf24; }
+    .val-item.est-2 { border-left-color: #f87171; }
+    .val-item.est-1 { border-left-color: #ef4444; }
+    .val-item-top {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .val-item-usuario {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .val-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e3a8a, #064e3b);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 0.82rem; flex-shrink: 0;
+    }
+    .val-usuario-info strong { font-size: 0.88rem; color: #0f172a; display: block; line-height: 1.2; }
+    .val-usuario-info span  { font-size: 0.72rem; color: #94a3b8; }
+    .val-estrellas-item { display: flex; gap: 3px; flex-shrink: 0; }
+    .val-estrellas-item svg { width: 15px; height: 15px; }
+    .val-star-llena { fill: #fbbf24; color: #fbbf24; }
+    .val-star-vacia { fill: none; color: #e2e8f0; }
+    .val-pqrs-info {
+      font-size: 0.78rem; color: #475569;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .val-pqrs-info code {
+      background: #f1f5f9; padding: 2px 7px; border-radius: 5px;
+      font-size: 0.72rem; color: #475569; font-weight: 700;
+    }
+    .val-comentario {
+      font-size: 0.83rem; color: #334155; line-height: 1.55;
+      background: #f8fafc; border-radius: 9px; padding: 10px 13px;
+      border-left: 3px solid #e2e8f0; font-style: italic;
+      margin-top: 8px;
+    }
+    .val-comentario.est-5 { border-left-color: #34d399; background: #f0fdf4; }
+    .val-comentario.est-4 { border-left-color: #6ee7b7; background: #f0fdf9; }
+    .val-comentario.est-3 { border-left-color: #fcd34d; background: #fffbeb; }
+    .val-comentario.est-2, .val-comentario.est-1 { border-left-color: #f87171; background: #fff5f5; }
+    .val-vacio {
+      text-align: center; padding: 52px 24px;
+      background: #fff; border-radius: 16px; border: 1px dashed #e2e8f0;
+      color: #94a3b8; font-size: 0.9rem; animation: fadeSlideUp 0.4s ease both;
+    }
+    .val-vacio svg { width: 48px; height: 48px; opacity: 0.3; display: block; margin: 0 auto 12px; }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     @media (max-width: 768px) {
-      #nav-bottom {
+      .val-hero { flex-direction: column; text-align: center; gap: 18px; }
+      .val-mini-stats { justify-content: center; }
+      .val-stars-display { justify-content: center; }
+    }
+
         display: flex !important;
         position: fixed !important;
         bottom: 0 !important; left: 0 !important; right: 0 !important;
@@ -63,6 +220,9 @@
       <button class="nav-item" onclick="mostrarSeccionSoporte('resueltas', this)">
         <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> Resueltas
       </button>
+      <button class="nav-item" onclick="mostrarSeccionSoporte('valoraciones', this)">
+        <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Mis valoraciones
+      </button>
       <button class="nav-item" onclick="mostrarSeccionSoporte('perfil', this)">
         <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Mi cuenta
       </button>
@@ -108,6 +268,12 @@
       </div>
     </section>
 
+    <!-- VALORACIONES -->
+    <section id="sec-valoraciones" style="display:none;">
+      <div class="page-header"><h1>Mis valoraciones</h1></div>
+      <div id="val-contenido"></div>
+    </section>
+
     <!-- PERFIL -->
     <section id="sec-perfil" style="display:none;"></section>
 
@@ -123,6 +289,10 @@
     <button class="nav-item" onclick="mostrarSeccionSoporte('resueltas', this)" data-seccion="resueltas">
       <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
       <span class="nav-label">Resueltas</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccionSoporte('valoraciones', this)" data-seccion="valoraciones">
+      <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      <span class="nav-label">Valoraciones</span>
     </button>
     <button class="nav-item" onclick="mostrarSeccionSoporte('perfil', this)" data-seccion="perfil">
       <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>

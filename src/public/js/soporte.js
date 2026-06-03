@@ -299,6 +299,7 @@ function mostrarSeccionSoporte(id, btn) {
   document.getElementById(`sec-${id}`).style.display = 'block';
   if (btn) btn.classList.add('activo');
   if (id === 'perfil') initPerfil();
+  if (id === 'valoraciones') cargarValoraciones();
 }
 function cerrarModal(id) { document.getElementById(id)?.classList.remove('abierto'); }
 function cerrarSesionLocal() { cerrarSesion(db); }
@@ -590,3 +591,152 @@ function abrirLightbox(url) {
 
 // Alias para compatibilidad con código existente
 function verImagenCompleta(url) { abrirLightbox(url); }
+
+// ══ MIS VALORACIONES ══════════════════════════════════════════════════════════
+
+async function cargarValoraciones() {
+  const contenedor = document.getElementById('val-contenido');
+  if (!contenedor) return;
+  contenedor.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:0.85rem;">Cargando valoraciones...</div>';
+
+  const { data, error } = await db
+    .from('pqrs')
+    .select('id, radicado, asunto, tipo, valoracion, valoracion_comentario, updated_at, users!pqrs_usuario_id_fkey(nombre, email)')
+    .eq('soporte_id', sesionSoporte.user.id)
+    .eq('estado', 'resuelto')
+    .not('valoracion', 'is', null)
+    .order('updated_at', { ascending: false });
+
+  if (error || !data) {
+    contenedor.innerHTML = '<div style="text-align:center;padding:40px;color:#f87171;">Error cargando valoraciones.</div>';
+    return;
+  }
+
+  if (!data.length) {
+    contenedor.innerHTML = `
+      <div class="val-vacio">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <strong style="display:block;color:#475569;margin-bottom:6px;">Sin valoraciones aún</strong>
+        Cuando resuelvas PQRS y los usuarios las valoren, aparecerán aquí.
+      </div>`;
+    return;
+  }
+
+  const total    = data.length;
+  const suma     = data.reduce((s, p) => s + (p.valoracion || 0), 0);
+  const promedio = suma / total;
+  const dist     = [5, 4, 3, 2, 1].map(n => ({ n, count: data.filter(p => p.valoracion === n).length }));
+
+  // Color del anillo según promedio
+  const ringClass = promedio >= 4 ? '' : promedio >= 3 ? 'amarillo' : 'rojo';
+  const pct5 = (promedio / 5) * 100;
+  const circumference = 251.2;
+  const offset = circumference - (circumference * pct5 / 100);
+
+  const starSVG = (llena) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="${llena ? 'estrella-llena' : 'estrella-media'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+
+  const starsHero = Array.from({length: 5}, (_, i) => starSVG(i < Math.round(promedio))).join('');
+
+  const maxDist = Math.max(...dist.map(d => d.count), 1);
+
+  contenedor.innerHTML = `
+    <div class="val-hero">
+      <div class="val-score-ring">
+        <svg viewBox="0 0 96 96">
+          <circle class="ring-track" cx="48" cy="48" r="40"/>
+          <circle class="ring-fill ${ringClass}" id="val-ring-fill" cx="48" cy="48" r="40"
+            style="stroke-dashoffset:${circumference}"/>
+        </svg>
+        <div class="val-score-num">
+          <span class="num">${promedio.toFixed(1)}</span>
+          <span class="de5">de 5</span>
+        </div>
+      </div>
+      <div class="val-hero-info">
+        <h2>Tu reputación como soporte</h2>
+        <div class="val-stars-display">${starsHero}</div>
+        <div class="val-mini-stats">
+          <div class="val-mini-stat">
+            <span class="vsn">${total}</span>
+            <span class="vsl">Valoraciones</span>
+          </div>
+          <div class="val-mini-stat">
+            <span class="vsn">${data.filter(p => p.valoracion >= 4).length}</span>
+            <span class="vsl">Positivas</span>
+          </div>
+          <div class="val-mini-stat">
+            <span class="vsn">${data.filter(p => p.valoracion_comentario).length}</span>
+            <span class="vsl">Con comentario</span>
+          </div>
+          <div class="val-mini-stat">
+            <span class="vsn">${Math.round((data.filter(p => p.valoracion >= 4).length / total) * 100)}%</span>
+            <span class="vsl">Satisfacción</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="val-dist-card">
+      <h3>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Distribución de puntuaciones
+      </h3>
+      ${dist.map(d => `
+        <div class="val-dist-row">
+          <div class="val-dist-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${d.count ? '#fbbf24' : 'none'}" stroke="${d.count ? '#fbbf24' : '#cbd5e1'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ${d.n} estrellas
+          </div>
+          <div class="val-dist-bar-wrap">
+            <div class="val-dist-bar vdb-${d.n}" data-pct="${(d.count / maxDist * 100).toFixed(0)}" style="width:0"></div>
+          </div>
+          <div class="val-dist-count">${d.count}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="val-lista">
+      ${data.map((p, i) => {
+        const usuario = p.users?.nombre || 'Usuario';
+        const inicial = usuario.charAt(0).toUpperCase();
+        const v = p.valoracion || 0;
+        const estrellasHtml = Array.from({length: 5}, (_, j) =>
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${j < v ? 'val-star-llena' : 'val-star-vacia'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+        ).join('');
+        const labelV = {5:'Excelente', 4:'Bueno', 3:'Regular', 2:'Malo', 1:'Muy malo'}[v] || '';
+        return `
+          <div class="val-item est-${v}" style="animation-delay:${i * 0.05}s">
+            <div class="val-item-top">
+              <div class="val-item-usuario">
+                <div class="val-avatar">${inicial}</div>
+                <div class="val-usuario-info">
+                  <strong>${usuario}</strong>
+                  <span>${formatFecha(p.updated_at)}</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+                <div class="val-estrellas-item">${estrellasHtml}</div>
+                <span style="font-size:0.7rem;font-weight:700;color:${v>=4?'#059669':v===3?'#d97706':'#dc2626'}">${labelV}</span>
+              </div>
+            </div>
+            <div class="val-pqrs-info">
+              <code>${p.radicado}</code>
+              <span style="color:#cbd5e1;">·</span>
+              <span>${p.asunto}</span>
+            </div>
+            ${p.valoracion_comentario ? `<div class="val-comentario est-${v}">"${p.valoracion_comentario}"</div>` : ''}
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  // Animar anillo y barras después de render
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const ring = document.getElementById('val-ring-fill');
+      if (ring) ring.style.strokeDashoffset = offset;
+      document.querySelectorAll('.val-dist-bar').forEach(bar => {
+        bar.style.width = (bar.dataset.pct || '0') + '%';
+      });
+    }, 120);
+  });
+}
