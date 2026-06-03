@@ -689,7 +689,7 @@ function actualizarBarraDisponibles(count) {
     barra.id = 'admin-notif-bar';
     barra.className = 'admin-notif-bar';
     barra.innerHTML = `
-      <span class="admin-notif-bar-icon"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span></span>
+      <span class="admin-notif-bar-icon"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span></span>
       <div class="admin-notif-bar-text">
         <div class="admin-notif-bar-title" id="admin-notif-bar-title"></div>
         <div class="admin-notif-bar-sub" id="admin-notif-bar-sub"></div>
