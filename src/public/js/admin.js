@@ -95,7 +95,7 @@ function _renderAdminTablaDesktop(lista) {
       <td>${formatFecha(p.created_at)}</td>
       <td style="display:flex;gap:6px;align-items:center;">
         ${['resuelto','cerrado'].includes(p.estado)
-          ? `<button class="btn btn-sm" disabled style="opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-width:110px;width:110px;justify-content:center;text-align:center;">✅ Resuelto</button>`
+          ? `<button class="btn btn-sm" disabled style="opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-width:110px;width:110px;justify-content:center;text-align:center;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Resuelto</button>`
           : `<button class="btn btn-sm btn-primario" style="min-width:110px;width:110px;justify-content:center;text-align:center;" onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
               ${p.estado === 'pendiente' ? '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Asignar' : '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Reasignar'}
              </button>`
@@ -147,7 +147,7 @@ function _renderAdminCardsMobile(lista) {
       <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> ${formatFecha(p.created_at)} &nbsp;·&nbsp; <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> ${p.area||'—'}</div>
       <div style="display:flex;gap:8px;">
         ${['resuelto','cerrado'].includes(p.estado)
-          ? `<button class="btn btn-sm" disabled style="flex:1;opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-height:42px;justify-content:center;text-align:center;">✅ Resuelto</button>`
+          ? `<button class="btn btn-sm" disabled style="flex:1;opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-height:42px;justify-content:center;text-align:center;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Resuelto</button>`
           : `<button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;text-align:center;min-height:42px;"
               onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
               ${p.estado==='pendiente'?'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Asignar':'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Reasignar'}
@@ -212,7 +212,7 @@ async function cargarUsuarios() {
       <td>
         <button onclick="verInfoUsuario('${uJson}')"
           style="background:rgba(99,102,241,0.07);color:#6366f1;border:1px solid rgba(99,102,241,0.22);padding:5px 11px;border-radius:7px;font-size:0.75rem;cursor:pointer;font-weight:600;white-space:nowrap;">
-          ℹ️ Info
+          <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span> Info
         </button>
       </td>
     </tr>`;
@@ -272,7 +272,7 @@ function _renderUsuariosMobile(data) {
         }
         <button onclick="verInfoUsuario('${uJson}')"
           style="background:rgba(99,102,241,0.07);color:#6366f1;border:1px solid rgba(99,102,241,0.22);padding:8px 13px;border-radius:8px;font-size:0.75rem;cursor:pointer;font-weight:600;flex-shrink:0;">
-          ℹ️
+          <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
         </button>
       </div>
     </div>`;
@@ -306,7 +306,7 @@ async function cambiarRol(userId, nuevoRol) {
           await apiFetch(`/users/${userId}/rol`, { method: 'PATCH', body: JSON.stringify({ rol: nuevoRol }) });
           await cargarSoporte();
           await cargarUsuarios();
-          mostrarToast('✅ Rol de administrador asignado correctamente.', 'exito', 4000);
+          mostrarToast('<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Rol de administrador asignado correctamente.', 'exito', 4000);
         } catch (err) { alert('Error al cambiar rol: ' + err.message); }
       },
       onCancel: async () => {
@@ -432,7 +432,7 @@ async function confirmarAsignacion() {
       method: 'POST',
       body: JSON.stringify({ soporte_id: soporteId, prioridad, sla_horas: sla })
     });
-    mostrarMensaje('msg-asignar', '✅ Asignado correctamente.', 'exito');
+    mostrarMensaje('msg-asignar', '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Asignado correctamente.', 'exito');
     setTimeout(() => cerrarModal('modal-asignar'), 1500);
     await cargarTodasPqrs();
   } catch (err) {
@@ -483,7 +483,7 @@ async function abrirModalVer(id) {
           style="padding:7px 10px;border:1.5px solid #c7d7fe;border-radius:8px;font-size:0.82rem;background:#fff;color:#334155;">
           <option value="">— Sin cambiar estado —</option>
           <option value="en_proceso"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Marcar En proceso</option>
-          <option value="resuelto">✅ Marcar Resuelto</option>
+          <option value="resuelto"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Marcar Resuelto</option>
           <option value="cerrado"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Cerrar PQRS</option>
         </select>
         <button onclick="enviarIntervencionAdmin()" id="btn-enviar-intervencion"
@@ -539,7 +539,7 @@ async function enviarIntervencionAdmin() {
       body: JSON.stringify({ soporte_id: session.user.id, contenido, nuevo_estado: nuevoEstado || undefined })
     });
 
-    msgEl.textContent = '✅ Mensaje enviado correctamente.';
+    msgEl.textContent = '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Mensaje enviado correctamente.';
     msgEl.style.color = '#059669';
     msgEl.style.display = 'inline';
     document.getElementById('admin-intervencion-txt').value = '';
@@ -632,7 +632,7 @@ function renderNotifAdmin() {
     </div>
     <div class="notif-list">
       ${lista.length === 0
-        ? `<div class="notif-vacio"><span class="notif-vacio-icon">✅</span>Sin notificaciones</div>`
+        ? `<div class="notif-vacio"><span class="notif-vacio-icon"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span></span>Sin notificaciones</div>`
         : lista.map(n => `
             <div class="notif-item ${n.leida ? '' : 'no-leida'}" onclick="clickNotifAdmin('${n.id}')">
               <div class="notif-icono">${n.icono || '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>'}</div>
@@ -776,11 +776,11 @@ function initNotifAdmin() {
 
 // Toast helper para admin (usa el global de notifications.js si está disponible, sino define uno local)
 function mostrarToast(titulo, msg, tipo = 'info', duracion = 5000) {
-  const iconos = { info: 'ℹ️', urgente: '⚠️', exito: '✅', error: '❌' };
+  const iconos = { info: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>`, urgente: '⚠️', exito: '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>', error: '❌' };
   const toast = document.createElement('div');
   toast.className = `toast-notif toast-${tipo}`;
   toast.innerHTML = `
-    <span class="toast-notif-icon">${iconos[tipo] || 'ℹ️'}</span>
+    <span class="toast-notif-icon">${iconos[tipo] || `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>`}</span>
     <div class="toast-notif-body">
       <div class="toast-notif-title">${titulo}</div>
       <div class="toast-notif-msg">${msg}</div>

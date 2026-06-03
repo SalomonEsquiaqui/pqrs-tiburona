@@ -42,7 +42,7 @@ async function cargarPines() {
           <td style="color:#666;font-size:0.85rem;">${p.descripcion || '—'}</td>
           <td>
             ${p.activo
-              ? '<span class="estado estado-resuelto">✅ Activo</span>'
+              ? '<span class="estado estado-resuelto"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Activo</span>'
               : '<span class="estado estado-cerrado"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Inactivo</span>'
             }
           </td>
@@ -121,7 +121,7 @@ function copiarPin() {
   navigator.clipboard.writeText(ultimoPinGenerado).then(() => {
     const btn = event.target.closest('button');
     const original = btn.innerHTML;
-    btn.innerHTML = '✅ ¡Copiado!';
+    btn.innerHTML = '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> ¡Copiado!';
     setTimeout(() => { btn.innerHTML = original; }, 2000);
   });
 }
@@ -181,7 +181,7 @@ function _renderPinesMobile(data, tbody) {
             ${p.rol === 'admin' ? '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><line x1="5" y1="20" x2="19" y2="20"/></svg></span> Admin' : '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span> Soporte'}
           </span>
           ${p.activo
-            ? '<span style="background:#05966918;color:#059669;border:1px solid #05966940;padding:2px 8px;border-radius:99px;font-size:0.65rem;font-weight:700;">✅ Activo</span>'
+            ? '<span style="background:#05966918;color:#059669;border:1px solid #05966940;padding:2px 8px;border-radius:99px;font-size:0.65rem;font-weight:700;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Activo</span>'
             : '<span style="background:#94a3b818;color:#94a3b8;border:1px solid #94a3b840;padding:2px 8px;border-radius:99px;font-size:0.65rem;font-weight:700;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Inactivo</span>'
           }
         </div>
