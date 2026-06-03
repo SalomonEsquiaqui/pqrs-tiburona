@@ -1061,7 +1061,7 @@ function buildValCard(ag, rank, total) {
 
   const conComentario = ag.items.filter(p => p.valoracion_comentario).length;
   const rankBadge = rank === 0
-    ? `<span class="val-badge-rank top">🏆 #1</span>`
+    ? `<span class="val-badge-rank top"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#f59e0b" style="width:13px;height:13px;vertical-align:-1px;margin-right:2px"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg> #1</span>`
     : rank < 3 ? `<span class="val-badge-rank">#${rank+1}</span>` : '';
 
   const colorProm = ag.promedio >= 4 ? '#059669' : ag.promedio >= 3 ? '#d97706' : '#ef4444';
