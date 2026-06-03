@@ -3,11 +3,11 @@
 
 /* ── TOAST GLOBAL ─────────────────────────────────────────────────────────── */
 function mostrarToast(titulo, msg, tipo = 'info', duracion = 5000) {
-  const iconos = { info: 'ℹ️', urgente: '⚠️', exito: '✅', error: '❌' };
+  const iconos = { info: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>`, urgente: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>`, exito: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`, error: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>` };
   const toast = document.createElement('div');
   toast.className = `toast-notif toast-${tipo}`;
   toast.innerHTML = `
-    <span class="toast-notif-icon">${iconos[tipo] || 'ℹ️'}</span>
+    <span class="toast-notif-icon">${iconos[tipo] || `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>`}</span>
     <div class="toast-notif-body">
       <div class="toast-notif-title">${titulo}</div>
       <div class="toast-notif-msg">${msg}</div>
@@ -81,20 +81,20 @@ function renderNotifPanel(lista, onClickItem) {
 
   panel.innerHTML = `
     <div class="notif-panel-header">
-      <h4>🔔 Notificaciones ${noLeidas > 0 ? `<span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 7px;font-size:.7rem;">${noLeidas}</span>` : ''}</h4>
+      <h4><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span> Notificaciones ${noLeidas > 0 ? `<span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 7px;font-size:.7rem;">${noLeidas}</span>` : ''}</h4>
       <button onclick="marcarNotifLeidas()">Marcar todas leídas</button>
     </div>
     <div class="notif-list" id="notif-list-inner">
       ${lista.length === 0
-        ? `<div class="notif-vacio"><span class="notif-vacio-icon">🔔</span>Sin notificaciones aún</div>`
+        ? `<div class="notif-vacio"><span class="notif-vacio-icon"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span></span>Sin notificaciones aún</div>`
         : lista.map(n => `
             <div class="notif-item ${n.leida ? '' : 'no-leida'} ${n.urgente ? 'notif-urgente' : ''}"
                  data-id="${n.id}" onclick="onClickNotif('${n.id}')">
-              <div class="notif-icono">${n.icono || '🔔'}</div>
+              <div class="notif-icono">${n.icono || `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>`}</div>
               <div class="notif-body">
                 <div class="notif-titulo">${n.titulo}</div>
                 <div class="notif-desc">${n.desc}</div>
-                ${n.extra ? `<div class="notif-sla-badge">⏱ ${n.extra}</div>` : ''}
+                ${n.extra ? `<div class="notif-sla-badge"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> ${n.extra}</div>` : ''}
                 <div class="notif-tiempo">${tiempoRelativo(n.ts)}</div>
               </div>
             </div>`).join('')
@@ -219,7 +219,7 @@ function inyectarCampana(contenedorId) {
   wrap.style.cssText = 'margin-top:12px;position:relative;';
   wrap.innerHTML = `
     <button class="notif-bell-btn" onclick="toggleNotifPanel()" title="Notificaciones">
-      🔔
+      <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
       <span class="notif-dot" id="notif-dot"></span>
     </button>
     <div class="notif-panel" id="notif-panel"></div>

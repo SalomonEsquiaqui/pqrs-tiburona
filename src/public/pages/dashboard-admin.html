@@ -177,7 +177,7 @@
             <label>Rol del PIN</label>
             <select id="pin-rol">
               <option value="soporte">Soporte técnico</option>
-              <option value="admin">👑 Administrador</option>
+              <option value="admin"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><line x1="5" y1="20" x2="19" y2="20"/></svg></span> Administrador</option>
             </select>
           </div>
           <div class="form-grupo" style="margin:0;flex:2;min-width:200px;">
@@ -185,7 +185,7 @@
             <input type="text" id="pin-desc" placeholder="Ej: Para Juan - Nuevo soporte">
           </div>
           <button class="btn btn-verde" onclick="generarPin()" id="btn-gen-pin">
-            🎲 Generar PIN
+            <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span> Generar PIN
           </button>
         </div>
       </div>
@@ -213,10 +213,10 @@
         <select id="filtro-pin-rol" onchange="cargarPines()" style="padding:7px 12px;border:2px solid var(--gris-medio);border-radius:8px;font-size:0.85rem;">
           <option value="">Todos los roles</option>
           <option value="soporte">Soporte</option>
-          <option value="admin">👑 Admin</option>
+          <option value="admin"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><line x1="5" y1="20" x2="19" y2="20"/></svg></span> Admin</option>
         </select>
         <button class="btn btn-sm" onclick="cargarPines()" style="background:var(--gris-claro);color:var(--azul-oscuro);">
-          🔄 Actualizar
+          <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Actualizar
         </button>
       </div>
 
@@ -273,7 +273,7 @@
 <div class="modal-overlay" id="modal-info-usuario">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header">
-      <h2>👤 Perfil de usuario</h2>
+      <h2><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Perfil de usuario</h2>
       <button class="btn-cerrar" onclick="cerrarModal('modal-info-usuario')">×</button>
     </div>
     <div id="info-usuario-contenido" style="padding:4px 0;"></div>
@@ -297,9 +297,9 @@
     <div class="form-grupo">
       <label>Prioridad</label>
       <select id="sel-prioridad">
-        <option value="normal">🟢 Normal</option>
-        <option value="alta">🟡 Alta</option>
-        <option value="urgente">🔴 Urgente</option>
+        <option value="normal">Normal</option>
+        <option value="alta">Alta</option>
+        <option value="urgente">Urgente</option>
       </select>
     </div>
     <button class="btn btn-primario" onclick="confirmarAsignacion()"><span class="ni ni-sm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span> Confirmar asignación</button>

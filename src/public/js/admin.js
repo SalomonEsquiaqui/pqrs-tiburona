@@ -97,10 +97,10 @@ function _renderAdminTablaDesktop(lista) {
         ${['resuelto','cerrado'].includes(p.estado)
           ? `<button class="btn btn-sm" disabled style="opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-width:110px;width:110px;justify-content:center;text-align:center;">✅ Resuelto</button>`
           : `<button class="btn btn-sm btn-primario" style="min-width:110px;width:110px;justify-content:center;text-align:center;" onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
-              ${p.estado === 'pendiente' ? '📋 Asignar' : '🔄 Reasignar'}
+              ${p.estado === 'pendiente' ? '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Asignar' : '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Reasignar'}
              </button>`
         }
-        <button class="btn btn-sm btn-verde" onclick="abrirModalVer('${p.id}')">👁</button>
+        <button class="btn btn-sm btn-verde" onclick="abrirModalVer('${p.id}')"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></button>
       </td>
     </tr>`;
   }).join('');
@@ -121,12 +121,12 @@ function _renderAdminCardsMobile(lista) {
   cardsWrap.style.display = 'flex';
 
   const colores = {pendiente:'#f97316',asignado:'#3b82f6',en_proceso:'#8b5cf6',resuelto:'#059669',cerrado:'#94a3b8'};
-  const iconos  = {peticion:'📝',queja:'😤',reclamo:'⚡',sugerencia:'💡',felicitacion:'🌟'};
+  const iconos  = {peticion:'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>',queja:'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>',reclamo:'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>',sugerencia:'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>',felicitacion:'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>'};
 
   if (!lista.length) {
     cardsWrap.innerHTML = `
       <div style="text-align:center;padding:40px 20px;background:#fff;border-radius:14px;border:1px solid #e2e8f0;">
-        <span style="font-size:2rem;display:block;margin-bottom:10px;">📭</span>
+        <span style="font-size:2rem;display:block;margin-bottom:10px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 .88 17.84l.06-.07A19.79 19.79 0 0 0 4.6 9.63 6 6 0 1 1 18 8c0 1-.25 2.5-1.5 3.5"/></svg></span></span>
         <p style="color:#94a3b8;font-size:0.9rem;">Sin solicitudes registradas.</p>
       </div>`;
     return;
@@ -143,18 +143,18 @@ function _renderAdminCardsMobile(lista) {
         </div>
         <span style="background:${color}18;color:${color};border:1px solid ${color}40;padding:3px 10px;border-radius:99px;font-size:0.68rem;font-weight:700;white-space:nowrap;flex-shrink:0;">${p.estado.replace('_',' ')}</span>
       </div>
-      <div style="font-size:0.78rem;color:#64748b;margin-bottom:2px;">👤 ${p.users?.nombre||'—'} &nbsp;·&nbsp; ${iconos[p.tipo]||'📋'} ${p.tipo}</div>
-      <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;">📅 ${formatFecha(p.created_at)} &nbsp;·&nbsp; 🏢 ${p.area||'—'}</div>
+      <div style="font-size:0.78rem;color:#64748b;margin-bottom:2px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> ${p.users?.nombre||'—'} &nbsp;·&nbsp; ${iconos[p.tipo]||'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>'} ${p.tipo}</div>
+      <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:12px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> ${formatFecha(p.created_at)} &nbsp;·&nbsp; <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> ${p.area||'—'}</div>
       <div style="display:flex;gap:8px;">
         ${['resuelto','cerrado'].includes(p.estado)
           ? `<button class="btn btn-sm" disabled style="flex:1;opacity:0.4;cursor:not-allowed;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;min-height:42px;justify-content:center;text-align:center;">✅ Resuelto</button>`
           : `<button class="btn btn-sm btn-primario" style="flex:1;justify-content:center;text-align:center;min-height:42px;"
               onclick="abrirModalAsignar('${p.id}','${p.radicado}','${p.tipo}')">
-              ${p.estado==='pendiente'?'📋 Asignar':'🔄 Reasignar'}
+              ${p.estado==='pendiente'?'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Asignar':'<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Reasignar'}
              </button>`
         }
         <button class="btn btn-sm btn-verde" style="min-height:42px;padding:0 16px;"
-          onclick="abrirModalVer('${p.id}')">👁</button>
+          onclick="abrirModalVer('${p.id}')"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></button>
       </div>
     </div>`;
   }).join('');
@@ -201,7 +201,7 @@ async function cargarUsuarios() {
       <td><span class="badge badge-${u.rol}">${u.rol}</span></td>
       <td>
         ${u.rol === 'admin'
-          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;">🔒 Admin (no editable)</span>`
+          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Admin (no editable)</span>`
           : `<select onchange="cambiarRol('${u.id}',this.value)" style="padding:5px 8px;border:1px solid var(--gris-medio);border-radius:6px;font-size:0.8rem;">
                <option value="usuario" ${u.rol==='usuario'?'selected':''}>Usuario</option>
                <option value="soporte" ${u.rol==='soporte'?'selected':''}>Soporte</option>
@@ -259,14 +259,14 @@ function _renderUsuariosMobile(data) {
           <p style="font-size:0.8rem;color:#64748b;margin:2px 0 0;">✉️ ${u.email}</p>
         </div>
       </div>
-      <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;">📞 ${u.telefono||'—'}</p>
+      <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:12px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span> ${u.telefono||'—'}</p>
       <div style="display:flex;align-items:center;gap:8px;">
         ${u.rol === 'admin'
-          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;flex:1;display:block;text-align:center;">🔒 Administrador (no editable)</span>`
+          ? `<span style="font-size:0.78rem;color:#94a3b8;background:#f1f5f9;padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;flex:1;display:block;text-align:center;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Administrador (no editable)</span>`
           : `<select onchange="cambiarRol('${u.id}',this.value)"
                style="flex:1;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:#fff;min-height:40px;">
-               <option value="usuario" ${u.rol==='usuario'?'selected':''}>👤 Usuario</option>
-               <option value="soporte" ${u.rol==='soporte'?'selected':''}>🛠️ Soporte</option>
+               <option value="usuario" ${u.rol==='usuario'?'selected':''}><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Usuario</option>
+               <option value="soporte" ${u.rol==='soporte'?'selected':''}><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>️ Soporte</option>
                <option value="admin">⚙️ Administrador</option>
              </select>`
         }
@@ -459,9 +459,9 @@ async function abrirModalVer(id) {
     <div class="detalle-campo"><strong>Área</strong><p>${p.area||'—'}</p></div>
     <div class="detalle-campo"><strong>Descripción</strong><p style="white-space:pre-wrap;line-height:1.6;">${p.descripcion}</p></div>
     ${renderAdjunto(p.imagen_url)}
-    <p style="color:#94a3b8;font-size:0.79rem;margin-top:10px;">📅 Enviado el ${formatFecha(p.created_at)}</p>
+    <p style="color:#94a3b8;font-size:0.79rem;margin-top:10px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Enviado el ${formatFecha(p.created_at)}</p>
     <hr style="margin:16px 0;border:none;border-top:1px solid var(--gris-medio);">
-    <h4 style="margin-bottom:10px;">💬 Conversación (${respuestas?.length||0})</h4>
+    <h4 style="margin-bottom:10px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Conversación (${respuestas?.length||0})</h4>
     <div id="hilo-respuestas-ver">
     ${respuestas?.length
       ? respuestas.map(r => _renderRespuestaItem(r)).join('')
@@ -471,7 +471,7 @@ async function abrirModalVer(id) {
     <!-- ── INTERVENCIÓN DEL ADMINISTRADOR ── -->
     <div style="margin-top:20px;background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1.5px solid #c7d7fe;border-radius:14px;padding:16px;">
       <h5 style="font-size:0.82rem;font-weight:700;color:#3730a3;margin:0 0 10px;display:flex;align-items:center;gap:6px;">
-        👑 Intervención del administrador
+        <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><line x1="5" y1="20" x2="19" y2="20"/></svg></span> Intervención del administrador
         <span style="font-size:0.7rem;font-weight:500;color:#6366f1;background:#e0e7ff;padding:2px 8px;border-radius:99px;">Visible para el cliente y soporte</span>
       </h5>
       <textarea id="admin-intervencion-txt" rows="3" maxlength="1000"
@@ -482,14 +482,14 @@ async function abrirModalVer(id) {
         <select id="admin-intervencion-estado"
           style="padding:7px 10px;border:1.5px solid #c7d7fe;border-radius:8px;font-size:0.82rem;background:#fff;color:#334155;">
           <option value="">— Sin cambiar estado —</option>
-          <option value="en_proceso">🔄 Marcar En proceso</option>
+          <option value="en_proceso"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span> Marcar En proceso</option>
           <option value="resuelto">✅ Marcar Resuelto</option>
-          <option value="cerrado">🔒 Cerrar PQRS</option>
+          <option value="cerrado"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Cerrar PQRS</option>
         </select>
         <button onclick="enviarIntervencionAdmin()" id="btn-enviar-intervencion"
           style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .18s;"
           onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
-          📤 Enviar mensaje
+          <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span> Enviar mensaje
         </button>
         <span id="admin-intervencion-msg" style="font-size:0.8rem;color:#059669;display:none;"></span>
       </div>
@@ -505,7 +505,7 @@ function _renderRespuestaItem(r) {
     <div style="margin-bottom:12px;background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1px solid #c7d7fe;border-radius:12px;padding:12px 14px;border-left:4px solid #6366f1;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap;">
         <strong style="font-size:0.82rem;color:#4338ca;display:flex;align-items:center;gap:5px;">
-          👑 ${r.users?.nombre||'Administrador'} <span style="font-size:0.68rem;background:#e0e7ff;color:#6366f1;padding:1px 7px;border-radius:99px;font-weight:600;">Admin</span>
+          <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><line x1="5" y1="20" x2="19" y2="20"/></svg></span> ${r.users?.nombre||'Administrador'} <span style="font-size:0.68rem;background:#e0e7ff;color:#6366f1;padding:1px 7px;border-radius:99px;font-weight:600;">Admin</span>
         </strong>
         <span style="font-size:0.73rem;color:#94a3b8;">${formatFecha(r.created_at)}</span>
       </div>
@@ -627,7 +627,7 @@ function renderNotifAdmin() {
 
   panel.innerHTML = `
     <div class="notif-panel-header">
-      <h4>📋 Notificaciones ${noLeidas > 0 ? `<span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 7px;font-size:.7rem;">${noLeidas}</span>` : ''}</h4>
+      <h4><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Notificaciones ${noLeidas > 0 ? `<span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 7px;font-size:.7rem;">${noLeidas}</span>` : ''}</h4>
       <button onclick="marcarLeidasAdmin()">Marcar leídas</button>
     </div>
     <div class="notif-list">
@@ -635,11 +635,11 @@ function renderNotifAdmin() {
         ? `<div class="notif-vacio"><span class="notif-vacio-icon">✅</span>Sin notificaciones</div>`
         : lista.map(n => `
             <div class="notif-item ${n.leida ? '' : 'no-leida'}" onclick="clickNotifAdmin('${n.id}')">
-              <div class="notif-icono">${n.icono || '📋'}</div>
+              <div class="notif-icono">${n.icono || '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>'}</div>
               <div class="notif-body">
                 <div class="notif-titulo">${n.titulo}</div>
                 <div class="notif-desc">${n.desc}</div>
-                ${n.count ? `<div class="notif-sla-badge">📋 ${n.count} PQRS pendientes</div>` : ''}
+                ${n.count ? `<div class="notif-sla-badge"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> ${n.count} PQRS pendientes</div>` : ''}
                 <div class="notif-tiempo">${tiempoRelAdmin(n.ts)}</div>
               </div>
             </div>`).join('')
@@ -689,7 +689,7 @@ function actualizarBarraDisponibles(count) {
     barra.id = 'admin-notif-bar';
     barra.className = 'admin-notif-bar';
     barra.innerHTML = `
-      <span class="admin-notif-bar-icon">📬</span>
+      <span class="admin-notif-bar-icon"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span></span>
       <div class="admin-notif-bar-text">
         <div class="admin-notif-bar-title" id="admin-notif-bar-title"></div>
         <div class="admin-notif-bar-sub" id="admin-notif-bar-sub"></div>
@@ -726,9 +726,9 @@ function verificarPendientesAdmin() {
   if (ultimoPendienteCount !== -1 && count > ultimoPendienteCount) {
     const nuevas = count - ultimoPendienteCount;
     agregarNotifAdmin({
-      titulo: `📬 ${nuevas} nueva${nuevas > 1 ? 's' : ''} PQRS pendiente${nuevas > 1 ? 's' : ''}`,
+      titulo: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span> ${nuevas} nueva${nuevas > 1 ? 's' : ''} PQRS pendiente${nuevas > 1 ? 's' : ''}`,
       desc: `Hay ${count} PQRS en total esperando ser asignadas a un agente de soporte.`,
-      icono: '📬',
+      icono: '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span>',
       count
     });
     renderNotifAdmin();
@@ -740,9 +740,9 @@ function verificarPendientesAdmin() {
   } else if (ultimoPendienteCount === -1 && count > 0) {
     // Primera carga: notificar si hay pendientes
     agregarNotifAdmin({
-      titulo: `📋 ${count} PQRS esperan asignación`,
+      titulo: `<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> ${count} PQRS esperan asignación`,
       desc: `Al iniciar sesión hay ${count} PQRS pendientes sin agente asignado.`,
-      icono: '📋',
+      icono: '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>',
       count
     });
     renderNotifAdmin();
@@ -759,7 +759,7 @@ function initNotifAdmin() {
   wrap.style.cssText = 'margin-top:12px;';
   wrap.innerHTML = `
     <button class="notif-bell-btn" onclick="toggleNotifAdmin()" title="Notificaciones">
-      🔔
+      <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
       <span class="notif-dot" id="notif-dot"></span>
     </button>
     <div class="notif-panel" id="notif-panel"></div>
@@ -802,7 +802,7 @@ function renderAdjunto(url) {
 
   if (isVideo) return `
     <div class="adjunto-wrap">
-      <p class="adjunto-label">🎬 Video adjunto</p>
+      <p class="adjunto-label"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span> Video adjunto</p>
       <video controls playsinline
         style="width:100%;max-height:300px;border-radius:12px;background:#000;margin-top:6px;outline:none;"
         preload="metadata">
@@ -819,7 +819,7 @@ function renderAdjunto(url) {
 
   if (isAudio) return `
     <div class="adjunto-wrap">
-      <p class="adjunto-label">🎵 Audio adjunto</p>
+      <p class="adjunto-label"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> Audio adjunto</p>
       <audio controls style="width:100%;margin-top:6px;border-radius:8px;" preload="metadata">
         <source src="${url}">
         <p style="color:#94a3b8;font-size:0.85rem;">Tu navegador no soporta audio.
@@ -834,7 +834,7 @@ function renderAdjunto(url) {
 
   if (isPDF) return `
     <div class="adjunto-wrap">
-      <p class="adjunto-label">📄 PDF adjunto</p>
+      <p class="adjunto-label"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> PDF adjunto</p>
       <div style="border:1.5px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-top:6px;">
         <iframe src="${url}" style="width:100%;height:420px;border:none;display:block;"
           title="PDF adjunto">
@@ -842,14 +842,14 @@ function renderAdjunto(url) {
       </div>
       <a href="${url}" target="_blank" rel="noopener"
         class="btn btn-outline btn-sm" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;">
-        🔗 Abrir en nueva pestaña
+        <span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span> Abrir en nueva pestaña
       </a>
     </div>`;
 
   // Imagen por defecto
   return `
     <div class="adjunto-wrap">
-      <p class="adjunto-label">📎 Imagen adjunta</p>
+      <p class="adjunto-label"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span> Imagen adjunta</p>
       <img src="${url}" alt="Adjunto"
         style="width:100%;max-height:280px;object-fit:contain;border-radius:12px;
                cursor:zoom-in;background:#f8fafc;border:1.5px solid #e2e8f0;margin-top:6px;"
@@ -930,14 +930,14 @@ function verInfoUsuario(uJson) {
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:1rem;flex-shrink:0;width:22px;">📞</span>
+        <span style="font-size:1rem;flex-shrink:0;width:22px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span></span>
         <div>
           <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">Teléfono</p>
           <p style="font-size:0.88rem;color:#334155;margin:0;">${u.telefono || '—'}</p>
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:1rem;flex-shrink:0;width:22px;">📅</span>
+        <span style="font-size:1rem;flex-shrink:0;width:22px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></span>
         <div>
           <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">Fecha de registro</p>
           <p style="font-size:0.88rem;color:#334155;margin:0;">${fechaReg}</p>
