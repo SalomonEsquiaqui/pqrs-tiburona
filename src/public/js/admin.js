@@ -964,10 +964,10 @@ async function cargarValoraciones() {
   if (!cont) return;
   cont.innerHTML = '<div class="val-loading">Cargando valoraciones...</div>';
 
-  // Obtener todas las pqrs con valoracion + soporte asignado
+  // Obtener pqrs con valoracion
   const { data: pqrs, error } = await db
     .from('pqrs')
-    .select('id, soporte_id, valoracion, valoracion_comentario, creado_en, asunto, users:soporte_id(nombre)')
+    .select('id, soporte_id, valoracion, valoracion_comentario, creado_en, asunto')
     .not('valoracion', 'is', null)
     .order('creado_en', { ascending: false });
 
@@ -980,18 +980,17 @@ async function cargarValoraciones() {
   const map = {};
   pqrs.forEach(p => {
     const sid = p.soporte_id || '_sin';
-    const nombre = (p.users && p.users.nombre) || 'Sin agente';
-    if (!map[sid]) map[sid] = { id: sid, nombre, items: [] };
+    if (!map[sid]) map[sid] = { id: sid, nombre: 'Sin agente', items: [] };
     map[sid].items.push(p);
   });
 
-  // Enriquecer con datos reales de users si están disponibles
+  // Enriquecer con datos reales de users
   const sids = Object.keys(map).filter(k => k !== '_sin');
   if (sids.length) {
     const { data: users } = await db.from('users').select('id,nombre,email,avatar_url').in('id', sids);
     (users || []).forEach(u => {
       if (map[u.id]) {
-        map[u.id].nombre = u.nombre;
+        map[u.id].nombre = u.nombre || 'Sin agente';
         map[u.id].email = u.email;
         map[u.id].avatar_url = u.avatar_url;
       }
