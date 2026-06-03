@@ -967,7 +967,7 @@ async function cargarValoraciones() {
   // Obtener todas las pqrs con valoracion + soporte asignado
   const { data: pqrs, error } = await db
     .from('pqrs')
-    .select('id, soporte_id, soporte_nombre, valoracion, valoracion_comentario, creado_en, asunto')
+    .select('id, soporte_id, valoracion, valoracion_comentario, creado_en, asunto, users:soporte_id(nombre)')
     .not('valoracion', 'is', null)
     .order('creado_en', { ascending: false });
 
@@ -980,7 +980,8 @@ async function cargarValoraciones() {
   const map = {};
   pqrs.forEach(p => {
     const sid = p.soporte_id || '_sin';
-    if (!map[sid]) map[sid] = { id: sid, nombre: p.soporte_nombre || 'Sin agente', items: [] };
+    const nombre = (p.users && p.users.nombre) || 'Sin agente';
+    if (!map[sid]) map[sid] = { id: sid, nombre, items: [] };
     map[sid].items.push(p);
   });
 
