@@ -432,7 +432,7 @@ async function confirmarAsignacion() {
       method: 'POST',
       body: JSON.stringify({ soporte_id: soporteId, prioridad, sla_horas: sla })
     });
-    mostrarMensaje('msg-asignar', '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Asignado correctamente.', 'exito');
+    mostrarMensaje('msg-asignar', '✔ La PQRS ha sido asignada al agente de soporte exitosamente.', 'exito');
     setTimeout(() => cerrarModal('modal-asignar'), 1500);
     await cargarTodasPqrs();
   } catch (err) {
