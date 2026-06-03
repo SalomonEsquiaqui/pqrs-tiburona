@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('nombre-soporte').textContent = perfil.nombre;
 
-  await Promise.all([cargarAsignaciones(), cargarResueltas()]);
+  await Promise.all([cargarAsignaciones(), cargarResueltas(), cargarValoraciones()]);
 
   // Iniciar campana de notificaciones SLA
   initNotifSoporte();
@@ -186,7 +186,7 @@ async function enviarRespuesta() {
     });
     mostrarMensaje('msg-responder', 'Respuesta guardada.', 'exito');
     setTimeout(() => cerrarModal('modal-responder'), 1200);
-    await Promise.all([cargarAsignaciones(), cargarResueltas()]);
+    await Promise.all([cargarAsignaciones(), cargarResueltas(), cargarValoraciones()]);
   } catch (err) {
     mostrarMensaje('msg-responder', err.message, 'error');
   }
@@ -590,3 +590,26 @@ function abrirLightbox(url) {
 
 // Alias para compatibilidad con código existente
 function verImagenCompleta(url) { abrirLightbox(url); }
+
+// ── VALORACIONES ─────────────────────
+async function cargarValoraciones(){
+ const box=document.getElementById('valoraciones-soporte'); if(!box) return;
+ const {data}=await db.from('asignaciones')
+ .select('pqrs(radicado,asunto,valoracion,valoracion_comentario,users!pqrs_usuario_id_fkey(nombre))')
+ .eq('soporte_id',sesionSoporte.user.id);
+ const vals=(data||[]).map(x=>x.pqrs).filter(x=>x?.valoracion);
+ if(!vals.length){box.innerHTML='<div class="tabla-wrap" style="padding:26px;text-align:center;color:#64748b">Aún no tienes valoraciones.</div>';return;}
+ const avg=(vals.reduce((a,b)=>a+b.valoracion,0)/vals.length).toFixed(1);
+ const dist=[1,2,3,4,5].map(n=>vals.filter(v=>v.valoracion===n).length);
+ box.innerHTML=`<div class="feedback-hero">
+ <div class="feedback-score">${avg}<small>/5</small></div>
+ <div><h3>${vals.length} valoraciones recibidas</h3><div class="feedback-bars">${
+ [5,4,3,2,1].map(n=>`<div class="fb-row"><span>${n}</span><div><i style="width:${(dist[n-1]/vals.length)*100}%"></i></div></div>`).join('')
+ }</div></div></div>
+ <div class="feedback-grid">${
+ vals.reverse().map((v,i)=>`<article class="feedback-card" style="animation-delay:${i*60}ms">
+ <div class="fb-top"><strong>${v.users?.nombre||'Usuario'}</strong><span>${'★'.repeat(v.valoracion)}${'☆'.repeat(5-v.valoracion)}</span></div>
+ <p>${v.asunto}</p>${v.valoracion_comentario?`<blockquote>${v.valoracion_comentario}</blockquote>`:''}
+ <small>${v.radicado}</small></article>`).join('')
+ }</div>`;
+}
