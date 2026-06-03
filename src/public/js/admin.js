@@ -967,9 +967,9 @@ async function cargarValoraciones() {
   // Obtener pqrs con valoracion
   const { data: pqrs, error } = await db
     .from('pqrs')
-    .select('id, soporte_id, valoracion, valoracion_comentario, creado_en, asunto')
+    .select('id, soporte_id, valoracion, valoracion_comentario, created_at, asunto')
     .not('valoracion', 'is', null)
-    .order('creado_en', { ascending: false });
+    .order('created_at', { ascending: false });
 
   if (error || !pqrs) {
     cont.innerHTML = '<div class="val-sin-datos">No se pudieron cargar las valoraciones.</div>';
@@ -1103,7 +1103,7 @@ function verComentariosVal(agenteId) {
 
   document.getElementById('val-modal-lista').innerHTML = items.length
     ? items.map(p => {
-        const fecha = p.creado_en ? new Date(p.creado_en).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}) : '';
+        const fecha = p.created_at ? new Date(p.created_at).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}) : '';
         return `<div class="val-comentario-item">
           <div class="val-coment-meta">
             <div class="val-coment-stars">${estrellasSVGmin(p.valoracion)}</div>
