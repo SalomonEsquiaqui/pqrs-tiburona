@@ -338,7 +338,7 @@ async function verDetalle(id) {
   const hayRespuestas = respuestas && respuestas.length > 0;
   const puedeValorar  = hayRespuestas && !p.valoracion;
   const btnValorar    = puedeValorar
-    ? `<button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="abrirModalValoracion('${p.id}')"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> Valorar atención</button>`
+    ? `<button class="btn btn-sm btn-outline" style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;" onclick="abrirModalValoracion('${p.id}')"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Valorar atención</button>`
     : '';
 
   document.getElementById('contenido-detalle').innerHTML = `
@@ -711,7 +711,7 @@ async function enviarValoracion() {
     if (error) throw new Error(error.message);
 
     btn.disabled = false;
-    btn.textContent = '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Enviar valoración';
+    btn.innerHTML = '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Enviar valoración';
     mostrarMensaje('msg-valoracion', '¡Gracias por tu valoración!', 'exito');
     setTimeout(() => {
       cerrarModal('modal-valoracion');
@@ -721,7 +721,7 @@ async function enviarValoracion() {
   } catch (err) {
     mostrarMensaje('msg-valoracion', err.message || 'Error al guardar. Intenta de nuevo.', 'error');
     btn.disabled = false;
-    btn.textContent = '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Enviar valoración';
+    btn.innerHTML = '<span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Enviar valoración';
   }
 }
 
