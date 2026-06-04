@@ -29,9 +29,10 @@ function generarRadicado() {
 
 function redirigirPorRol(rol) {
   const rutas = {
-    admin:   '/pages/dashboard-admin.html',
-    soporte: '/pages/dashboard-soporte.html',
-    usuario: '/pages/dashboard-usuario.html'
+    admin:        '/pages/dashboard-admin.html',
+    soporte:      '/pages/dashboard-soporte.html',
+    usuario:      '/pages/dashboard-usuario.html',
+    mantenimiento:'/pages/dashboard-mantenimiento.html'
   };
   const destino = rutas[rol] || '/pages/index.html';
   _transicionSalida(destino);

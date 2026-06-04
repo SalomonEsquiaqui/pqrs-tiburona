@@ -205,6 +205,7 @@ async function cargarUsuarios() {
           : `<select onchange="cambiarRol('${u.id}',this.value)" style="padding:5px 8px;border:1px solid var(--gris-medio);border-radius:6px;font-size:0.8rem;">
                <option value="usuario" ${u.rol==='usuario'?'selected':''}>Usuario</option>
                <option value="soporte" ${u.rol==='soporte'?'selected':''}>Soporte</option>
+               <option value="mantenimiento" ${u.rol==='mantenimiento'?'selected':''}>Mantenimiento</option>
                <option value="admin">Administrador</option>
              </select>`
         }
@@ -267,6 +268,7 @@ function _renderUsuariosMobile(data) {
                style="flex:1;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:#fff;min-height:40px;">
                <option value="usuario" ${u.rol==='usuario'?'selected':''}><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Usuario</option>
                <option value="soporte" ${u.rol==='soporte'?'selected':''}><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>️ Soporte</option>
+               <option value="mantenimiento" ${u.rol==='mantenimiento'?'selected':''}>🔧 Mantenimiento</option>
                <option value="admin">⚙️ Administrador</option>
              </select>`
         }

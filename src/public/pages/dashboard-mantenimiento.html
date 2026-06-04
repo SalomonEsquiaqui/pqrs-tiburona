@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mantenimiento — PQRS La Tiburona</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/alerts.css">
+  <link rel="stylesheet" href="/css/perfil.css">
+  <link rel="stylesheet" href="/css/icons.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    /* ── VARIABLES ── */
+    :root {
+      --mant-accent: #f59e0b;
+      --mant-accent2: #d97706;
+      --mant-green: #10b981;
+      --mant-red: #ef4444;
+      --mant-blue: #3b82f6;
+    }
+
+    /* ── ANIMACIONES ── */
+    @keyframes fadeSlideUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+      70%  { box-shadow: 0 0 0 10px rgba(245,158,11,0); }
+      100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    }
+    @keyframes countdown-tick {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+    @keyframes slideInRight {
+      from { opacity:0; transform:translateX(30px); }
+      to   { opacity:1; transform:translateX(0); }
+    }
+    @keyframes bounceIn {
+      0%   { opacity:0; transform:scale(0.8); }
+      60%  { transform:scale(1.05); }
+      100% { opacity:1; transform:scale(1); }
+    }
+    @keyframes spinLoader {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── SIDEBAR OVERRIDE PARA MANTENIMIENTO ── */
+    .sidebar { background: linear-gradient(180deg,#0f172a 0%,#1c1108 55%,#431407 100%) !important; }
+    .nav-item.activo {
+      background: rgba(245,158,11,0.18) !important;
+      color: #f59e0b !important;
+      border-left: 3px solid #f59e0b !important;
+    }
+    .nav-item:hover:not(.activo) {
+      background: rgba(245,158,11,0.08) !important;
+      color: rgba(255,255,255,0.9) !important;
+    }
+    .badge-mant {
+      background: linear-gradient(135deg,#f59e0b,#d97706);
+      color: #fff; font-size:0.6rem; font-weight:800;
+      padding:2px 8px; border-radius:20px; letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    /* ── HEADER SECCIÓN ── */
+    .sec-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:22px; flex-wrap:wrap; gap:12px;
+      animation: fadeSlideUp 0.35s ease both;
+    }
+    .sec-header h1 {
+      font-size:1.35rem; font-weight:800; color:#0f172a;
+      display:flex; align-items:center; gap:10px; margin:0;
+    }
+    .sec-header h1 svg { color: var(--mant-accent); }
+
+    /* ── STAT CARDS ── */
+    .mant-stats {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+      margin-bottom:24px; animation: fadeSlideUp 0.4s ease 0.05s both;
+    }
+    .mant-stat {
+      background:#fff; border-radius:14px; padding:18px 20px;
+      border:1px solid #e2e8f0; position:relative; overflow:hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .mant-stat:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.09); }
+    .mant-stat::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    }
+    .mant-stat.amarillo::before { background: linear-gradient(90deg,#f59e0b,#fcd34d); }
+    .mant-stat.verde::before    { background: linear-gradient(90deg,#10b981,#34d399); }
+    .mant-stat.azul::before     { background: linear-gradient(90deg,#3b82f6,#93c5fd); }
+    .mant-stat .num { font-size:2rem; font-weight:900; color:#0f172a; line-height:1; }
+    .mant-stat .lbl { font-size:0.72rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.05em; margin-top:4px; }
+
+    /* ── CARDS DE REPORTE ── */
+    .reportes-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:16px;
+    }
+    .reporte-card {
+      background:#fff; border-radius:16px; border:1px solid #e2e8f0;
+      overflow:hidden; transition: transform 0.22s, box-shadow 0.22s;
+      animation: fadeSlideUp 0.4s ease both;
+    }
+    .reporte-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.1); }
+    .reporte-card-img {
+      width:100%; height:180px; object-fit:cover; display:block;
+      background: linear-gradient(135deg,#1e293b,#334155);
+    }
+    .reporte-card-img-placeholder {
+      width:100%; height:180px; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:8px;
+      background: linear-gradient(135deg,#f1f5f9,#e2e8f0);
+      color:#94a3b8;
+    }
+    .reporte-card-img-placeholder svg { width:40px; height:40px; opacity:0.4; }
+    .reporte-card-body { padding:16px; }
+    .reporte-card-title {
+      font-size:0.95rem; font-weight:700; color:#0f172a; margin:0 0 6px;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    }
+    .reporte-card-desc {
+      font-size:0.8rem; color:#64748b; line-height:1.5; margin:0 0 12px;
+      display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+    }
+    .reporte-card-meta {
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:0.72rem; color:#94a3b8; flex-wrap:wrap; gap:6px;
+    }
+    .reporte-card-author {
+      display:flex; align-items:center; gap:6px;
+    }
+    .reporte-card-author .avatar-mini {
+      width:22px; height:22px; border-radius:50%;
+      background: linear-gradient(135deg,#f59e0b,#d97706);
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.6rem; font-weight:800; color:#fff; flex-shrink:0;
+      overflow:hidden;
+    }
+    .reporte-card-author .avatar-mini img { width:100%; height:100%; object-fit:cover; }
+    .reporte-chip {
+      font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:20px;
+      text-transform:uppercase; letter-spacing:.04em;
+    }
+    .chip-propio { background:rgba(245,158,11,0.12); color:#d97706; }
+    .reporte-card-actions {
+      display:flex; gap:8px; margin-top:12px; padding-top:12px;
+      border-top:1px solid #f1f5f9;
+    }
+    .btn-reporte {
+      flex:1; padding:7px 0; border-radius:8px; font-size:0.75rem;
+      font-weight:600; border:none; cursor:pointer; transition:all 0.15s;
+      display:flex; align-items:center; justify-content:center; gap:5px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .btn-reporte.ver   { background:#f1f5f9; color:#475569; }
+    .btn-reporte.editar { background:rgba(245,158,11,0.1); color:#d97706; }
+    .btn-reporte.ver:hover    { background:#e2e8f0; }
+    .btn-reporte.editar:hover { background:rgba(245,158,11,0.2); }
+
+    /* ── COUNTDOWN BADGE ── */
+    .countdown-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      background: linear-gradient(135deg,#f59e0b,#d97706);
+      color:#fff; font-size:0.7rem; font-weight:800;
+      padding:3px 10px; border-radius:20px;
+      animation: pulse-ring 1.5s infinite;
+    }
+    .countdown-badge.urgente { background: linear-gradient(135deg,#ef4444,#dc2626); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align:center; padding:60px 20px;
+      animation: bounceIn 0.5s ease both;
+    }
+    .empty-state svg { width:64px; height:64px; color:#cbd5e1; margin-bottom:16px; }
+    .empty-state h3 { font-size:1.1rem; font-weight:700; color:#475569; margin:0 0 8px; }
+    .empty-state p  { font-size:0.85rem; color:#94a3b8; margin:0; }
+
+    /* ── LOADER ── */
+    .loader-dots {
+      display:flex; align-items:center; justify-content:center; gap:6px; padding:40px;
+    }
+    .loader-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:#f59e0b; animation: pulse-ring 1s ease infinite;
+    }
+    .loader-dot:nth-child(2) { animation-delay:0.2s; }
+    .loader-dot:nth-child(3) { animation-delay:0.4s; }
+
+    /* ── MODAL NUEVO REPORTE ── */
+    .modal-reporte {
+      position:fixed; inset:0; z-index:9000;
+      background:rgba(15,23,42,0.65); backdrop-filter:blur(4px);
+      display:flex; align-items:center; justify-content:center;
+      padding:16px; opacity:0; pointer-events:none;
+      transition: opacity 0.2s;
+    }
+    .modal-reporte.abierto { opacity:1; pointer-events:all; }
+    .modal-reporte-inner {
+      background:#fff; border-radius:20px; width:100%; max-width:540px;
+      max-height:90vh; overflow-y:auto; padding:28px;
+      transform:scale(0.95) translateY(20px);
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
+      scrollbar-width:thin;
+    }
+    .modal-reporte.abierto .modal-reporte-inner { transform:scale(1) translateY(0); }
+    .modal-reporte-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:24px;
+    }
+    .modal-reporte-header h2 {
+      font-size:1.1rem; font-weight:800; color:#0f172a; margin:0;
+      display:flex; align-items:center; gap:8px;
+    }
+    .modal-reporte-header h2 svg { color:var(--mant-accent); }
+    .btn-cerrar-modal {
+      width:32px; height:32px; border-radius:50%; border:none; background:#f1f5f9;
+      color:#475569; cursor:pointer; font-size:1.1rem; display:flex;
+      align-items:center; justify-content:center; transition:all 0.15s;
+    }
+    .btn-cerrar-modal:hover { background:#e2e8f0; color:#0f172a; }
+
+    /* form inputs en modal */
+    .form-mant { display:flex; flex-direction:column; gap:16px; }
+    .form-mant label { font-size:0.78rem; font-weight:700; color:#374151; display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .form-mant input[type=text], .form-mant textarea, .form-mant select {
+      width:100%; padding:10px 13px; border:2px solid #e2e8f0;
+      border-radius:10px; font-size:0.88rem; color:#0f172a;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      transition:border-color 0.15s, box-shadow 0.15s;
+      background:#fff; box-sizing:border-box;
+    }
+    .form-mant input:focus, .form-mant textarea:focus, .form-mant select:focus {
+      outline:none; border-color:var(--mant-accent);
+      box-shadow:0 0 0 3px rgba(245,158,11,0.15);
+    }
+    .form-mant textarea { resize:vertical; min-height:100px; }
+
+    /* upload foto */
+    .upload-zona {
+      border:2px dashed #cbd5e1; border-radius:12px; padding:24px;
+      text-align:center; cursor:pointer; transition:all 0.2s;
+      background:#fafafa; position:relative;
+    }
+    .upload-zona:hover, .upload-zona.drag-over {
+      border-color:var(--mant-accent); background:rgba(245,158,11,0.04);
+    }
+    .upload-zona input[type=file] {
+      position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+    }
+    .upload-zona svg { width:32px; height:32px; color:#94a3b8; margin-bottom:8px; }
+    .upload-zona p  { font-size:0.8rem; color:#94a3b8; margin:0; }
+    .upload-preview {
+      width:100%; height:160px; object-fit:cover;
+      border-radius:10px; display:none; margin-top:10px;
+    }
+    .upload-preview.visible { display:block; }
+
+    /* btn submit */
+    .btn-submit-reporte {
+      width:100%; padding:12px; background:linear-gradient(135deg,#f59e0b,#d97706);
+      color:#fff; border:none; border-radius:12px; font-size:0.92rem;
+      font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
+      transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-submit-reporte:hover { background:linear-gradient(135deg,#d97706,#b45309); transform:translateY(-1px); box-shadow:0 6px 20px rgba(245,158,11,0.35); }
+    .btn-submit-reporte:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+    /* ── MODAL VER REPORTE ── */
+    .modal-ver-reporte {
+      position:fixed; inset:0; z-index:9001;
+      background:rgba(15,23,42,0.65); backdrop-filter:blur(4px);
+      display:flex; align-items:center; justify-content:center;
+      padding:16px; opacity:0; pointer-events:none;
+      transition:opacity 0.2s;
+    }
+    .modal-ver-reporte.abierto { opacity:1; pointer-events:all; }
+    .modal-ver-inner {
+      background:#fff; border-radius:20px; width:100%; max-width:560px;
+      max-height:90vh; overflow-y:auto;
+      transform:scale(0.95) translateY(20px);
+      transition:transform 0.25s cubic-bezier(.34,1.56,.64,1);
+      scrollbar-width:thin;
+    }
+    .modal-ver-reporte.abierto .modal-ver-inner { transform:scale(1) translateY(0); }
+    .modal-ver-img { width:100%; max-height:280px; object-fit:cover; display:block; border-radius:20px 20px 0 0; }
+    .modal-ver-body { padding:24px; }
+    .modal-ver-body h2 { font-size:1.2rem; font-weight:800; color:#0f172a; margin:0 0 10px; }
+    .modal-ver-body p  { font-size:0.87rem; color:#475569; line-height:1.65; margin:0 0 16px; }
+    .modal-ver-meta { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+    .modal-ver-meta-item {
+      display:flex; align-items:center; gap:6px;
+      font-size:0.75rem; color:#64748b;
+    }
+    .modal-ver-meta-item svg { width:14px; height:14px; }
+
+    /* ── TOAST ── */
+    .mant-toast {
+      position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:#0f172a; color:#fff; padding:12px 20px; border-radius:12px;
+      font-size:0.85rem; font-weight:600; z-index:99999;
+      opacity:0; transition:all 0.3s; white-space:nowrap;
+      display:flex; align-items:center; gap:8px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);
+    }
+    .mant-toast.visible { opacity:1; transform:translateX(-50%) translateY(0); }
+    .mant-toast.exito { background:linear-gradient(135deg,#059669,#047857); }
+    .mant-toast.error { background:linear-gradient(135deg,#ef4444,#dc2626); }
+
+    /* ── BTN NUEVO REPORTE ── */
+    .btn-nuevo-reporte {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 20px; background:linear-gradient(135deg,#f59e0b,#d97706);
+      color:#fff; border:none; border-radius:12px; font-size:0.85rem;
+      font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
+      transition:all 0.2s; box-shadow:0 4px 14px rgba(245,158,11,0.3);
+    }
+    .btn-nuevo-reporte:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(245,158,11,0.4); }
+
+    /* ── SECTION TABS ── */
+    .sec-tabs {
+      display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;
+    }
+    .sec-tab {
+      padding:8px 16px; border-radius:20px; border:2px solid #e2e8f0;
+      background:#fff; color:#64748b; font-size:0.8rem; font-weight:600;
+      cursor:pointer; transition:all 0.15s; font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    .sec-tab.activo { background:var(--mant-accent); border-color:var(--mant-accent); color:#fff; }
+    .sec-tab:hover:not(.activo) { border-color:var(--mant-accent); color:var(--mant-accent); }
+
+    /* ── FORM EDITAR ── */
+    .edit-timer {
+      display:flex; align-items:center; gap:8px;
+      background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3);
+      border-radius:10px; padding:10px 14px; margin-bottom:16px;
+      font-size:0.82rem; color:#92400e;
+    }
+    .edit-timer svg { width:16px; height:16px; flex-shrink:0; }
+    .edit-timer-num { font-weight:800; font-size:1rem; animation:countdown-tick 1s ease infinite; }
+    .edit-timer.urgente { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3); color:#991b1b; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      .mant-stats { grid-template-columns:repeat(3,1fr); gap:10px; }
+      .mant-stat .num { font-size:1.5rem; }
+      .reportes-grid { grid-template-columns:1fr; }
+    }
+
+    /* ── NAV BOTTOM MANT ── */
+    #nav-bottom .nav-item.activo { color:#f59e0b !important; background:rgba(245,158,11,0.12) !important; }
+  </style>
+</head>
+<body>
+<div class="dash-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/img/logo-tiburona.png" alt="La Tiburona" style="width:38px;height:38px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;">
+      <div>
+        <h2 style="font-size:0.92rem;margin:0;">La Tiburona</h2>
+        <small>Unidad Mantenimiento</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item activo" onclick="mostrarSeccion('todos', this)">
+        <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> Todos los reportes
+      </button>
+      <button class="nav-item" onclick="mostrarSeccion('mis-reportes', this)">
+        <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span> Mis reportes
+      </button>
+      <button class="nav-item" onclick="abrirModalNuevo()">
+        <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span> Nuevo reporte
+      </button>
+      <button class="nav-item" onclick="mostrarSeccion('perfil', this)">
+        <span class="ni"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Mi cuenta
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <strong id="nombre-mant">—</strong>
+      <span class="badge-mant" style="margin:4px 0;display:inline-block;">Mantenimiento</span>
+      <button onclick="cerrarSesionLocal()" class="btn btn-sm btn-peligro" style="margin-top:10px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
+        <span style="display:flex;align-items:center;flex-shrink:0;width:14px;height:14px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- STATS -->
+    <div class="mant-stats">
+      <div class="mant-stat amarillo">
+        <div class="num" id="stat-total">0</div>
+        <div class="lbl">Total reportes</div>
+      </div>
+      <div class="mant-stat verde">
+        <div class="num" id="stat-mis">0</div>
+        <div class="lbl">Mis reportes</div>
+      </div>
+      <div class="mant-stat azul">
+        <div class="num" id="stat-hoy">0</div>
+        <div class="lbl">Publicados hoy</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN TODOS LOS REPORTES -->
+    <section id="sec-todos">
+      <div class="sec-header">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Todos los reportes
+        </h1>
+        <button class="btn-nuevo-reporte" onclick="abrirModalNuevo()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo reporte
+        </button>
+      </div>
+      <div id="lista-todos" class="reportes-grid">
+        <div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN MIS REPORTES -->
+    <section id="sec-mis-reportes" style="display:none;">
+      <div class="sec-header">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Mis reportes
+        </h1>
+        <button class="btn-nuevo-reporte" onclick="abrirModalNuevo()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo reporte
+        </button>
+      </div>
+      <div id="lista-mis" class="reportes-grid">
+        <div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN MI CUENTA -->
+    <section id="sec-perfil" style="display:none;"></section>
+
+  </main>
+
+  <!-- NAV INFERIOR MÓVIL -->
+  <nav class="nav-bottom-mobile" id="nav-bottom">
+    <button class="nav-item activo" onclick="mostrarSeccion('todos', this)" data-seccion="todos">
+      <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span class="nav-label">Reportes</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccion('mis-reportes', this)" data-seccion="mis-reportes">
+      <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+      <span class="nav-label">Mis reportes</span>
+    </button>
+    <button class="nav-item" onclick="abrirModalNuevo()" data-seccion="nuevo">
+      <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+      <span class="nav-label">Nuevo</span>
+    </button>
+    <button class="nav-item" onclick="mostrarSeccion('perfil', this)" data-seccion="perfil">
+      <span class="ni ni-mob"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+      <span class="nav-label">Cuenta</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MODAL NUEVO / EDITAR REPORTE -->
+<div class="modal-reporte" id="modal-nuevo-reporte">
+  <div class="modal-reporte-inner">
+    <div class="modal-reporte-header">
+      <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <span id="modal-reporte-titulo">Nuevo reporte</span>
+      </h2>
+      <button class="btn-cerrar-modal" onclick="cerrarModalNuevo()">×</button>
+    </div>
+
+    <div id="edit-timer-container" style="display:none;">
+      <div class="edit-timer" id="edit-timer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Tiempo para editar: <span class="edit-timer-num" id="edit-timer-num">2:00</span></span>
+      </div>
+    </div>
+
+    <div id="msg-reporte" class="mensaje" style="margin-bottom:12px;"></div>
+
+    <div class="form-mant">
+      <input type="hidden" id="reporte-edit-id">
+      <div>
+        <label>Título del reporte *</label>
+        <input type="text" id="reporte-titulo" placeholder="Ej: Daño en la red del arco norte" maxlength="120">
+      </div>
+      <div>
+        <label>Descripción *</label>
+        <textarea id="reporte-descripcion" placeholder="Describe detalladamente la novedad encontrada..."></textarea>
+      </div>
+      <div>
+        <label>Área / Zona</label>
+        <select id="reporte-area">
+          <option value="">Seleccionar área...</option>
+          <option value="Cancha principal">Cancha principal</option>
+          <option value="Cancha auxiliar">Cancha auxiliar</option>
+          <option value="Vestuarios">Vestuarios</option>
+          <option value="Iluminación">Iluminación</option>
+          <option value="Graderías">Graderías</option>
+          <option value="Accesos y puertas">Accesos y puertas</option>
+          <option value="Baños">Baños</option>
+          <option value="Zona administrativa">Zona administrativa</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div>
+        <label>Foto del reporte</label>
+        <div class="upload-zona" id="upload-zona">
+          <input type="file" id="reporte-foto" accept="image/jpeg,image/png,image/webp" onchange="previsualizarFoto(this)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>Haz clic o arrastra una imagen<br><span style="font-size:0.7rem;">JPG, PNG o WEBP · Máx. 3 MB</span></p>
+        </div>
+        <img id="foto-preview" class="upload-preview" alt="Vista previa">
+        <div id="foto-url-actual" style="display:none;"></div>
+      </div>
+      <button class="btn-submit-reporte" id="btn-guardar-reporte" onclick="guardarReporte()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Publicar reporte
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VER REPORTE -->
+<div class="modal-ver-reporte" id="modal-ver-reporte">
+  <div class="modal-ver-inner">
+    <div id="modal-ver-contenido"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="mant-toast" id="mant-toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/mantenimiento.js"></script>
+<script src="/js/perfil.js"></script>
+<script>
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const navItems = document.querySelectorAll('.nav-bottom-mobile .nav-item');
+    navItems.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.seccion === 'nuevo') return;
+        navItems.forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+      });
+    });
+    document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const onclick = btn.getAttribute('onclick') || '';
+        const match = onclick.match(/['"]([\w-]+)['"]/);
+        if (match && match[1] !== 'nuevo') {
+          navItems.forEach(b => b.classList.toggle('activo', b.dataset.seccion === match[1]));
+        }
+      });
+    });
+
+    // drag & drop upload
+    const zona = document.getElementById('upload-zona');
+    if (zona) {
+      zona.addEventListener('dragover', e => { e.preventDefault(); zona.classList.add('drag-over'); });
+      zona.addEventListener('dragleave', () => zona.classList.remove('drag-over'));
+      zona.addEventListener('drop', e => {
+        e.preventDefault(); zona.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          const inp = document.getElementById('reporte-foto');
+          const dt = new DataTransfer(); dt.items.add(file); inp.files = dt.files;
+          previsualizarFoto(inp);
+        }
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

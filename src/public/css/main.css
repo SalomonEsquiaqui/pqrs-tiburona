@@ -290,9 +290,10 @@ body::after {
   font-size: 0.72rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.badge-admin    { background: #fef3c7; color: #92400e; }
-.badge-soporte  { background: #ede9fe; color: #4c1d95; }
-.badge-usuario  { background: var(--azul-suave); color: var(--azul-rey); }
+.badge-admin        { background: #fef3c7; color: #92400e; }
+.badge-soporte      { background: #ede9fe; color: #4c1d95; }
+.badge-usuario      { background: var(--azul-suave); color: var(--azul-rey); }
+.badge-mantenimiento{ background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
 
 /* Tipos PQRS */
 .badge-tipo-peticion    { background: #eff6ff; color: #1e40af; }

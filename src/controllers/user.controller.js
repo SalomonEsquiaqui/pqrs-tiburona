@@ -17,7 +17,7 @@ const cambiarRol = async (req, res) => {
   try {
     const { id } = req.params;
     const { rol } = req.body;
-    const rolesValidos = ['usuario', 'soporte', 'admin'];
+    const rolesValidos = ['usuario', 'soporte', 'admin', 'mantenimiento'];
     if (!rolesValidos.includes(rol)) return res.status(400).json({ error: 'Rol inválido.' });
 
     const { error } = await supabaseAdmin.from('users').update({ rol }).eq('id', id);
