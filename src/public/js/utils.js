@@ -71,7 +71,7 @@ function mostrarMensaje(id, texto, tipo = 'error') {
   const el = document.getElementById(id);
   if (!el) return;
   el.className = `mensaje ${tipo}`;
-  el.textContent = texto;
+  el.innerHTML = texto;
   if (tipo === 'exito') setTimeout(() => ocultarMensaje(id), 4500);
 }
 function ocultarMensaje(id) {
