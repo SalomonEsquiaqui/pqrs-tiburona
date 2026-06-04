@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Validar reCAPTCHA
       const captchaToken = getCaptchaToken(captchaLoginWidget);
       if (!captchaToken) {
-        mostrarMensaje('msg-login', '⚠️ Por favor completa el reCAPTCHA antes de continuar.', 'error');
+        mostrarMensaje('msg-login', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Por favor completa el reCAPTCHA antes de continuar.', 'error');
         return;
       }
 
@@ -142,15 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Validaciones frontend
       if (!tipoId) {
-        mostrarMensaje('msg-registro', '⚠️ Selecciona un tipo de identificación.', 'error');
+        mostrarMensaje('msg-registro', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Selecciona un tipo de identificación.', 'error');
         return;
       }
       if (!numId) {
-        mostrarMensaje('msg-registro', '⚠️ Ingresa tu número de identificación.', 'error');
+        mostrarMensaje('msg-registro', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Ingresa tu número de identificación.', 'error');
         return;
       }
       if (!/^[A-Za-z0-9\-]+$/.test(numId)) {
-        mostrarMensaje('msg-registro', '⚠️ El número de identificación solo puede contener letras, números y guiones.', 'error');
+        mostrarMensaje('msg-registro', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> El número de identificación solo puede contener letras, números y guiones.', 'error');
         return;
       }
       if (password !== pass2) {
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Validar reCAPTCHA
       const captchaToken = getCaptchaToken(captchaRegistroWidget);
       if (!captchaToken) {
-        mostrarMensaje('msg-registro', '⚠️ Por favor completa el reCAPTCHA antes de continuar.', 'error');
+        mostrarMensaje('msg-registro', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Por favor completa el reCAPTCHA antes de continuar.', 'error');
         return;
       }
 
@@ -269,7 +269,7 @@ function irAMetodoId() {
 async function buscarCuenta() {
   const correo = document.getElementById('rec-correo').value.trim().toLowerCase();
   if (!correo) {
-    mostrarMensaje('msg-recuperar', '⚠️ Ingresa tu correo electrónico.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Ingresa tu correo electrónico.', 'error');
     return;
   }
 
@@ -305,7 +305,7 @@ async function buscarCuenta() {
 async function verificarTelefono() {
   const telIngresado = document.getElementById('rec-tel-completo').value.trim();
   if (!telIngresado) {
-    mostrarMensaje('msg-recuperar', '⚠️ Ingresa el número de teléfono completo.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Ingresa el número de teléfono completo.', 'error');
     return;
   }
 
@@ -339,7 +339,7 @@ async function verificarTelefono() {
 async function verificarId() {
   const numId = document.getElementById('rec-num-id').value.trim();
   if (!numId) {
-    mostrarMensaje('msg-recuperar', '⚠️ Ingresa tu número de identificación.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Ingresa tu número de identificación.', 'error');
     return;
   }
 
@@ -381,11 +381,11 @@ async function cambiarContrasena() {
   const pass2 = document.getElementById('rec-pass-confirm').value;
 
   if (!pass1 || pass1.length < 6) {
-    mostrarMensaje('msg-recuperar', '⚠️ La contraseña debe tener mínimo 6 caracteres.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> La contraseña debe tener mínimo 6 caracteres.', 'error');
     return;
   }
   if (pass1 !== pass2) {
-    mostrarMensaje('msg-recuperar', '⚠️ Las contraseñas no coinciden.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Las contraseñas no coinciden.', 'error');
     return;
   }
 
@@ -422,11 +422,11 @@ async function cambiarContrasena() {
   const pass2 = document.getElementById('rec-pass-confirm').value;
 
   if (!pass1 || pass1.length < 6) {
-    mostrarMensaje('msg-recuperar', '⚠️ La contraseña debe tener mínimo 6 caracteres.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> La contraseña debe tener mínimo 6 caracteres.', 'error');
     return;
   }
   if (pass1 !== pass2) {
-    mostrarMensaje('msg-recuperar', '⚠️ Las contraseñas no coinciden.', 'error');
+    mostrarMensaje('msg-recuperar', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:middle;margin-right:5px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Las contraseñas no coinciden.', 'error');
     return;
   }
 
