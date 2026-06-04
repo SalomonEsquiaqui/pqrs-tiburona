@@ -931,7 +931,7 @@ function verInfoUsuario(uJson) {
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:1rem;flex-shrink:0;width:22px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 15.1 19.79 19.79 0 0 1 2.12 22 2 2 0 0 1 0 19.82V16.92a2 2 0 0 1 1.64-2l4.16-.73A2 2 0 0 1 8 15.59l1.87 1.87a16 16 0 0 0 6.07-6.07L14.07 9.5a2 2 0 0 1-.3-2.2l.73-4.16A2 2 0 0 1 16.5 1.5h3a2 2 0 0 1 2 2.18 19.79 19.79 0 0 1-3.07 8.63"/></svg></span></span>
+        <span style="font-size:1rem;flex-shrink:0;width:22px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg></span></span>
         <div>
           <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">Teléfono</p>
           <p style="font-size:0.88rem;color:#334155;margin:0;">${u.telefono || '—'}</p>
@@ -945,7 +945,7 @@ function verInfoUsuario(uJson) {
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:1rem;flex-shrink:0;width:22px;">🆔</span>
+        <span style="font-size:1rem;flex-shrink:0;width:22px;"><span class="ni" style="display:inline-flex;align-items:center;width:1em;height:1em;vertical-align:-0.15em;flex-shrink:0;" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 9h4"/><path d="M14 15h4"/></svg></span></span>
         <div>
           <p style="font-size:0.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin:0 0 2px;">N° Identificación</p>
           <code style="font-size:0.78rem;color:#475569;background:#f1f5f9;padding:3px 8px;border-radius:5px;letter-spacing:.05em;">${numId}</code>
